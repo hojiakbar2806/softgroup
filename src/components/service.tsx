@@ -43,29 +43,35 @@ const Service = () => {
 
 
     return (
-        <div className="mx-auto shadow-white shadow p-10 max-w-4xl w-full flex flex-col gap-8 bg-white/5 rounded-2xl">
-            {
-                services.map((item, index) => {
-                    const open = active === index;
-                    return (
-                        <div data-active={open} key={index}
-                             className="w-full group animate-appear grid-cols-[1fr] grid grid-rows-[auto_0fr] gap-4 transition-all duration-300
-                                data-[active=true]:grid-rows-[auto_1fr]"
-                             onClick={() => toggleOpenCard(index)}>
-                            <div className="w-full flex border-b items-center justify-between cursor-pointer">
-                                <h1 className="text-white text-2xl transition-all duration-300">{item.name}</h1>
-                                <button className={`transition-all duration-300
-                                group-data-[active=true]:rotate-180`
-                                }>
-                                    <ChevronUp stroke="white" size={40}/>
-                                </button>
-                            </div>
+        <div className="flex flex-col items-center gap-10">
+            <h1 className="text-white text-4xl">Our Mission</h1>
 
-                            <p className="overflow-hidden text-white transition-all duration-300">{item.content}</p>
-                        </div>
-                    )
-                })
-            }
+            <div
+                className="mx-auto shadow-white shadow p-10 max-w-4xl w-full flex flex-col gap-8 bg-white/5 rounded-2xl">
+                {
+                    services.map((item, index) => {
+                        const open = active === index;
+                        return (
+                            <div data-active={open} key={index}
+                                 className="w-full group animate-appear grid-cols-[1fr] grid grid-rows-[auto_0fr] gap-4 transition-all duration-300
+                                data-[active=true]:grid-rows-[auto_1fr]"
+                                 onClick={() => toggleOpenCard(index)}>
+                                <div className="w-full flex border-b items-center justify-between cursor-pointer">
+                                    <h1 className="text-white text-2xl transition-all duration-300">{item.name}</h1>
+                                    <button className={`transition-all duration-300
+                                group-data-[active=true]:rotate-180`
+                                    }>
+                                        <ChevronUp stroke="white" size={40}/>
+                                    </button>
+                                </div>
+
+                                <p className="overflow-hidden text-white transition-all duration-300">{item.content}</p>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+
         </div>
     );
 };

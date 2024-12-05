@@ -40,7 +40,8 @@ const mission = [
 
 export const MissionLine: React.FC = () => {
     return (
-        <div className="p-0 md:px-20">
+        <div className="p-0 md:px-20 flex flex-col items-center gap-10">
+            <h1 className="text-white text-4xl">Our Mission</h1>
             <div
                 className="space-y-5 relative before:absolute  before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
 

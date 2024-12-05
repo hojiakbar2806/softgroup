@@ -5,7 +5,7 @@ import Service from "@/components/service";
 
 export default function Home() {
     return (
-        <div className="w-full flex flex-col gap-10 z-10">
+        <div className="w-full flex flex-col gap-10 z-10 p-2">
             <Header/>
             <MissionLine/>
             <Service/>
