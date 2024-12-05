@@ -3,7 +3,7 @@ import {MissionLine} from "@/components/missionLine";
 import {Header} from "@/components/header";
 import Service from "@/components/service";
 
-export default function Home() {
+export default function InfoPage() {
     return (
         <div className="w-full flex flex-col gap-10 z-10">
             <Header/>
