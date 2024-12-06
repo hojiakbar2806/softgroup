@@ -36,6 +36,7 @@ const Service = () => {
     const [active, setActive] = React.useState<number | null>();
 
     const toggleOpenCard = (index: number) => {
+        window.scrollTo(0, document.body.scrollHeight)
         if (active !== index) {
             setActive(index)
         } else setActive(null)
@@ -44,7 +45,7 @@ const Service = () => {
 
     return (
         <div className="flex flex-col items-center gap-10">
-            <h1 className="text-white text-4xl">Our Mission</h1>
+            <h1 className="text-white text-4xl">Our Services</h1>
 
             <div
                 className="mx-auto shadow-white shadow p-10 max-w-4xl w-full flex flex-col gap-8 bg-white/5 rounded-2xl">
