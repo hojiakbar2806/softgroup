@@ -17,7 +17,7 @@ export default {
                 scroll: "scroll 20s linear infinite",
             },
             backgroundImage: {
-                parallex: "radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%)",
+                parallex: "radial-gradient(ellipse at bottom, #394757 0%, #090a0f 100%)",
             }
         },
     },

@@ -36,7 +36,7 @@ const Service = () => {
     const [active, setActive] = React.useState<number | null>();
 
     const toggleOpenCard = (index: number) => {
-        window.scrollTo(0, document.body.scrollHeight)
+        // window.scrollTo(0, document.body.scrollHeight)
         if (active !== index) {
             setActive(index)
         } else setActive(null)
