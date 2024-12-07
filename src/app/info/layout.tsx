@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: "Softgroup Info",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "https://softgroup-info.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Softgroup preview",
