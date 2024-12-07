@@ -46,7 +46,7 @@ const Service = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 pt-20">
+    <div className="flex flex-col items-center gap-6 py-20">
       <h1 className="font-bold text-white text-2xl md:text-3xl xl:text-4xl 2xl:text-5x">
         Bizning xizmatlarimiz
       </h1>
