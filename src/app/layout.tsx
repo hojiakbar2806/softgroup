@@ -22,22 +22,13 @@ export const metadata: Metadata = {
     siteName: "Softgroup",
     images: [
       {
-        url: "https://softgroup.uz/og-image.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Softgroup logo",
       },
     ],
     type: "website",
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    site: "@softgroup_info",
-    title: "Softgroup - Innovatsion IT xizmatlari",
-    description:
-      "Softgroup.uz saytida sizga biznesingizni rivojlantirish uchun zarur bo'lgan IT xizmatlarining barcha tafsilotlarini taqdim etamiz.",
-    images: "https://softgroup.uz/og-image.png",
   },
 };
 

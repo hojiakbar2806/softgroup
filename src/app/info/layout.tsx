@@ -7,6 +7,22 @@ export const metadata: Metadata = {
   keywords:
     "Softgroup haqida, kompaniya tarixi, missiya, qadriyatlar, IT kompaniya O'zbekiston",
   robots: "index, follow",
+  openGraph: {
+    title: "Softgroup haqida - Missiya, qadriyatlar va kompaniya tarixi",
+    description:
+      "Softgroup kompaniyasining tarixini, missiyasini va qadriyatlarini bilib oling. Biz biznesingizni rivojlantirish uchun innovatsion yechimlar yaratishga intilamiz.",
+    url: "https://info.softgroup.uz",
+    siteName: "Softgroup Info",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Softgroup preview",
+      },
+    ],
+    type: "website",
+  },
 };
 
 export default function RootLayout({
