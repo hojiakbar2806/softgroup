@@ -5,6 +5,7 @@ import Service from "@/components/info/service";
 import { InfoFooter } from "@/components/info/footer";
 import React from "react";
 import ContactForm from "@/components/info/contactForm";
+import LangButton from "@/components/info/langButton";
 
 export default function InfoPage() {
   return (
@@ -16,6 +17,7 @@ export default function InfoPage() {
         <InfoFooter />
       </div>
       <ContactForm />
+      <LangButton />
       <ParallexBackground />
     </React.Fragment>
   );
