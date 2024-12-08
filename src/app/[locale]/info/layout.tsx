@@ -1,34 +1,35 @@
-import type { Metadata } from "next";
+import { getMessages } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Softgroup haqida - Missiya, qadriyatlar va kompaniya tarixi",
-  description:
-    "Softgroup kompaniyasining tarixini, missiyasini va qadriyatlarini bilib oling. Biz biznesingizni rivojlantirish uchun innovatsion yechimlar yaratishga intilamiz.",
-  keywords:
-    "Softgroup haqida, kompaniya tarixi, missiya, qadriyatlar, IT kompaniya O'zbekiston",
-  robots: "index, follow",
-  openGraph: {
-    title: "Softgroup haqida - Missiya, qadriyatlar va kompaniya tarixi",
-    description:
-      "Softgroup kompaniyasining tarixini, missiyasini va qadriyatlarini bilib oling. Biz biznesingizni rivojlantirish uchun innovatsion yechimlar yaratishga intilamiz.",
-    url: "https://info.softgroup.uz",
-    siteName: "Softgroup Info",
-    images: [
-      {
-        url: "https://softgroup-info.vercel.app/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Softgroup preview",
-      },
-    ],
-    type: "website",
-  },
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return <div>{children}</div>;
 }
+
+export const metadata = async () => {
+  const messages = (await getMessages()) as any;
+
+  return {
+    title: messages.InfoPage.Meta.title,
+    description: messages.InfoPage.Meta.description,
+    keywords: messages.InfoPage.Meta.keywords,
+    robots: "index, follow",
+    openGraph: {
+      title: messages.InfoPage.Meta.openGraph.title,
+      description: messages.InfoPage.Meta.openGraph.description,
+      url: "https://info.softgroup.uz",
+      siteName: "Softgroup Info",
+      images: [
+        {
+          url: "https://softgroup-info.vercel.app/og-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Softgroup preview",
+        },
+      ],
+      type: "website",
+    },
+  };
+};

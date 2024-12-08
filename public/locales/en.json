@@ -4,6 +4,15 @@
       "description": "A reliable partner for your IT needs! This is a company that creates products for the production and implementation of innovative software, provides service in Uzbekistan in a new and advanced way, automates production processes and helps to create a business. Together with us, it is easier to promote your business in the global market. !",
       "button": "Contact us"
     },
+    "Meta": {
+      "title": "About Softgroup - Mission, Values, and Company History",
+      "description": "Learn about the history, mission, and values of Softgroup. We strive to create innovative solutions to help grow your business.",
+      "keywords": "About Softgroup, company history, mission, values, IT company Uzbekistan",
+      "openGraph": {
+        "title": "About Softgroup - Mission, Values, and Company History",
+        "description": "Learn about the history, mission, and values of Softgroup. We strive to create innovative solutions to help grow your business."
+      }
+    },
     "OurMissions": {
       "title": "Our missions",
       "Missions": [
