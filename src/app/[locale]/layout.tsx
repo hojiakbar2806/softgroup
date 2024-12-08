@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "../globals.css";
 import { Sora } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import React from "react";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -32,14 +35,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+type RootLayoutProps = {
   children: React.ReactNode;
-}>) {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function RootLayout({
+  children,
+  params,
+}: Readonly<RootLayoutProps>) {
+  const locale = (await params).locale;
+  const messages = await getMessages();
   return (
-    <html lang="en">
-      <body className={`${sora.className} antialiased`}>{children}</body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <html lang={locale}>
+        <body className={`${sora.className} antialiased`}>
+          {React.cloneElement(children as React.ReactElement, { locale })}
+        </body>
+      </html>
+    </NextIntlClientProvider>
   );
 }

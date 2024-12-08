@@ -1,17 +1,16 @@
 "use client";
 
+import { cn } from "@/utils/utils";
 import React, { useState } from "react";
-import clx from "classnames";
 
 interface InputProps extends React.ComponentProps<"input"> {
   label: string;
   className?: string;
-  labelClass?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input: React.FC<InputProps> = React.memo(
-  ({ label, className, labelClass, ...props }) => {
+  ({ label, className, ...props }) => {
     const [value, setValue] = useState(props.value || "");
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,20 +23,22 @@ const Input: React.FC<InputProps> = React.memo(
     return (
       <label
         htmlFor={label}
-        className={clx("w-full relative border-gray-300 rounded ", className)}
+        className={cn(
+          "w-full min-h-14 flex items-end bg-none relative border rounded px-3 py-2",
+          className
+        )}
       >
         <input
           id={label}
           {...props}
           value={value}
           onChange={handleChange}
-          className="peer w-full autofill:bg-white border-none bg-transparent p-2.5 outline-none"
+          className="peer w-full text-md border-none bg-transparent outline-none"
         />
         <span
-          className={clx(
-            "absolute  peer-focus:top-0 left-3 -translate-y-1/2 text-gray-500 transition-all duration-200",
-            value ? "text-blue-500 top-0" : " top-1/2",
-            labelClass
+          className={cn(
+            "absolute l-2 top-1/2 cursor-text -translate-y-1/2 peer-focus:top-3 peer-focus:text-xs transition-all duration-200",
+            value ? "top-3 text-xs text-blue-500" : ""
           )}
         >
           {label}

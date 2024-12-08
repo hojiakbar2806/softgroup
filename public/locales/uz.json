@@ -1,0 +1,79 @@
+{
+  "InfoPage": {
+    "Header": {
+      "description": "Sizning IT sohasidagi ehtiyojlaringiz uchun ishonchli hamkor! Bu innovatsion dasturiy ta'minot ishlab chiqarish va joriy etish bo'yicha mahsulot yaratuvchi,O'zbekistonda yangi va ilg'or uslubda xizmat ko'rsatish,ishlab chiqarish jarayonlarini avtomatlashtirish va biznesni yaratishga yordam beruvchi kompaniyadir.Biz bilan birgalikda biznesingizni global bozorda yuksaltirish osonroq!",
+      "button": "Biz bilan bog'lanish"
+    },
+    "OurMissions": {
+      "title": "Bizning vazifalarimiz",
+      "Missions": [
+        {
+          "id": 1,
+          "name": "Innovatsion yechimlar yaratish.",
+          "content": "Har bir mahsulotimiz orqali mijozlarimiz uchun innovatsion va samarali yechimlar taqdim etishni maqsad qilamiz."
+        },
+        {
+          "id": 2,
+          "name": "Mijozlarimizning Ustuvorligi.",
+          "content": "Bizning asosiy e'tiborimiz — faoliyatimiz. Ularning bizneslarini rivojlantirishga yordam, samarali va foydalanuvchi dasturlarni ishga tushirish orqali ularga maksimal quvvat berish imkonini beradi.Biz taqdim etadigan barcha ta'minot vositalarining yuqori sifati va ishonchliligiga kafolat beramiz."
+        },
+        {
+          "id": 3,
+          "name": "Raqobatbardoshlik va Boshqaruv Efektivligi.",
+          "content": "Resurslarni optimallashtirish va tezkor qarorlar qabul qilish orqali jarayonlarning samaradorligini oshiramiz.Sifatli mahsulotlar va innovatsion texnologiyalar orqali bozor talablarini to'la qondira olamiz."
+        },
+        {
+          "id": 4,
+          "name": "Mahalliy Bozorga Moslashuvchanlik.",
+          "content": "O'zbekistonda sanoat rivojini qo'llab-quvvatlash va mahalliy tadbirkorlikni kuchaytirishga hissa qo'shamiz."
+        },
+        {
+          "id": 5,
+          "name": "Uzoq Muddatli Hamkorlikni Rivojlantirish.",
+          "content": "Biz milliy qisqa, balki uzoq muddatli va manfaatli yordamni rivojlantirishga intilamiz. Mijozlarimiz bilan mustahkam ishonchga hamkorlikni yo'lga qo'yish, doimiy doimiy qo'llab-quvvatlash va maslahatlar taqdim etish bizning strategiyamizning asosidir."
+        },
+        {
+          "id": 6,
+          "name": "Jamoa va Kadrlar Taraqqiyoti.",
+          "content": "Bizning muvaffaqiyatimiz — malakali va fidoyilarga ega bo'lgan jamoamizning yordamga bog'liq. Biz o'zimizni doimiy ravishda rivojlantirib boramiz, ularga eng yaxshi sharoitlarni yaratamiz va qobiliyatli o'z ustida ishlaydigan kelajak avlodga ham ish o'rinlari yarata olamiz."
+        }
+      ]
+    },
+    "OurServices": {
+      "title": "Bizning xizmatlarimiz",
+      "Services": [
+        {
+          "name": "Biznesni avtomatlashtirish",
+          "content": "Korxonangizning ishlab chiqarish, savdo, logistika va boshqa jarayonlarini avtomatlashtirish orqali vaqtni tejash va samaradorlikni oshirishga yordam beramiz."
+        },
+        {
+          "name": "Ilovalarni ishlab chiqish",
+          "content": "Sizning biznes ehtiyojlaringizga mos, funksional va qulay mobil va desktop ilovalar yaratamiz, mijozlar va xodimlar uchun qulay platformalar taqdim etamiz."
+        },
+        {
+          "name": "Veb-sahifalar ishlab chiqish",
+          "content": "Zamonaviy dizayn va ilg‘or texnologiyalarga asoslangan web-saytlar va platformalar ishlab chiqib, biznesingizning onlayn mavjudligini mustahkamlaymiz."
+        },
+        {
+          "name": "ML/AI",
+          "content": "Ma'lumotlarni tahlil qilish, jarayonlarni optimallashtirish va aqlli qarorlarni qabul qilish uchun sun'iy intellekt va mashina o'qitish tizimlarini joriy qilamiz."
+        },
+        {
+          "name": "ERP/CRM",
+          "content": "Resurslarni boshqarish, xarajatlarni nazorat qilish va mijozlar bilan ishlashni samarali tashkil qilish uchun ERP va CRM tizimlarini sozlaymiz va ishga tushiramiz."
+        },
+        {
+          "name": "IoT",
+          "content": "Korxonalarda moslama va qurilmalarni birlashtirib, masofadan boshqarish va real vaqt rejimida kuzatish imkoniyatlarini taqdim etamiz."
+        }
+      ]
+    },
+    "ContactForm": {
+      "title": "Biz bilan bog'lanish",
+      "name": "Ism",
+      "email": "Email",
+      "message": "Siz qo'ldirgan ma'lumot bilan biz sizga bo'g'lanamiz",
+      "submit": "Yuborish"
+    }
+  }
+}

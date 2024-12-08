@@ -1,10 +1,13 @@
 "use client";
 
 import { useContactForm } from "@/store/formStore";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 export const Header: React.FC = () => {
   const { toggleOpenContact } = useContactForm();
+  const t = useTranslations("InfoPage");
+
   return (
     <div className="h-screen flex flex-col items-center justify-center gap-12 max-w-6xl mx-auto text-white">
       <h1 className="text-4xl md:text-5xl lg:text-6xl lx:text-7xl 2xl:text-8xl">
@@ -14,12 +17,7 @@ export const Header: React.FC = () => {
         className="leading-[150%] text-center font-semibold
         text-xs sm:text-sm md:text-base lg:text-lg lx:text-xl 2xl:text-2xl"
       >
-        Sizning IT sohasidagi ehtiyojlaringiz uchun ishonchli hamkor! Bu
-        innovatsion dasturiy ta'minot ishlab chiqarish va joriy etish bo'yicha
-        mahsulot yaratuvchi,O'zbekistonda yangi va ilg'or uslubda xizmat
-        ko'rsatish,ishlab chiqarish jarayonlarini avtomatlashtirish va biznesni
-        yaratishga yordam beruvchi kompaniyadir.Biz bilan birgalikda
-        biznesingizni global bozorda yuksaltirish osonroq!
+        {t("Header.description")}
       </p>
       <button
         className="flex items-center border border-transparent
@@ -28,7 +26,7 @@ export const Header: React.FC = () => {
         "
         onClick={toggleOpenContact}
       >
-        Contact us
+        {t("Header.button")}
       </button>
     </div>
   );

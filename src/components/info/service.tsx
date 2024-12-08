@@ -2,42 +2,11 @@
 
 import React from "react";
 import { ChevronUp } from "lucide-react";
-
-const services = [
-  {
-    name: "Biznesni avtomatlashtirish",
-    content:
-      "Korxonangizning ishlab chiqarish, savdo, logistika va boshqa jarayonlarini avtomatlashtirish orqali vaqtni tejash va samaradorlikni oshirishga yordam beramiz.",
-  },
-  {
-    name: "Ilovalarni ishlab chiqish",
-    content:
-      "Sizning biznes ehtiyojlaringizga mos, funksional va qulay mobil va desktop ilovalar yaratamiz, mijozlar va xodimlar uchun qulay platformalar taqdim etamiz.",
-  },
-  {
-    name: "Veb-sahifalar ishlab chiqish",
-    content:
-      "Zamonaviy dizayn va ilg‘or texnologiyalarga asoslangan web-saytlar va platformalar ishlab chiqib, biznesingizning onlayn mavjudligini mustahkamlaymiz.",
-  },
-  {
-    name: "ML/AI",
-    content:
-      "Ma'lumotlarni tahlil qilish, jarayonlarni optimallashtirish va aqlli qarorlarni qabul qilish uchun sun'iy intellekt va mashina o'qitish tizimlarini joriy qilamiz.",
-  },
-  {
-    name: "ERP/CRM",
-    content:
-      "Resurslarni boshqarish, xarajatlarni nazorat qilish va mijozlar bilan ishlashni samarali tashkil qilish uchun ERP va CRM tizimlarini sozlaymiz va ishga tushiramiz.",
-  },
-  {
-    name: "IoT",
-    content:
-      "Korxonalarda moslama va qurilmalarni birlashtirib, masofadan boshqarish va real vaqt rejimida kuzatish imkoniyatlarini taqdim etamiz.",
-  },
-];
+import { useTranslations } from "next-intl";
 
 const Service = () => {
   const [active, setActive] = React.useState<number | null>();
+  const t = useTranslations("InfoPage.OurServices");
 
   const toggleOpenCard = (index: number) => {
     if (active !== index) {
@@ -48,11 +17,11 @@ const Service = () => {
   return (
     <div className="flex flex-col items-center gap-6 py-20">
       <h1 className="font-bold text-white text-2xl md:text-3xl xl:text-4xl 2xl:text-5x">
-        Bizning xizmatlarimiz
+        {t("title")}
       </h1>
 
       <div className="mx-auto shadow-white shadow py-6 px-8 max-w-6xl w-full flex flex-col gap-6 bg-white/5 rounded-2xl">
-        {services.map((item, index) => {
+        {Array.from({ length: 6 }).map((_, index) => {
           const open = active === index;
           return (
             <div
@@ -64,7 +33,7 @@ const Service = () => {
             >
               <div className="w-full flex border-b items-center justify-between cursor-pointer">
                 <h1 className="font-semibold text-white text-xl md:text-2xl xl:text-3xl transition-all duration-300">
-                  {item.name}
+                  {t(`Services.${index}.name`)}
                 </h1>
                 <button
                   className={`transition-all duration-300
@@ -78,7 +47,7 @@ const Service = () => {
               </div>
 
               <p className="overflow-hidden transition-all duration-300 text-white text-sm md:text-base lg:text-lg xl:text-xl">
-                {item.content}
+                {t(`Services.${index}.content`)}
               </p>
             </div>
           );

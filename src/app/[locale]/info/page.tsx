@@ -9,14 +9,14 @@ import ContactForm from "@/components/info/contactForm";
 export default function InfoPage() {
   return (
     <React.Fragment>
-      <ContactForm />
-      <ParallexBackground />
       <div className="w-full flex flex-col z-10 px-2 sm:px-5 md:px-2 lg:px-6">
         <Header />
         <MissionLine />
         <Service />
         <InfoFooter />
       </div>
+      <ContactForm />
+      <ParallexBackground />
     </React.Fragment>
   );
 }
