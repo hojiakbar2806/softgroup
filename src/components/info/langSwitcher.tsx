@@ -3,7 +3,7 @@
 import { locales } from "@/config";
 import { useLocale } from "next-intl";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 const LangSwitcher = () => {
