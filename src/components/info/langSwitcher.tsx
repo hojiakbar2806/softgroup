@@ -8,13 +8,7 @@ import React from "react";
 
 const LangSwitcher = () => {
   const locale = useLocale();
-  const router = useRouter();
   const pathname = usePathname();
-
-  const toggleLocale = (newLocale: string) => {
-    const newPathname = pathname.split("/").slice(2).join("/");
-    router.push(`/${newLocale}/${newPathname}`, { scroll: false });
-  };
 
   return (
     // <div
