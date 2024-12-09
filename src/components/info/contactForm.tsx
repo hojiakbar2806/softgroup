@@ -14,8 +14,7 @@ const ContactForm: React.FC = () => {
     <div
       data-open={openContact}
       className="group fixed top-0 p-4 left-0 w-full h-full flex items-center justify-center bg-black/80 z-10 transition-all duration-300 cursor-pointer pointer-events-none
-      data-[open=false]:opacity-0
-      data-[open=true]:pointer-events-auto"
+      data-[open=false]:opacity-0"
     >
       <form
         className="relative z-20 flex flex-col gap-5 p-10 pointer-events-auto bg-nightSkyRadial shadow shadow-white rounded-xl text-white w-full max-w-[500px]
@@ -25,7 +24,7 @@ const ContactForm: React.FC = () => {
         <Input label={t("name")} type="text" autoFocus />
         <Input label={t("email")} type="email" />
         <p className="text-xs text-gray-500">{t("message")}</p>
-        <button className="px-4 py-3 bg-purple-400 rounded-full">
+        <button className="h-14 text-lg bg-purple-800 border border-purple-800 rounded-full duration-300 transition-all hover:bg-purple-500 hover:border-white ">
           {t("submit")}
         </button>
 

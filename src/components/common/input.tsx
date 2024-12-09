@@ -33,7 +33,7 @@ const Input: React.FC<InputProps> = React.memo(
           {...props}
           value={value}
           onChange={handleChange}
-          className="peer w-full text-md border-none bg-transparent outline-none"
+          className="peer w-full text-lg border-none bg-transparent outline-none"
         />
         <span
           className={cn(

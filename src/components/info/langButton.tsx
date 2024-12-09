@@ -41,18 +41,18 @@ const LangButton = () => {
     //       ))}
     //   </div>
     // </div>
-    <div className="flex items-center gap-3 fixed bottom-5 right-10 group cursor-pointer text-white">
+    <div className="flex flex-col items-center fixed bottom-2 gap-1 right-2 group cursor-pointer text-white">
       {locales.map((item, index) => (
         <React.Fragment key={index}>
           <button
             data-active={item === locale}
             onClick={() => toggleLocale(item)}
-            className="flex items-center data-[active=true]:bg-white/10 p-2 rounded uppercase gap-3 border-b border-transparent transition-all duration-100"
+            className="flex items-center data-[active=true]:bg-white/10 data-[active=true]:border border-white p-1 md:p-2 rounded uppercase gap-3 border-transparent transition-all duration-100"
           >
             {item}
             {item === locale}
           </button>
-          <span>{index + 1 !== locales.length && "|"}</span>
+          {/* {index + 1 !== locales.length && <span className="w-1/2 h-px bg-white"/>} */}
         </React.Fragment>
       ))}
     </div>

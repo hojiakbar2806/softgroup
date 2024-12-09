@@ -10,7 +10,7 @@ export const Header: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col items-center justify-center gap-12 max-w-6xl mx-auto text-white">
-      <h1 className="text-4xl md:text-5xl lg:text-6xl lx:text-7xl 2xl:text-8xl">
+      <h1 className="text-5xl lg:text-6xl lx:text-7xl 2xl:text-8xl">
         <span className="font-extrabold text-purple-800">Soft</span>Group
       </h1>
       <p
@@ -21,7 +21,7 @@ export const Header: React.FC = () => {
       </p>
       <button
         className="flex items-center border border-transparent
-        text-sm px-4 py-2 sm:px-6 sm:text-lg lg:text-2xl lg:py-4 lg:px-8
+        px-6 py-3 text-lg lg:text-2xl lg:py-4 lg:px-8
       bg-purple-800 rounded-full duration-300 transition-all hover:bg-purple-500 hover:border-white 
         "
         onClick={toggleOpenContact}
