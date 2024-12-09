@@ -17,6 +17,7 @@ const ContactForm: React.FC = () => {
       data-[open=false]:opacity-0"
     >
       <form
+        onSubmit={(e) => e.preventDefault()}
         className="relative z-20 flex flex-col gap-5 p-10 pointer-events-auto bg-nightSkyRadial shadow shadow-white rounded-xl text-white w-full max-w-[500px]
         scale-0 transition-all duration-300 group-data-[open=true]:scale-100"
       >
@@ -29,7 +30,7 @@ const ContactForm: React.FC = () => {
         </button>
 
         <button
-          type="button"
+          type="submit"
           className="text-red-600 absolute right-5 top-5"
           onClick={toggleOpenContact}
         >
