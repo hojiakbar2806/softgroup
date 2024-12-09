@@ -45,6 +45,7 @@ const LangButton = () => {
       {locales.map((item, index) => (
         <React.Fragment key={index}>
           <button
+            type="button"
             data-active={item === locale}
             onClick={() => toggleLocale(item)}
             className="flex items-center data-[active=true]:bg-white/10 data-[active=true]:border border-white p-1 md:p-2 rounded uppercase gap-3 border-transparent transition-all duration-100"
