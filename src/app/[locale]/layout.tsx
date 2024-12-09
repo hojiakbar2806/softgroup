@@ -50,7 +50,7 @@ export default async function RootLayout({
     <NextIntlClientProvider messages={messages}>
       <html lang={locale}>
         <body className={`${sora.className} antialiased`}>
-          {React.cloneElement(children as React.ReactElement, { locale })}
+          <main>{children}</main>
         </body>
       </html>
     </NextIntlClientProvider>

@@ -5,7 +5,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div>{children}</div>;
+  return <div className="scrollbar-none">{children}</div>;
 }
 
 export const metadata = async () => {
