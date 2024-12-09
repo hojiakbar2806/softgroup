@@ -22,7 +22,7 @@ const ContactForm: React.FC = () => {
         scale-0 transition-all duration-300 group-data-[open=true]:scale-100"
       >
         <h1 className="font-bold text-2xl text-center">{t("title")}</h1>
-        <Input label={t("name")} type="text" autoFocus />
+        <Input label={t("name")} type="text" />
         <Input label={t("email")} type="email" />
         <p className="text-xs text-gray-500">{t("message")}</p>
         <button className="h-14 text-lg bg-purple-800 border border-purple-800 rounded-full duration-300 transition-all hover:bg-purple-500 hover:border-white ">
