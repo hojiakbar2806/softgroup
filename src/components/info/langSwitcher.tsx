@@ -2,6 +2,7 @@
 
 import { locales } from "@/config";
 import { useLocale } from "next-intl";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
@@ -12,7 +13,7 @@ const LangSwitcher = () => {
 
   const toggleLocale = (newLocale: string) => {
     const newPathname = pathname.split("/").slice(2).join("/");
-    router.push(`/${newLocale}/${newPathname}`);
+    router.push(`/${newLocale}/${newPathname}`, { scroll: false });
   };
 
   return (
@@ -44,14 +45,15 @@ const LangSwitcher = () => {
     <div className="flex flex-col items-center fixed bottom-2 gap-1 right-2 group cursor-pointer text-white">
       {locales.map((item, index) => (
         <React.Fragment key={index}>
-          <span
+          <Link
             data-active={item === locale}
-            onClick={() => toggleLocale(item)}
-            className="flex items-center data-[active=true]:bg-white/10 data-[active=true]:border border-white p-1 md:p-2 rounded uppercase gap-3 border-transparent transition-all duration-100"
+            href={`/${item}/${pathname.split("/").slice(2).join("/")}`}
+            className="flex items-center data-[active=true]:bg-white/10 border border-transparent p-1 md:p-2 rounded uppercase gap-3 
+            data-[active=true]:border-white transition-all duration-100"
           >
             {item}
             {item === locale}
-          </span>
+          </Link>
           {/* {index + 1 !== locales.length && <span className="w-1/2 h-px bg-white"/>} */}
         </React.Fragment>
       ))}
