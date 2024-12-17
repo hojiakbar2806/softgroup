@@ -19,7 +19,7 @@ jobs:
         run: |
           docker build \
             --cache-from hojiakbar2806/softgroup:latest \
-            --tag hojiakbar2806/softgroup:latest ./m-look-front
+            --tag hojiakbar2806/softgroup:latest ./
 
       - name: Push Docker Image
         run: docker push hojiakbar2806/softgroup:latest
