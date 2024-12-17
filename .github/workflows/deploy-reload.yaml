@@ -1,0 +1,48 @@
+name: Rental frontend deploy
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Docker Hub Login
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            --cache-from hojiakbar2806/softgroup:latest \
+            --tag hojiakbar2806/softgroup:latest ./m-look-front
+
+      - name: Push Docker Image
+        run: docker push hojiakbar2806/softgroup:latest
+
+      - name: Verify Docker Image
+        run: docker inspect hojiakbar2806/softgroup:latest --format '{{.Id}}'
+
+      - name: Deploy to AWS
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
+          chmod 600 ~/ssh_key
+
+          ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ubuntu@16.16.242.244 << 'EOF'
+            cd ~/softgroup
+
+            git pull origin main
+
+            sudo docker pull hojiakbar2806/softgroup:latest
+
+            sudo docker compose stop softgroup
+            sudo docker compose rm -f softgroup
+            sudo docker compose up -d
+
+            sudo docker image prune -f
+            sudo docker container prune -f
+          EOF

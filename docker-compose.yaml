@@ -1,0 +1,8 @@
+services:
+  frontend:
+    image: hojiakbar2806/softgroup:latest
+    container_name: softgroup
+    environment:
+      - NODE_ENV=production
+    expose:
+      - "3000:3000"
