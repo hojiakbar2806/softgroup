@@ -3,7 +3,7 @@ name: Softgroup frontend deploy
 on:
   push:
     branches:
-      - frontend
+      - main
 
 jobs:
   build:
