@@ -1,4 +1,4 @@
-name: Rental frontend deploy
+name: Softgroup frontend deploy
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
       - main
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -16,16 +15,10 @@ jobs:
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
       - name: Build Docker Image
-        run: |
-          docker build \
-            --cache-from hojiakbar2806/softgroup:latest \
-            --tag hojiakbar2806/softgroup:latest ./
+        run: echo docker build  --tag "${{ secrets.DOCKER_HUB_USERNAME }}"/softgroup:latest .
 
       - name: Push Docker Image
         run: docker push hojiakbar2806/softgroup:latest
-
-      - name: Verify Docker Image
-        run: docker inspect hojiakbar2806/softgroup:latest --format '{{.Id}}'
 
       - name: Deploy to AWS
         run: |
@@ -33,16 +26,11 @@ jobs:
           chmod 600 ~/ssh_key
 
           ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ubuntu@16.16.242.244 << 'EOF'
-            cd ~/softgroup
-
-            git pull origin main
 
             sudo docker pull hojiakbar2806/softgroup:latest
-
-            sudo docker compose stop softgroup
-            sudo docker compose rm -f softgroup
-            sudo docker compose up -d
-
+            sudo docker stop softgroup || true
+            sudo docker rm softgroup || true
+            sudo docker run -d --name softgroup -p 3000:3000 hojiakbar2806/softgroup:latest
             sudo docker image prune -f
             sudo docker container prune -f
           EOF
