@@ -4,6 +4,7 @@ import { Sora } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import React from "react";
+import { Toaster } from "sonner";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -51,6 +52,7 @@ export default async function RootLayout({
       <html lang={locale}>
         <body className={`${sora.className} antialiased`}>
           <main>{children}</main>
+          <Toaster position="bottom-right" richColors />
         </body>
       </html>
     </NextIntlClientProvider>
