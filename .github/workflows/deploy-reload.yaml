@@ -16,7 +16,7 @@ jobs:
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
       - name: Build Docker Image
-        run: docker build  --tag hojiakbar2806/softgroup:latest .
+        run: docker build --no-cache -t hojiakbar2806/softgroup:latest .
 
       - name: Push Docker Image
         run: docker push hojiakbar2806/softgroup:latest
