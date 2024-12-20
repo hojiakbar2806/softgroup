@@ -1,70 +1,39 @@
-# name: Softgroup frontend deploy
-
-# on:
-#   push:
-#     branches:
-#       - main
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
-
-#       - name: Docker Hub Login
-#         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-
-#       - name: Build Docker Image
-#         run: docker build --no-cache -t hojiakbar2806/softgroup:latest .
-
-#       - name: Push Docker Image
-#         run: docker push hojiakbar2806/softgroup:latest
-
-#       - name: Deploy to AWS
-#         run: |
-#           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
-#           chmod 600 ~/ssh_key
-
-#           ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ubuntu@16.16.242.244 << 'EOF'
-
-#             sudo docker pull hojiakbar2806/softgroup:latest
-#             sudo docker stop softgroup || true
-#             sudo docker rm softgroup || true
-#             sudo docker run -d --name softgroup -p 3000:3000 hojiakbar2806/softgroup:latest
-#             sudo docker image prune -f
-#             sudo docker container prune -f
-#           EOF
-
-name: Deploy to AWS EC2 via SSH
+name: Softgroup frontend deploy
 
 on:
   push:
     branches:
-      - main # Asosiy branchni tanlang, masalan `main` yoki `master`
+      - frontend
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ubuntu@13.61.74.70 >> ~/.ssh/known_hosts
+      - name: Docker Hub Login
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-      - name: Deploy to EC2
+      - name: Build Docker Image
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@13.61.74.70 << 'EOF'
-            sudo docker pull hojiakbar2806/softgroup:latest
-            sudo docker stop softgroup || true
-            sudo docker rm softgroup || true
-            sudo docker run -d --name softgroup -p 3000:3000 hojiakbar2806/softgroup:latest
-            sudo docker image prune -f
-            sudo docker container prune -f
+          docker build \
+            --cache-from hojiakbar2806/softgroup:latest \
+            --tag hojiakbar2806/softgroup:latest ./m-look-front
+
+      - name: Push Docker Image
+        run: docker push hojiakbar2806/softgroup:latest
+
+      - name: Deploy to AWS
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
+          chmod 600 ~/ssh_key
+
+          ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ubuntu@13.61.74.70 << 'EOF'
+          sudo docker pull hojiakbar2806/softgroup:latest
+          sudo docker stop softgroup
+          sudo docker rm softgroup
+          sudo docker run -d --name softgroup -p 80:80 hojiakbar2806/softgroup:latest
+          sudo docker image prune -f
           EOF
