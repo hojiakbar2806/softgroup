@@ -15,23 +15,26 @@ const ContactForm: React.FC = () => {
 
   const telegramToken = "7385022476:AAEuDbLPJBCrHCQzuXDwQ-MzCb17ECk9-xE";
   const chatId = "-1002428200529";
+  const url = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
 
   const handleSubmit = async (formData: FormData) => {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
 
     try {
-      const res = await axios.post(
-        `https://api.telegram.org/bot${telegramToken}/sendMessage`,
-        {
-          chat_id: chatId,
-          text: `📝 *Yangi Xabar* 📝\n\n👤 *Ism:* ${name}\n📧 *Email:* ${email}`,
-          parse_mode: "Markdown",
-        }
-      );
+      if (!name || !email) {
+        toast.error("Iltimos, to'liq ma'lumotlarni kiriting.");
+        return;
+      }
+      const res = await axios.post(url, {
+        chat_id: chatId,
+        text: `📝 *Yangi Xabar* 📝\n\n👤 *Ism:* ${name}\n📧 *Email:* ${email}`,
+        parse_mode: "Markdown",
+      });
 
       if (res.status === 200) {
         toast.success("Xabar muvaffaqiyatli yuborildi!");
+        toggleOpenContact();
       }
     } catch (error) {
       console.error(error);
