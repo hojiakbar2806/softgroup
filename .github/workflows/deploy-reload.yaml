@@ -34,6 +34,6 @@ jobs:
           sudo docker pull hojiakbar2806/softgroup:latest
           sudo docker stop softgroup
           sudo docker rm softgroup
-          sudo docker run -d --name softgroup -p 80:80 hojiakbar2806/softgroup:latest
+          sudo docker run -d --name softgroup -p 3000:3000 hojiakbar2806/softgroup:latest
           sudo docker image prune -f
           EOF
