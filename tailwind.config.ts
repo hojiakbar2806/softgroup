@@ -19,6 +19,8 @@ export default {
         appear: "appear linear",
       },
       backgroundImage: {
+        purpleGradient:
+          "linear-gradient(96.44deg, #c5d5ff, #e2f0ff 51.56%, #d7d4ff)",
         nightSkyRadial:
           "radial-gradient(ellipse at bottom, #394757 0%, #090a0f 100%)",
       },

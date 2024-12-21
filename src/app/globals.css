@@ -21,7 +21,19 @@
     scroll-behavior: smooth;
   }
 
-  :root {
+  body {
+    @apply w-full flex justify-center antialiased;
+  }
+
+  main {
+    @apply max-w-[1520px] w-full;
+  }
+  main {
+    section,
+    header,
+    footer {
+      @apply px-10 md:px-14 lg:px-20 xl:px-24;
+    }
   }
 }
 

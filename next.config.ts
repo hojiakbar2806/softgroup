@@ -6,7 +6,6 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
-  metadataBase: new URL("http://softgroup.uz"), 
 };
 
 export default withNextIntl(nextConfig);

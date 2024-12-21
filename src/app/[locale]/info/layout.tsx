@@ -12,6 +12,7 @@ export const metadata = async () => {
   const messages = (await getMessages()) as any;
 
   return {
+    metadataBase: new URL("https://softgroup.uz"),
     title: messages.InfoPage.Meta.title,
     description: messages.InfoPage.Meta.description,
     keywords: messages.InfoPage.Meta.keywords,

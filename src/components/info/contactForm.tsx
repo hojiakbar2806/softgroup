@@ -59,12 +59,15 @@ const ContactForm: React.FC = () => {
         <Input name="name" label={t("name")} type="text" />
         <Input name="email" label={t("email")} type="email" />
         <p className="text-xs text-gray-500">{t("message")}</p>
-        <button className="h-14 text-lg bg-purple-800 border border-purple-800 rounded-full duration-300 transition-all hover:bg-purple-500 hover:border-white ">
+        <button
+          type="submit"
+          className="h-14 text-lg bg-purple-800 border border-purple-800 rounded-full duration-300 transition-all hover:bg-purple-500 hover:border-white "
+        >
           {t("submit")}
         </button>
 
         <button
-          type="submit"
+          type="button"
           className="text-red-600 absolute right-5 top-5"
           onClick={toggleOpenContact}
         >

@@ -8,7 +8,7 @@ type DialogProps= {
   onClose?: () => void;
 };
 
-const Dialog: React.FC<DialogProps> = ({ children, onClose, dialogState }) => {
+const DialogWrapper: React.FC<DialogProps> = ({ children, onClose, dialogState }) => {
   return (
     <div
       data-state={dialogState}
@@ -28,4 +28,4 @@ const Dialog: React.FC<DialogProps> = ({ children, onClose, dialogState }) => {
   );
 };
 
-export default Dialog;
+export default DialogWrapper;

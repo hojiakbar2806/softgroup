@@ -1,7 +1,8 @@
 import createMiddleware from "next-intl/middleware";
-import { locales } from "./config";
+import { routing } from "./i18n/routing";
 
-export default createMiddleware({ locales, defaultLocale: "uz" });
+export default createMiddleware(routing);
+
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/", "/(uz|en|ru)/:path*"],
 };
