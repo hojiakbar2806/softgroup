@@ -14,6 +14,9 @@ export const metadata = async () => {
   return {
     metadataBase: new URL("http://softgroup.uz"),
     title: messages.InfoPage.Meta.title,
+    icons: {
+      icon: "/icons/favicon.svg",
+    },
     description: messages.InfoPage.Meta.description,
     keywords: messages.InfoPage.Meta.keywords,
     robots: "index, follow",

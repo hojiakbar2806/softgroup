@@ -12,7 +12,7 @@ const Header: FC = () => {
   return (
     <header className="flex justify-between bg-[#2d394b] items-center shadow-sm py-3 sticky top-0 z-50">
       <Link href="/">
-        <Image src="/icons/logo.svg" width={60} height={60} alt="logo" />
+        <Image src="/icons/logo.svg" width={176} height={55} alt="logo" />
       </Link>
       <div className="flex items-center gap-6">
         <Link href="/wishlist">
