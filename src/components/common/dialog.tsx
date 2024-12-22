@@ -12,7 +12,7 @@ const DialogWrapper: React.FC<DialogProps> = ({ children, onClose, dialogState }
   return (
     <div
       data-state={dialogState}
-      className="fixed w-full h-full top-0 left-0 bg-black/50 z-40 transition-opacity duration-300 data-[state=open]:opacity-100 data-[state=close]:opacity-0 data-[state=close]:pointer-events-none"
+      className="fixed w-full h-full top-0 left-0 bg-black/50 transition-opacity duration-300 data-[state=open]:opacity-100 data-[state=close]:opacity-0 data-[state=close]:pointer-events-none z-50"
       onClick={onClose}
     >
       <div

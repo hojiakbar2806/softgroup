@@ -17,6 +17,10 @@
 }
 
 @layer base {
+  * {
+    overscroll-behavior: none;
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -28,7 +32,9 @@
   main {
     @apply max-w-[1520px] w-full;
   }
+
   main {
+
     section,
     header,
     footer {
@@ -38,6 +44,7 @@
 }
 
 @layer utilities {
+
   /*//////////STAR/////////*/
   #stars1 {
     width: 1px;
@@ -635,6 +642,7 @@
     from {
       transform: translateY(0px);
     }
+
     to {
       transform: translateY(-2000px);
     }
