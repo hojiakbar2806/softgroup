@@ -5,12 +5,15 @@ import React, { FC } from "react";
 import LanguageDropdown from "./langDropDown";
 import useCartStore from "@/store/cartStore";
 import { Link } from "@/i18n/routing";
+import Image from "next/image";
 
 const Header: FC = () => {
   const { setCartDialog } = useCartStore();
   return (
-    <header className="flex justify-between bg-[#2d394b] items-center shadow-sm py-5 sticky top-0 z-50">
-      <h1 className="text-3xl font-bold text-blue-100">Logo</h1>
+    <header className="flex justify-between bg-[#2d394b] items-center shadow-sm py-3 sticky top-0 z-50">
+      <Link href="/">
+        <Image src="/icons/logo.svg" width={60} height={60} alt="logo" />
+      </Link>
       <div className="flex items-center gap-6">
         <Link href="/wishlist">
           <HeartIcon className="text-white " />

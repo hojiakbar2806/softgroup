@@ -44,6 +44,9 @@ export default async function RootLayout({
 export const metadata: Metadata = {
   metadataBase: new URL("http://templates.softgroup.uz"),
   title: "Softgroup - Innovatsion IT xizmatlari",
+  icons: {
+    icon: "/icons/logo.svg",
+  },
   description:
     "Sizning IT sohasidagi ehtiyojlaringiz uchun ishonchli hamkor! Bu innovatsion dasturiy ta'minot ishlab chiqarish va joriy etish bo'yicha mahsulot yaratuvchi,O'zbekistonda yangi va ilg'or uslubda xizmat ko'rsatish,ishlab chiqarish jarayonlarini avtomatlashtirish va biznesni yaratishga yordam beruvchi kompaniyadir.Biz bilan birgalikda biznesingizni global bozorda yuksaltirish osonroq!",
   keywords:
