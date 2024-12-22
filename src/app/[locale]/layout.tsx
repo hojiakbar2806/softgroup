@@ -42,7 +42,7 @@ export default async function RootLayout({
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://softgroup.uz"),
+  metadataBase: new URL("http://templates.softgroup.uz"),
   title: "Softgroup - Innovatsion IT xizmatlari",
   description:
     "Sizning IT sohasidagi ehtiyojlaringiz uchun ishonchli hamkor! Bu innovatsion dasturiy ta'minot ishlab chiqarish va joriy etish bo'yicha mahsulot yaratuvchi,O'zbekistonda yangi va ilg'or uslubda xizmat ko'rsatish,ishlab chiqarish jarayonlarini avtomatlashtirish va biznesni yaratishga yordam beruvchi kompaniyadir.Biz bilan birgalikda biznesingizni global bozorda yuksaltirish osonroq!",
@@ -54,14 +54,14 @@ export const metadata: Metadata = {
     title: "Softgroup - Innovatsion IT xizmatlari",
     description:
       "Sizning IT sohasidagi ehtiyojlaringiz uchun ishonchli hamkor! Bu innovatsion dasturiy ta'minot ishlab chiqarish va joriy etish bo'yicha mahsulot yaratuvchi,O'zbekistonda yangi va ilg'or uslubda xizmat ko'rsatish,ishlab chiqarish jarayonlarini avtomatlashtirish va biznesni yaratishga yordam beruvchi kompaniyadir.Biz bilan birgalikda biznesingizni global bozorda yuksaltirish osonroq!",
-    url: "https://softgroup.uz",
+    url: "http://templates.softgroup.uz",
     siteName: "Softgroup",
     images: [
       {
-        url: "/og-image.png",
+        url: "http://templates.softgroup.uz/images/templates-og-image.png",
         width: 1200,
         height: 630,
-        alt: "Softgroup logo",
+        alt: "Softgroup Templates",
       },
     ],
     type: "website",

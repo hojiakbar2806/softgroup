@@ -12,7 +12,7 @@ export const metadata = async () => {
   const messages = (await getMessages()) as any;
 
   return {
-    metadataBase: new URL("https://softgroup.uz"),
+    metadataBase: new URL("http://softgroup.uz"),
     title: messages.InfoPage.Meta.title,
     description: messages.InfoPage.Meta.description,
     keywords: messages.InfoPage.Meta.keywords,
@@ -20,14 +20,14 @@ export const metadata = async () => {
     openGraph: {
       title: messages.InfoPage.Meta.openGraph.title,
       description: messages.InfoPage.Meta.openGraph.description,
-      url: "https://info.softgroup.uz",
+      url: "http://softgroup.uz",
       siteName: "Softgroup Info",
       images: [
         {
-          url: "https://softgroup-info.vercel.app/og-image.jpg",
+          url: "http://templates.softgroup.uz/images/info-og-image.png",
           width: 1200,
           height: 630,
-          alt: "Softgroup preview",
+          alt: "Softgroup Info",
         },
       ],
       type: "website",
