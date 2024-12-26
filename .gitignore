@@ -1,40 +1,56 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Python asosiy fayllari
+__pycache__/
+*.py[cod]
+*.pyo
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# Virtuall muhit
+venv/
+env/
+*.env
+*.venv
 
-# testing
-/coverage
+# Flask secret key va konfiguratsiya
+instance/
+*.cfg
+*.ini
+*.env
 
-# next.js
-/.next/
-/out/
+# Loglar
+*.log
+logs/
+debug.log
 
-# production
-/build
+# Cache va vaqtinchalik fayllar
+*.swp
+*.swo
+*.tmp
+*.bak
+*.orig
+*.DS_Store
 
-# misc
-.DS_Store
-*.pem
+# Kompilyatsiya va boshqa arxiv fayllari
+*.egg-info/
+*.egg
+*.manifest
+*.spec
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# IDE'lar uchun (masalan, VSCode, PyCharm)
+.idea/
+.vscode/
+*.iml
 
-# env files (can opt-in for committing if needed)
-.env*
+# Platformaga oid fayllar
+*.db
+*.sqlite3
+*.sqlite
 
-# vercel
-.vercel
+# Docker (agar Flask loyihasida Docker ishlatilsa)
+.dockerignore
+docker-compose.override.yml
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Node.js (agar Frontend integratsiyasi mavjud bo‘lsa)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+postges_container

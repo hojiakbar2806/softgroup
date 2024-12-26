@@ -1,0 +1,88 @@
+{
+  "InfoPage": {
+    "Header": {
+      "description": "A reliable partner for your IT needs! This is a company that creates products for the production and implementation of innovative software, provides service in Uzbekistan in a new and advanced way, automates production processes and helps to create a business. Together with us, it is easier to promote your business in the global market. !",
+      "button": "Contact us"
+    },
+    "Meta": {
+      "title": "About Softgroup - Mission, Values, and Company History",
+      "description": "Learn about the history, mission, and values of Softgroup. We strive to create innovative solutions to help grow your business.",
+      "keywords": "About Softgroup, company history, mission, values, IT company Uzbekistan",
+      "openGraph": {
+        "title": "About Softgroup - Mission, Values, and Company History",
+        "description": "Learn about the history, mission, and values of Softgroup. We strive to create innovative solutions to help grow your business."
+      }
+    },
+    "OurMissions": {
+      "title": "Our missions",
+      "Missions": [
+        {
+          "id": 1,
+          "name": "Creating Innovative Solutions.",
+          "content": "We aim to provide innovative and effective solutions for our clients through each of our products."
+        },
+        {
+          "id": 2,
+          "name": "Priority of Our Clients.",
+          "content": "Our main focus is their business. By helping develop their businesses and launching efficient and user-friendly programs, we enable them to maximize their potential. We guarantee the high quality and reliability of all the tools we provide."
+        },
+        {
+          "id": 3,
+          "name": "Competitiveness and Management Efficiency.",
+          "content": "We improve process efficiency by optimizing resources and making prompt decisions. Through quality products and innovative technologies, we can fully meet market demands."
+        },
+        {
+          "id": 4,
+          "name": "Flexibility for the Local Market.",
+          "content": "We support the development of industry in Uzbekistan and contribute to strengthening local entrepreneurship."
+        },
+        {
+          "id": 5,
+          "name": "Developing Long-term Cooperation.",
+          "content": "We strive to develop not just short-term, but also long-term and mutually beneficial support. Building strong, trust-based partnerships with our clients, providing continuous support and offering consultations is the core of our strategy."
+        },
+        {
+          "id": 6,
+          "name": "Team and Personnel Development.",
+          "content": "Our success is dependent on the help of our team, which is made up of skilled and dedicated people. We constantly develop ourselves, create the best conditions for them, and can offer job opportunities for future generations who are eager to work on themselves."
+        }
+      ]
+    },
+    "OurServices": {
+      "title": "Our services",
+      "Services": [
+        {
+          "name": "Business Automation",
+          "content": "We help save time and increase efficiency by automating your company's production, sales, logistics, and other processes."
+        },
+        {
+          "name": "Application Development",
+          "content": "We create functional and user-friendly mobile and desktop applications tailored to your business needs, offering convenient platforms for clients and employees."
+        },
+        {
+          "name": "Web Development",
+          "content": "We strengthen your business's online presence by developing websites and platforms based on modern design and advanced technologies."
+        },
+        {
+          "name": "ML/AI",
+          "content": "We implement artificial intelligence and machine learning systems for data analysis, process optimization, and intelligent decision-making."
+        },
+        {
+          "name": "ERP/CRM",
+          "content": "We set up and deploy ERP and CRM systems to manage resources, control costs, and effectively organize customer relationships."
+        },
+        {
+          "name": "IoT",
+          "content": "We provide remote control and real-time monitoring capabilities by integrating devices and equipment in businesses."
+        }
+      ]
+    },
+    "ContactForm": {
+      "title": "Contact us",
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Submit"
+    }
+  }
+}
