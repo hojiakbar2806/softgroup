@@ -20,6 +20,9 @@ instance/
 logs/
 debug.log
 
+
+postgres_container
+
 # Cache va vaqtinchalik fayllar
 *.swp
 *.swo
