@@ -22,6 +22,8 @@ def upload_template():
     price = data.get("price")
     description = data.get("description")
 
+    owner_id = get_jwt_identity()
+
     if not all([name, category, price, description]):
         return jsonify({"message": "All fields are required!"}), 400
 
@@ -66,7 +68,7 @@ def upload_template():
         description=description,
         image_url=image_path,
         template_dir=template_dir,
-        owner_id=1
+        owner_id=owner_id
     )
 
     db.session.add(template)

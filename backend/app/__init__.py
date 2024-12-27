@@ -1,9 +1,9 @@
 from flask import Flask
 from app.config import Config
 from app.database import init_db
+from flask_jwt_extended import JWTManager
 from app.routes.auth_routes import auth_routes
 from app.routes.template_routes import template_routes
-from flask_jwt_extended import JWTManager
 
 
 def create_app():

@@ -22,10 +22,3 @@ class Config:
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.getenv("POSTGRES_DB")}.db"
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    JWT_SECRET = os.getenv("JWT_SECRET", "default_jwt_secret_key")
-    JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-    JWT_EXP_DELTA_SECONDS = int(os.getenv("JWT_EXP_DELTA_SECONDS", 3600))
-
-    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
-    ALLOWED_EXTENSIONS = {"txt", "pdf", "png", "jpg", "jpeg", "doc", "docx"}

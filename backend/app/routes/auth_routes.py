@@ -1,6 +1,6 @@
-from flask import Blueprint, request, jsonify, session
 from app.database import db
 from app.database.models import User
+from flask import Blueprint, request, jsonify, session
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 auth_routes = Blueprint("auth", __name__)
