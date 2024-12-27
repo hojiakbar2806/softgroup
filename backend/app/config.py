@@ -12,13 +12,12 @@ class Config:
     if RUN_ON_POSTGRES:
         DB_USER = os.getenv("POSTGRES_USER")
         DB_PASS = os.getenv("POSTGRES_PASSWORD")
-        DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
-        DB_PORT = os.getenv("POSTGRES_PORT", 5432)
+        DB_HOST = os.getenv("POSTGRES_HOST")
+        DB_PORT = os.getenv("POSTGRES_PORT")
         DB_NAME = os.getenv("POSTGRES_DB")
 
-        SQLALCHEMY_DATABASE_URI = (
-            f"postgresql://{DB_USER}:{DB_PASS}"
-            f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+        SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://postgres:qwerty@{
+            DB_HOST}:{DB_PORT}/{DB_NAME}"
     else:
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.getenv("POSTGRES_DB")}.db"
 

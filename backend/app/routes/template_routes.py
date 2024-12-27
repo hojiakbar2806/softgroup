@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 from io import BytesIO
 from app.database import db
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.database.models import Template
 
 template_routes = Blueprint("templates", __name__)
@@ -13,6 +14,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 @template_routes.route("/", methods=["POST"])
+@jwt_required()
 def upload_template():
     data = request.form
     name = data.get("name")

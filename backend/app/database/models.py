@@ -28,7 +28,7 @@ class Template(db.Model):
     description = db.Column(db.Text, nullable=True)
     template_dir = db.Column(db.String(255), nullable=False)
 
-    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     owner = db.relationship("User", backref="templates", lazy=True)
 
     def __repr__(self):
