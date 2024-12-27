@@ -16,8 +16,8 @@ class Config:
         DB_PORT = os.getenv("POSTGRES_PORT")
         DB_NAME = os.getenv("POSTGRES_DB")
 
-        SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://postgres:qwerty@{
-            DB_HOST}:{DB_PORT}/{DB_NAME}"
+        SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{
+            DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     else:
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.getenv("POSTGRES_DB")}.db"
 
