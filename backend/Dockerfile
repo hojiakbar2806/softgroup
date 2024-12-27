@@ -1,21 +1,23 @@
-# Python asosiy tasviridan foydalanamiz
 FROM python:3.12-slim
 
-# Loyihaning ish katalogini o‘rnatish
 WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Talablar faylini konteynerga nusxalash
-COPY requirements.txt .
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
+    apt-get remove -y curl && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Talablarni o‘rnatish
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml poetry.lock ./
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-dev --no-interaction --no-ansi
 
-# Flask ilovasini konteynerga nusxalash
 COPY . .
 
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_RUN_PORT=8000
+EXPOSE 8000
 
-# Flask serverini ishga tushirish
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "app:app"]
+CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "run:app"]
