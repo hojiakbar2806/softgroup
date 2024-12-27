@@ -4,10 +4,7 @@ networks:
 
 services:
   backend:
-    # image: hojiakbar2806/softgroup_backend
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: hojiakbar2806/softgroup_backend:latest
     container_name: backend
     command: /bin/sh -c "flask db upgrade && poetry run gunicorn -b 0.0.0.0:8000 run:app"
     environment:
