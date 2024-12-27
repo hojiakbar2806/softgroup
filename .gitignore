@@ -12,7 +12,6 @@ env/
 # Flask secret key va konfiguratsiya
 instance/
 *.cfg
-*.ini
 *.env
 
 # Loglar
