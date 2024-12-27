@@ -40,6 +40,7 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ubuntu@13.61.74.70 << 'EOF'
           cd ~/softgroup 
+          git pull
           sudo docker-compose down frontend backend
           sudo docker-compose pull frontend backend
           sudo docker-compose up -d
