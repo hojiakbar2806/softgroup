@@ -17,4 +17,4 @@ COPY . /app/
 
 EXPOSE 8000
 
-ENTRYPOINT ["sh", "-c", "poetry run alembic upgrade head && poetry run uvicorn main:app --host 0.0.0.0 --port 8000"]
+ENTRYPOINT ["sh", "-c", "poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000"]
