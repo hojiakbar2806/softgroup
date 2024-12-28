@@ -24,7 +24,7 @@ const Input: React.FC<InputProps> = React.memo(
       <label
         htmlFor={label}
         className={cn(
-          "w-full min-h-14 flex items-end bg-none relative border rounded px-3 py-2",
+          "w-full h-12 flex items-end bg-none relative border rounded px-3 py-2",
           className
         )}
       >
@@ -33,7 +33,7 @@ const Input: React.FC<InputProps> = React.memo(
           {...props}
           value={value}
           onChange={handleChange}
-          className="peer w-full text-lg border-none bg-transparent outline-none"
+          className="peer w-full text-sm border-none bg-transparent outline-none"
         />
         <span
           className={cn(

@@ -1,8 +1,7 @@
 "use client";
 
-import { HeartIcon, ShoppingCart, User2 } from "lucide-react";
+import { HeartIcon, ShoppingCart } from "lucide-react";
 import React, { FC } from "react";
-import LanguageDropdown from "./langDropDown";
 import useCartStore from "@/store/cartStore";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
@@ -18,13 +17,18 @@ const Header: FC = () => {
         <Link href="/wishlist">
           <HeartIcon className="text-white " />
         </Link>
-        <Link href="/profile">
+        {/* <Link href="/profile">
           <User2 className="text-white" />
-        </Link>
+        </Link> */}
         <button onClick={() => setCartDialog(true)}>
           <ShoppingCart className="text-white" />
         </button>
-        <LanguageDropdown />
+        <Link
+          href="/login"
+          className="flex border-l pl-5 items-center text-lg duration-300 transition-all"
+        >
+          <button className="text-white">Login</button>
+        </Link>
       </div>
     </header>
   );

@@ -4,10 +4,15 @@ from app.database import init_db
 from flask_jwt_extended import JWTManager
 from app.routes.auth_routes import auth_routes
 from app.routes.template_routes import template_routes
+from flask_cors import CORS
 
 
 def create_app():
     app = Flask(__name__)
+
+    CORS(app, resources={
+         r"/*": {"origins": ["http://localhost:3000", "https://softgroup.uz", "https://template.softgroup.uz"]}})
+
     app.config.from_object(Config)
     app.secret_key = "hojiakbar"
     jwt = JWTManager(app)

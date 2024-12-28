@@ -8,6 +8,7 @@ import CartDialog from "@/components/cartDialog/cartDialog";
 import { Locale, routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
+import ReactQueryProvider from "@/utils/reactQueryProvider";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -32,9 +33,11 @@ export default async function RootLayout({
     <NextIntlClientProvider messages={messages}>
       <html lang={locale}>
         <body className={sora.className}>
-          <main>{children}</main>
-          <Toaster position="bottom-right" richColors />
-          <CartDialog />
+          <ReactQueryProvider>
+            <main>{children}</main>
+            <Toaster position="bottom-right" richColors />
+            <CartDialog />
+          </ReactQueryProvider>
         </body>
       </html>
     </NextIntlClientProvider>
