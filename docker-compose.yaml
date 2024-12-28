@@ -1,7 +1,7 @@
 services:
-  backend:
+  softgroup_backend:
     image: hojiakbar2806/softgroup_backend:latest
-    container_name: backend
+    container_name: softgroup_backend
     command: sh -c "poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000"
     environment:
       - APP_ENV=production
@@ -20,9 +20,9 @@ services:
     networks:
       - app-network
 
-  frontend:
+  softgroup_frontend:
     image: hojiakbar2806/softgroup:latest
-    container_name: frontend
+    container_name: softgroup_frontend
     environment:
       - NODE_ENV=production
     expose:
@@ -32,7 +32,7 @@ services:
 
   softgroup_db:
     image: postgres
-    container_name: postgres
+    container_name: softgroup_db
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -44,7 +44,7 @@ services:
     networks:
       - app-network
 
-  nginx:
+  softgroup_nginx:
     image: nginx:latest
     container_name: softgroup_nginx
     volumes:
@@ -57,8 +57,8 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - frontend
-      - backend
+      - softgroup_frontend
+      - softgroup_backend
     networks:
       - app-network
 
