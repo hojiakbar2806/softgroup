@@ -27,8 +27,13 @@ export default function LoginPage() {
         className="w-full p-8 sm:max-w-lg
        flex mt-auto gap-8 flex-col m-auto shadow rounded-lg"
       >
-        <Input label="Username" name="username" />
-        <Input label="Password" name="password" />
+        <Input label="Username" name="username" value="hojiakbar" />
+        <Input
+          label="Password"
+          type="password"
+          name="password"
+          value="qwerty"
+        />
         <button
           type="submit"
           disabled={mutation.isPending}
