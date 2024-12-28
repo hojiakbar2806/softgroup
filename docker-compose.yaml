@@ -46,21 +46,21 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./nginx/softgroup.uz.conf:/etc/nginx/conf.d/softgroup.uz.conf
-      - ./nginx/api.softgroup.uz.conf:/etc/nginx/conf.d/api.softgroup.uz.conf
-      - ./nginx/templates.softgroup.uz.conf:/etc/nginx/conf.d/templates.softgroup.uz.conf
-      - ./nginx/error-pages:/etc/nginx/error-pages:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - app-network
+    container_name: softgroup_nginx
+  volumes:
+    - ./nginx/softgroup.uz.conf:/etc/nginx/conf.d/softgroup.uz.conf
+    - ./nginx/api.softgroup.uz.conf:/etc/nginx/conf.d/api.softgroup.uz.conf
+    - ./nginx/templates.softgroup.uz.conf:/etc/nginx/conf.d/templates.softgroup.uz.conf  
+    - ./nginx/error-pages:/etc/nginx/error-pages:ro
+    - /etc/letsencrypt:/etc/letsencrypt:ro
+  ports:
+    - "80:80"
+    - "443:443"
+  depends_on:
+    - frontend
+    - backend
+  networks:
+    - app-network
 
 networks:
   app-network:
