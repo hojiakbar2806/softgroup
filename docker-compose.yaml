@@ -40,31 +40,17 @@ services:
     networks:
       - app-network
 
-  nginx-softgroup:
+  nginx:
     image: nginx:latest
-    container_name: nginx-softgroup
+    container_name: nginx
     volumes:
-      - ./nginx/nginx-softgroup.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx-softgroup.conf:/etc/nginx/conf.d/softgroup.conf
+      - ./nginx/nginx-templates.conf:/etc/nginx/conf.d/templates.conf
       - ./nginx/error-pages:/etc/nginx/error-pages:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - frontend
-    networks:
-      - app-network
-
-  nginx-templates:
-    image: nginx:latest
-    container_name: nginx-templates
-    volumes:
-      - ./nginx/nginx-templates.conf:/etc/nginx/nginx.conf
-      - ./nginx/error-pages:/etc/nginx/error-pages:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-    ports:
-      - "8080:80"
-      - "8443:443"
     depends_on:
       - frontend
       - backend
