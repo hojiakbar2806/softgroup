@@ -2,9 +2,9 @@ services:
   backend:
     image: hojiakbar2806/softgroup_backend:latest
     container_name: backend
-    command: /bin/sh -c "flask db upgrade && poetry run gunicorn -b 0.0.0.0:8000 run:app"
+    command: sh -c "poetry run alembic upgrade head && poetry run uvicorn main:app --host 0.0.0.0 --port 8000"
     environment:
-      - FLASK_ENV=production
+      - APP_ENV=production
       - DEBUG=False
       - RUN_ON_POSTGRES=True
     env_file:
@@ -44,8 +44,9 @@ services:
     image: nginx:latest
     container_name: nginx
     volumes:
-      - ./nginx/nginx-softgroup.conf:/etc/nginx/conf.d/softgroup.conf
-      - ./nginx/nginx-templates.conf:/etc/nginx/conf.d/templates.conf
+      - ./nginx/softgroup.uz.conf:/etc/nginx/conf.d/softgroup.uz.conf
+      - ./nginx/api.softgroup.uz.conf:/etc/nginx/conf.d/api.softgroup.uz.conf
+      - ./nginx/templates.softgroup.uz.conf:/etc/nginx/conf.d/templates.softgroup.uz.conf
       - ./nginx/error-pages:/etc/nginx/error-pages:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:

@@ -1,17 +1,20 @@
 FROM python:3.12-slim
 
 WORKDIR /app
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
 
-RUN pip install poetry
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
+    apt-get clean
 
-COPY pyproject.toml poetry.lock ./
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --no-ansi
+ENV PATH="/root/.local/bin:$PATH"
 
-COPY . .
+COPY pyproject.toml poetry.lock /app/
+
+RUN poetry install --no-dev --no-interaction
+
+COPY . /app/
 
 EXPOSE 8000
 
-CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "run:app"]
+ENTRYPOINT ["sh", "-c", "poetry run alembic upgrade head && poetry run uvicorn main:app --host 0.0.0.0 --port 8000"]

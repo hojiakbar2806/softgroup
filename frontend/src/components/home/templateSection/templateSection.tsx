@@ -1,5 +1,6 @@
 import TemplateCard from "@/components/common/templateCard/templateCard";
 import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
+import { products } from "@/utils/const";
 import { ChevronRightCircle } from "lucide-react";
 import Link from "next/link";
 import React, { FC } from "react";
@@ -18,14 +19,18 @@ const TemplateSection: FC<TemplateSectionProps> = ({ sectionTitle }) => {
         </Link>
       </div>
       <TemplateCardWrapper>
-        <TemplateCard template={null} />
-        <TemplateCard template={null} />
-        <TemplateCard template={null} />
-        <TemplateCard template={null} />
-        <TemplateCard template={null} />
-        <TemplateCard template={null} />
-        <TemplateCard template={null} />
-        <TemplateCard template={null} />
+        {products.map((product) => (
+          <TemplateCard key={product.id} product={product} />
+        ))}
+        {products.map((product) => (
+          <TemplateCard key={product.id} product={product} />
+        ))}
+        {products.map((product) => (
+          <TemplateCard key={product.id} product={product} />
+        ))}
+        {products.map((product) => (
+          <TemplateCard key={product.id} product={product} />
+        ))}
       </TemplateCardWrapper>
     </section>
   );

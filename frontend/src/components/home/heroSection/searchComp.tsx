@@ -1,7 +1,5 @@
 "use client";
 
-import TemplateCard from "@/components/common/templateCard/templateCard";
-import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
 import { Search, X } from "lucide-react";
 import Form from "next/form";
 import React, { FC, Fragment, useState } from "react";
@@ -64,11 +62,11 @@ const SearchComp: FC = () => {
             </button>
           </div>
           <div className="p-4">
-            <TemplateCardWrapper>
+            {/* <TemplateCardWrapper>
               {Array.from({ length: 10 }).map((_, index) => (
                 <TemplateCard key={index} template={null} />
               ))}
-            </TemplateCardWrapper>
+            </TemplateCardWrapper> */}
           </div>
         </div>
       </div>

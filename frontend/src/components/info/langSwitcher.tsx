@@ -1,6 +1,6 @@
 "use client";
 
-import { locales } from "@/config";
+import { routing } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,7 +17,7 @@ const LangSwitcher = () => {
 
   return (
     <div className="flex flex-col items-center fixed bottom-2 gap-1 right-2 group cursor-pointer text-white">
-      {locales.map((item, index) => (
+      {routing.locales.map((item, index) => (
         <React.Fragment key={index}>
           <Link
             data-active={item === locale}
