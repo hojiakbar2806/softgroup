@@ -1,7 +1,3 @@
-networks:
-  app-network:
-    driver: bridge
-
 services:
   backend:
     image: hojiakbar2806/softgroup_backend:latest
@@ -48,23 +44,33 @@ services:
     image: nginx:latest
     container_name: nginx-softgroup
     volumes:
-      - ./nginx-softgroup.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx-softgroup.conf:/etc/nginx/nginx.conf
+      - ./nginx/error-pages:/etc/nginx/error-pages:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
       - "443:443"
     depends_on:
       - frontend
+    networks:
+      - app-network
 
   nginx-templates:
     image: nginx:latest
     container_name: nginx-templates
     volumes:
-      - ./nginx-templates.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt:/etc/letsencrypt:ro 
+      - ./nginx/nginx-templates.conf:/etc/nginx/nginx.conf
+      - ./nginx/error-pages:/etc/nginx/error-pages:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "8080:80"
       - "8443:443"
     depends_on:
       - frontend
       - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
