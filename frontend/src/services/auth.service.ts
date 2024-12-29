@@ -12,7 +12,6 @@ export const LoginService = async (data: IUserLogin) => {
     setAuth(res.data.access_token);
     const urlParams = new URLSearchParams(window.location.search);
     const nextPath = urlParams.get("next") || "/";
-    localStorage.setItem("isLoggedIn", "true");
     window.location.href = nextPath;
     return res;
   } catch (error: unknown) {

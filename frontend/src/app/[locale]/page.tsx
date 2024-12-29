@@ -11,8 +11,8 @@ export default function Home() {
     <Fragment>
       <Header />
       <HeroSection />
-      <TemplateSection sectionTitle="Recommendeds templates" />
-      <TemplateSection sectionTitle="Trending templates" />
+      <TemplateSection sectionTitle="Templates" />
+      {/* <TemplateSection sectionTitle="Trending templates" /> */}
       <Footer />
     </Fragment>
   );

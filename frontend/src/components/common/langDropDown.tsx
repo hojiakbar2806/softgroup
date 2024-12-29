@@ -66,7 +66,7 @@ const LanguageDropdown: React.FC = () => {
             alt={currentLanguage?.label || ""}
             className="rounded"
           />
-          <span className="text-gray-700 text-sm">
+          <span className="text-gray-700 text-lg px-2">
             {currentLanguage?.label}
           </span>
         </div>
@@ -90,7 +90,7 @@ const LanguageDropdown: React.FC = () => {
               width: buttonWidth || "auto",
               zIndex: 50,
             }}
-            // onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="py-1">
               {languages.map((l) => (
@@ -112,7 +112,7 @@ const LanguageDropdown: React.FC = () => {
                     alt={l.label}
                     className="rounded"
                   />
-                  <span className="text-sm font-medium">{l.label}</span>
+                  <span className="text-lg font-medium">{l.label}</span>
                 </motion.div>
               ))}
             </div>

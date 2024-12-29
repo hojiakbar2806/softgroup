@@ -38,6 +38,5 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   logout: async () => {
     await LogoutService();
-    window.location.href = "/";
   },
 }));

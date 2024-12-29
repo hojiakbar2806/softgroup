@@ -7,6 +7,16 @@
   --scroll-gap: 20px;
 }
 
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+
 @layer base {
   * {
     overscroll-behavior: none;
