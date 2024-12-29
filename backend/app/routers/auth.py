@@ -9,7 +9,7 @@ from app.core.security.utils import verify_user_token
 from app.database.session import get_db_session
 from app.utils.set_cookie import set_refresh_token_cookie
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserLogin
 
 router = APIRouter()
 
@@ -44,8 +44,8 @@ async def register(user: UserCreate, session: AsyncSession = Depends(get_db_sess
 
 
 @router.post("/login")
-async def login_user(username: str, password: str, session: AsyncSession = Depends(get_db_session)):
-    query = select(User).where(User.username == username)
+async def login_user(user_in: UserLogin, session: AsyncSession = Depends(get_db_session)):
+    query = select(User).where(User.username == user_in.username)
     user = (await session.execute(query)).scalar_one_or_none()
 
     if not user:
@@ -55,7 +55,7 @@ async def login_user(username: str, password: str, session: AsyncSession = Depen
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    if not user or not user.check_password(password):
+    if not user or not user.check_password(user_in.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",

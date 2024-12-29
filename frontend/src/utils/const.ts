@@ -1,4 +1,4 @@
-export const BASE_URL = "https://softgroup.uz/api";
+export const BASE_URL = "https://api.softgroup.uz";
 
 export const products = [
   {
