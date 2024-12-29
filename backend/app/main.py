@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
@@ -9,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth, users, templates
 
 app = FastAPI(title="Template API", version="1.0.0")
+
+os.makedirs("templates", exist_ok=True)
 
 app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 
