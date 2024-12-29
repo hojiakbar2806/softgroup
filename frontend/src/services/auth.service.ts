@@ -10,9 +10,10 @@ export const LoginService = async (data: IUserLogin) => {
     toast.success(res.data.message);
     const { setAuth } = useAuthStore.getState();
     setAuth(res.data.access_token);
-    // const urlParams = new URLSearchParams(window.location.search);
-    // const nextPath = urlParams.get("next") || "/";
-    // window.location.href = nextPath;
+    const urlParams = new URLSearchParams(window.location.search);
+    const nextPath = urlParams.get("next") || "/";
+    localStorage.setItem("isLoggedIn", "true");
+    window.location.href = nextPath;
     return res;
   } catch (error: unknown) {
     if (isAxiosError(error)) {

@@ -30,11 +30,7 @@ async def create_template(
     title: str = Form(...),
     current_price: float = Form(...),
     original_price: Optional[float] = Form(None),
-    rating: float = Form(...),
-    rating_count: int = Form(...),
     description: str = Form(...),
-    downloads: int = Form(...),
-    likes: int = Form(...),
     features: str = Form(...),
     template_file: UploadFile = File(...),
     images: List[UploadFile] = File(...),
@@ -58,11 +54,7 @@ async def create_template(
         title=title,
         current_price=current_price,
         original_price=original_price,
-        rating=rating,
-        rating_count=rating_count,
         description=description,
-        downloads=downloads,
-        likes=likes,
         slug=slug,
         owner_id=current_user.id
     )

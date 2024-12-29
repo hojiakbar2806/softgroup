@@ -27,12 +27,12 @@ export default function LoginPage() {
         className="w-full p-8 sm:max-w-lg
        flex mt-auto gap-8 flex-col m-auto shadow rounded-lg"
       >
-        <Input label="Username" name="username" value="hojiakbar" />
+        <Input label="Username" name="username" value="string" />
         <Input
           label="Password"
           type="password"
           name="password"
-          value="qwerty"
+          value="string"
         />
         <button
           type="submit"

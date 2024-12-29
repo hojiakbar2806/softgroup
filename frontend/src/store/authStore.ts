@@ -19,9 +19,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const response = await SessionService();
       const newToken = response.data.access_token;
       set({ token: newToken });
+      localStorage.setItem("isLoggedIn", "true");
       return newToken;
     } catch (error) {
       console.error("Refresh token failed: ", error);
+      localStorage.removeItem("isLoggedIn");
       return null;
     }
   },
