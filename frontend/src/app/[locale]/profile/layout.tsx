@@ -13,7 +13,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
 
   useEffect(() => {
     refreshToken();
-  });
+  }, []);
 
   return (
     <div className="w-full flex bg-blue-50">
