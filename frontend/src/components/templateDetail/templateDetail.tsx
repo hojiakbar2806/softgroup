@@ -12,11 +12,16 @@ import {
   Share2,
   XIcon,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { GetTemplateWithSlugService } from "@/services/template.service";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  AddRateService,
+  GetTemplateWithSlugService,
+} from "@/services/template.service";
 import { Template } from "@/types/template";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/utils/const";
 
 type TemplateDetailProps = {
   slug: string;
@@ -24,12 +29,25 @@ type TemplateDetailProps = {
 
 export default function TemplateDetails({ slug }: TemplateDetailProps) {
   const [selectedImage, setSelectedImage] = useState<number>(0);
+  const router = useRouter();
 
   const { data, isLoading, isError } = useQuery<Template>({
     queryKey: ["template", slug],
     queryFn: () => GetTemplateWithSlugService(slug),
     retry: 1,
   });
+
+  const mutation = useMutation({
+    mutationFn: AddRateService,
+  });
+
+  const handleDownload = () => {
+    router.push(`${BASE_URL}/template/download/${slug}`);
+  };
+
+  const handlePreview = () => {
+    router.push(`${BASE_URL}/templates/${slug}/index.html`);
+  };
 
   if (isError) {
     return (
@@ -50,7 +68,6 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
   return (
     <section className="container mx-auto px-4 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Image Section */}
         <div className="flex flex-col gap-4">
           <motion.div
             initial={{ opacity: 0 }}
@@ -93,7 +110,6 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           )}
         </div>
 
-        {/* Details Section */}
         <div className="space-y-6">
           <div className="space-y-2">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
@@ -102,9 +118,14 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            <Rating value={data?.rating || 0} />
+            <Rating
+              value={data?.avarage_rating || 0}
+              onChange={(rate) => {
+                mutation.mutate({ slug, rate });
+              }}
+            />
             <span className="text-gray-600">
-              {data?.ratingCount?.toLocaleString() || 0} views
+              {data?.views || 0} views
             </span>
           </div>
 
@@ -170,6 +191,8 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               whileTap={{ scale: 0.98 }}
               className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
                 bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
+              aria-label="Download"
+              onClick={handleDownload}
             >
               <DownloadIcon size={20} />
               Download Now
@@ -179,6 +202,8 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               whileTap={{ scale: 0.98 }}
               className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
                 bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
+              aria-label="Preview"
+              onClick={handlePreview}
             >
               <EyeIcon size={20} />
               Preview

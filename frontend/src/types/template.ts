@@ -21,7 +21,9 @@ export interface Template {
   original_price: number;
   current_price: number;
   rating: number;
+  avarage_rating: number;
   ratingCount: number;
+  views: number;
   images: {
     id: number;
     url: string;

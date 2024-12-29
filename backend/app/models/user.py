@@ -16,6 +16,7 @@ class User(Base):
     phone_number = Column(String(20), unique=True, nullable=False)
 
     templates = relationship("Template", back_populates="owner")
+    ratings = relationship("Rating", back_populates="user")
 
     def set_password(self, password):
         self.hashed_password = hash_password(password)

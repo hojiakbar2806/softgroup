@@ -8,16 +8,14 @@ class Image(BaseModel):
     url: str
 
 
-class TemplateBase(BaseModel):
-    title: str
-    current_price: float
-    original_price: Optional[float] = None
-    description: Optional[str] = None
-
-
 class Feature(BaseModel):
     text: str
     available: bool = True
+
+
+class Rating(BaseModel):
+    id: int
+    rating: float
 
 
 class TemplateResponse(BaseModel):
@@ -26,7 +24,12 @@ class TemplateResponse(BaseModel):
     title: str
     current_price: float
     original_price: Optional[float] = None
-    description: Optional[str] = None
+    description: str = None
     owner_id: int
+    downloads: int
+    avarage_rating: float
+    likes: int
+    views: int
     features: List[Feature]
+    ratings: List[Rating]
     images: List[Image]
