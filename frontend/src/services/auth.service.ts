@@ -37,6 +37,7 @@ export const LogoutService = async () => {
   try {
     const res = await axiosWithCredentials.post("auth/logout");
     toast.success(res.data.message);
+    window.location.href = "/";
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       toast.error(error.response?.data.detail || "Logout failed");

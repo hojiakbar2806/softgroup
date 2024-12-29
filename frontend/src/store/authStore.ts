@@ -12,18 +12,21 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>((set, get) => ({
   token: null,
 
-  setAuth: (newToken) => set({ token: newToken }),
+  setAuth: (newToken) => {
+    document.cookie = "isLoggedIn=true; path=/; SameSite=Lax";
+    set({ token: newToken });
+  },
 
   refreshToken: async () => {
     try {
       const response = await SessionService();
       const newToken = response.data.access_token;
+      document.cookie = "isLoggedIn=true; path=/; SameSite=Lax";
       set({ token: newToken });
-      localStorage.setItem("isLoggedIn", "true");
       return newToken;
     } catch (error) {
       console.error("Refresh token failed: ", error);
-      localStorage.removeItem("isLoggedIn");
+      document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
       return null;
     }
   },
@@ -37,6 +40,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   logout: async () => {
+    document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
     await LogoutService();
   },
 }));

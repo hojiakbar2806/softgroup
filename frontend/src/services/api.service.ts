@@ -15,26 +15,13 @@ axiosWithAuth.interceptors.request.use(async (config) => {
 axiosWithAuth.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response.status === 401) {
-      const { refreshToken } = useAuthStore.getState();
-      await refreshToken();
-    }
+    const { refreshToken } = useAuthStore.getState();
+    await refreshToken();
     return Promise.reject(error);
   }
 );
 
 const axiosWithCredentials = axios.create({ withCredentials: true });
-
-axiosWithCredentials.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response.status === 401) {
-      const { logout } = useAuthStore.getState();
-      await logout();
-    }
-    return Promise.reject(error);
-  }
-);
 
 const defaultAxios = axios.create();
 

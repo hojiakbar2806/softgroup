@@ -6,7 +6,6 @@ import { LoginService } from "@/services/auth.service";
 import { IUserLogin } from "@/types/user";
 import { useMutation } from "@tanstack/react-query";
 import Form from "next/form";
-import React from "react";
 
 export default function LoginPage() {
   const mutation = useMutation({
