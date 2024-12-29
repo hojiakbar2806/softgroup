@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { PlusCircle, X } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -15,8 +15,15 @@ import Form from "next/form";
 import { Feature } from "@/types/template";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
+import { useAuthStore } from "@/store/authStore";
 
 const AddTemplatePage: React.FC = () => {
+  const { refreshToken } = useAuthStore();
+
+  useEffect(() => {
+    refreshToken();
+  }, []);
+
   const [features, setFeatures] = useState<Feature[]>([
     {
       text: "",
@@ -58,7 +65,9 @@ const AddTemplatePage: React.FC = () => {
       >
         <CardHeader className="flex flex-row items-center justify-between">
           <h1 className="text-2xl font-bold">Add New Template</h1>
-          <Button onClick={() => router.push("/profile/templates")}>Back</Button>
+          <Button onClick={() => router.push("/profile/templates")}>
+            Back
+          </Button>
         </CardHeader>
         <Form action={handleSubmit}>
           <Card className="shadow-md">
