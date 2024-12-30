@@ -46,7 +46,8 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
   };
 
   const handlePreview = () => {
-    router.push(`${BASE_URL}/templates/${slug}/index.html`);
+    const url = `${BASE_URL}/templates/${slug}/index.html`;
+    window.open(url, "_blank");
   };
 
   if (isError) {
@@ -124,9 +125,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                 mutation.mutate({ slug, rate });
               }}
             />
-            <span className="text-gray-600">
-              {data?.views || 0} views
-            </span>
+            <span className="text-gray-600">{data?.views || 0} views</span>
           </div>
 
           <div className="flex items-center gap-4">
