@@ -25,7 +25,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       set({ token: newToken });
       return newToken;
     } catch (error) {
-      console.error("Refresh token failed: ", error);
       document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
       window.location.href = "/";
       return null;
@@ -41,8 +40,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   logout: async () => {
-    await LogoutService();
     document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
     window.location.href = "/";
+    await LogoutService();
   },
 }));
