@@ -16,7 +16,7 @@ services:
     expose:
       - "8000"
     volumes:
-      - ./app:/app
+      - ./templates:/app/templates
     depends_on:
       - softgroup_db
     networks:
