@@ -23,6 +23,15 @@ axiosWithAuth.interceptors.response.use(
 
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
+axiosWithCredentials.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const { logout } = useAuthStore.getState();
+    await logout();
+    return Promise.reject(error);
+  }
+);
+
 const defaultAxios = axios.create();
 
 export { axiosWithAuth, axiosWithCredentials, defaultAxios };
