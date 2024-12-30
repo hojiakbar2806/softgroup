@@ -40,17 +40,14 @@ export const RegisterService = async (data: IUserRegister) => {
 
 export const LogoutService = async () => {
   try {
-    const res = await axiosWithCredentials.post("auth/logout");
-    toast.success(res.data.message);
+    await axiosWithCredentials.post("auth/logout");
+    document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
+    window.location.href = "/";
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       toast.error(error.response?.data.detail || "Logout failed");
     }
   }
-};
-
-export const ActivateService = async (token: string) => {
-  return await axiosWithCredentials.post(`/auth/activate/${token}`);
 };
 
 export const SessionService = async () => {

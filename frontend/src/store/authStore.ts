@@ -1,10 +1,11 @@
 import { LogoutService, SessionService } from "@/services/auth.service";
+import { toast } from "sonner";
 import { create } from "zustand";
 
 interface AuthStore {
   token: string | null;
   setAuth: (newToken: string) => void;
-  refreshToken: () => Promise<string | null>;
+  refreshToken: () => Promise<void>;
   getToken: () => Promise<string | null>;
   logout: () => Promise<void>;
 }
@@ -12,36 +13,22 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>((set, get) => ({
   token: null,
 
-  setAuth: (newToken) => {
-    document.cookie = "isLoggedIn=true; path=/; SameSite=Lax";
-    set({ token: newToken });
-  },
-
+  setAuth: (newToken) => set({ token: newToken }),
   refreshToken: async () => {
-    try {
-      const response = await SessionService();
-      const newToken = response.data.access_token;
-      document.cookie = "isLoggedIn=true; path=/; SameSite=Lax";
-      set({ token: newToken });
-      return newToken;
-    } catch (error) {
-      document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
-      window.location.href = "/";
-      return null;
-    }
+    const response = await SessionService();
+    set({ token: response.data.access_token });
   },
 
   getToken: async () => {
-    const { token } = get();
+    const token = get().token;
     if (!token) {
-      return await get().refreshToken();
+      await get().refreshToken();
     }
     return token;
   },
 
   logout: async () => {
-    document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
-    window.location.href = "/";
     await LogoutService();
+    set({ token: null });
   },
 }));

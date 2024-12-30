@@ -10,10 +10,7 @@ export default async function middleware(request: NextRequest) {
 
   const languageRegex = /^(\/(uz|en|ru))\/profile/;
 
-  if (
-    !isLoggedIn?.value ||
-    (isLoggedIn?.value === "false" && languageRegex.test(pathname))
-  ) {
+  if (isLoggedIn?.value === "false" && languageRegex.test(pathname)) {
     const language = pathname.split("/")[1];
     return NextResponse.redirect(
       new URL(`/${language}/login?next=${pathname}`, nextUrl.origin)

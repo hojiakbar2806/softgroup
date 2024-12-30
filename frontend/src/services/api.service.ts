@@ -24,10 +24,13 @@ axiosWithAuth.interceptors.response.use(
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
 axiosWithCredentials.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    document.cookie = "isLoggedIn=true; path=/; SameSite=Lax";
+    return response;
+  },
   async (error) => {
-    const { logout } = useAuthStore.getState();
-    await logout();
+    document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
+    window.location.reload();
     return Promise.reject(error);
   }
 );

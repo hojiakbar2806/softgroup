@@ -7,9 +7,15 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Rating from "../rating";
 import { Template } from "@/types/template";
+import { BASE_URL } from "@/utils/const";
 
 const TemplateCard: FC<{ product: Template }> = ({ product }) => {
   const router = useRouter();
+
+  const handlePreview = () => {
+    const url = `${BASE_URL}/templates/${product?.slug}/index.html`;
+    window.open(url, "_blank");
+  };
 
   return (
     <motion.div
@@ -76,20 +82,22 @@ const TemplateCard: FC<{ product: Template }> = ({ product }) => {
           </div>
         </div>
 
-        <Link href={``}>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full cursor-pointer flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 
               text-white rounded-xl py-3 font-medium transition-colors"
-          >
-            View Preview
-            <ArrowUpRight
-              size={18}
-              className="group-hover:translate-x-1 transition-transform"
-            />
-          </motion.button>
-        </Link>
+          onClick={(e) => {
+            e.stopPropagation();
+            handlePreview();
+          }}
+        >
+          View Preview
+          <ArrowUpRight
+            size={18}
+            className="group-hover:translate-x-1 transition-transform"
+          />
+        </motion.button>
       </div>
 
       <div
