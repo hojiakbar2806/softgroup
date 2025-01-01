@@ -5,9 +5,6 @@ const axiosWithAuth = axios.create();
 axiosWithAuth.interceptors.request.use(async (config) => {
   const { getToken } = useAuthStore.getState();
   const token = await getToken();
-  if (!token) {
-    return config;
-  }
   config.headers.Authorization = `Bearer ${token}`;
   return config;
 });

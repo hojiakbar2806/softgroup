@@ -9,11 +9,7 @@ export const SearchTemplateService = async (query: string) => {
 
 export const AddTemplateService = async (data: FormData) => {
   try {
-    const res = await axiosWithAuth.post("/template/create", data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const res = await axiosWithAuth.post("/template/create", data);
     toast.success(res.data.message);
     return res.data;
   } catch (error) {

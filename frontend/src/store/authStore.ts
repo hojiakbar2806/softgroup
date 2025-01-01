@@ -4,8 +4,8 @@ import { create } from "zustand";
 interface AuthStore {
   token: string | null;
   setAuth: (newToken: string) => void;
-  refreshToken: () => Promise<void>;
-  getToken: () => Promise<string | null>;
+  refreshToken: () => Promise<string>;
+  getToken: () => Promise<string>;
   logout: () => Promise<void>;
 }
 
@@ -16,12 +16,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   refreshToken: async () => {
     const response = await SessionService();
     set({ token: response.data.access_token });
+    return response.data.access_token;
   },
 
   getToken: async () => {
     const token = get().token;
     if (!token) {
-      await get().refreshToken();
+      return await get().refreshToken();
     }
     return token;
   },
