@@ -1,11 +1,13 @@
 "use client";
 
 import { Search, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Form from "next/form";
 import React, { FC, Fragment, useState } from "react";
 
 const SearchComp: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const t = useTranslations("TemplatePage.Header");
 
   const handleSearch = async (fromData: FormData) => {
     const search = fromData.get("search") as string;
@@ -27,7 +29,7 @@ const SearchComp: FC = () => {
             id="search"
             name="search"
             autoComplete="off"
-            placeholder="Search..."
+            placeholder={t("search.placeholder")}
             className="outline-none bg-transparent w-full text-gray-700 md:text-xl"
             aria-label="Search"
           />
@@ -37,7 +39,7 @@ const SearchComp: FC = () => {
           className="ml-4 px-4 py-2 lg:text-xl border-2 border-purple-500 text-purple-500 rounded-lg 
           hover:bg-purple-600 hover:text-white transition"
         >
-          Search
+          {t("search.button")}
         </button>
       </Form>
 

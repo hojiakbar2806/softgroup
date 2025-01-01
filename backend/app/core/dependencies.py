@@ -1,3 +1,4 @@
+from fastapi import Request
 from fastapi import Depends
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,3 +13,7 @@ auth_schema = HTTPBearer()
 
 async def current_auth_user(auth: HTTPAuthorizationCredentials = Depends(auth_schema), session: AsyncSession = Depends(get_db_session)) -> User:
     return await verify_user_token(auth.credentials, session, "access")
+
+
+def get_accept_language(request: Request) -> str:
+    return request.headers.get("Accept-Language", "en")

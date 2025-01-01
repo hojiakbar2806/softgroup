@@ -85,5 +85,16 @@
       "message": "Siz qo'ldirgan ma'lumot bilan biz sizga bo'g'lanamiz",
       "submit": "Yuborish"
     }
+  },
+  "TemplatePage": {
+    "Header": {
+      "title": "Sifat, ishonch va ajoyib narxlar – bir joyda!",
+      "description": "Eng sifatli mahsulotlar, tez yetkazib berish va raqobatbardosh narxlar bilan xarid qilishni boshlang. Bizning takliflarimiz sizni kutmoqda!",
+      "button": "Shablon qo'shish",
+      "search": {
+        "placeholder": "Shablon qidirish",
+        "button": "Qidirish"
+      }
+    }
   }
 }

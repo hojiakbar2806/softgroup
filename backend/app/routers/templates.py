@@ -1,230 +1,202 @@
 import os
 import json
 import zipfile
-
-from fastapi.responses import FileResponse, JSONResponse
-from fastapi import status
-from fastapi.templating import Jinja2Templates
-from slugify import slugify
-from typing import List, Optional
-
 from sqlalchemy.future import select
-from sqlalchemy.orm import selectinload
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from sqlalchemy.orm import selectinload
+from fastapi import APIRouter, Depends, Form, HTTPException
 
-from app.core.dependencies import current_auth_user
-from app.database.session import get_db_session
-from app.models.template import Feature, Image, Rating,  Template
 from app.models.user import User
-from app.schemas.template import TemplateResponse
 from app.core.config import settings
 
+from app.utils.slug import unique_slug
+from app.database.session import get_db_session
+from app.schemas.template import TemplateCreate, TemplateResponse
+from app.core.dependencies import current_auth_user, get_accept_language
+from app.models.template import Feature, FeatureTranslation, Image, Template, TemplateTranslation
+
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
 
 
 @router.post("/create")
 async def create_template(
-    title: str = Form(...),
-    current_price: float = Form(...),
-    original_price: Optional[float] = Form(None),
-    description: str = Form(...),
-    features: str = Form(...),
-    template_file: UploadFile = File(...),
-    images: List[UploadFile] = File(...),
+    template: TemplateCreate = Depends(TemplateCreate.as_form),
+    features: str = Form(
+        ..., description='[{"text_uz": "text", "text_ru": "text", "text_en": "text", "available": true}]'),
     session: AsyncSession = Depends(get_db_session),
-    current_user: User = Depends(current_auth_user)
+    current_user: User = Depends(current_auth_user),
+
 ):
+    try:
+        features = json.loads(features)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid features")
 
-    features_list = json.loads(features)
+    if not template.template_file:
+        raise HTTPException(
+            status_code=400, detail="Template file is required")
 
-    slug = slugify(title)
+    slug = await unique_slug(template.title_en, session)
 
-    temp_dir = os.path.join(settings.TEMPLATE_DIR, slug)
-    images_dir = os.path.join(temp_dir, "images")
+    current_template = os.path.join(settings.TEMPLATES_DIR, slug)
+    images_dir = os.path.join(current_template, "images")
 
-    os.makedirs(temp_dir, exist_ok=True)
+    os.makedirs(current_template, exist_ok=True)
     os.makedirs(images_dir, exist_ok=True)
 
-    zip_file_path = os.path.join(temp_dir, f"{slug}.zip")
-
+    zip_file_path = os.path.join(current_template, f"{slug}.zip")
     with open(zip_file_path, "wb") as buffer:
-        content = await template_file.read()
-        buffer.write(content)
+        buffer.write(await template.template_file.read())
 
-    with zipfile.ZipFile(template_file.file, "r") as zip_ref:
-        zip_ref.extractall(temp_dir)
+    with zipfile.ZipFile(template.template_file.file, "r") as zip_ref:
+        zip_ref.extractall(current_template)
+        filename = zip_ref.namelist()[0]
 
-    zip_folder = os.path.join(
-        temp_dir, template_file.filename.replace(".zip", ""))
+    current_zipfile_path = os.path.join(current_template, filename)
+    if not os.path.exists(current_zipfile_path):
+        raise HTTPException(status_code=400, detail="Invalid zip file")
 
-    if os.path.exists(zip_folder):
-        for f in os.listdir(zip_folder):
-            FROM = os.path.join(zip_folder, f)
-            TO = os.path.join(temp_dir, f)
-            os.rename(FROM, TO)
-        os.rmdir(zip_folder)
+    for f in os.listdir(current_zipfile_path):
+        os.rename(
+            os.path.join(current_zipfile_path, f),
+            os.path.join(current_template, f)
+        )
+    os.rmdir(current_zipfile_path)
 
     db_template = Template(
-        title=title,
-        current_price=current_price,
-        original_price=original_price,
-        description=description,
         slug=slug,
+        current_price=template.current_price,
+        original_price=template.original_price,
         owner_id=current_user.id
     )
     session.add(db_template)
-    await session.commit()
-    await session.refresh(db_template)
+    await session.flush()
 
-    feature_objects = []
-    for feature in features_list:
+    translations = [
+        TemplateTranslation(
+            language="uz",
+            title=template.title_uz,
+            description=template.description_uz,
+            template_id=db_template.id
+        ),
+        TemplateTranslation(
+            language="ru",
+            title=template.title_ru,
+            description=template.description_ru,
+            template_id=db_template.id
+        ),
+        TemplateTranslation(
+            language="en",
+            title=template.title_en,
+            description=template.description_en,
+            template_id=db_template.id
+        )
+    ]
+    session.add_all(translations)
+
+    for feature in features:
         db_feature = Feature(
-            text=feature['text'],
             available=feature['available'],
             template_id=db_template.id
         )
-        feature_objects.append(db_feature)
-    session.add_all(feature_objects)
+        session.add(db_feature)
+        await session.flush()
 
-    image_objects = []
-    for index, image in enumerate(images):
+        feature_translations = [
+            FeatureTranslation(
+                language="uz",
+                text=feature['text_uz'],
+                feature_id=db_feature.id
+            ),
+            FeatureTranslation(
+                language="ru",
+                text=feature['text_ru'],
+                feature_id=db_feature.id
+            ),
+            FeatureTranslation(
+                language="en",
+                text=feature['text_en'],
+                feature_id=db_feature.id
+            )
+        ]
+        session.add_all(feature_translations)
+
+    for index, image in enumerate(template.images):
         file_extension = os.path.splitext(image.filename)[1]
-        image_filename = f"{slugify(title)}_{index}{file_extension}"
+        image_filename = f"{slug}_{index}{file_extension}"
         file_path = os.path.join(images_dir, image_filename)
 
         with open(file_path, "wb") as buffer:
-            content = await image.read()
-            buffer.write(content)
-
-        relative_path = os.path.relpath(file_path)
+            buffer.write(await image.read())
 
         db_image = Image(
-            url=relative_path,
+            url=os.path.relpath(file_path),
             template_id=db_template.id
         )
-        image_objects.append(db_image)
+        session.add(db_image)
 
-    session.add_all(image_objects)
     await session.commit()
     await session.refresh(db_template)
-
-    return db_template
+    return JSONResponse(
+        status_code=201,
+        content={"message": "Template created successfully"}
+    )
 
 
 @router.get("/all", response_model=list[TemplateResponse])
-async def read_templates(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db_session)):
-    query = select(Template).options(
+async def read_templates(
+    skip: int = 0,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db_session)
+):
+    query = select(Template).offset(skip).limit(limit)
+    query = query.options(
+        selectinload(Template.translations),
         selectinload(Template.images),
-        selectinload(Template.features),
+        selectinload(Template.features).selectinload(Feature.translations),
         selectinload(Template.ratings)
-    ).offset(skip).limit(limit)
+    )
+
     result = await db.execute(query)
     templates = result.scalars().all()
-
     return templates
 
 
-@router.get("/search", response_model=list[TemplateResponse])
-async def search_templates(query: str, session: AsyncSession = Depends(get_db_session)):
-    query = select(Template).where(Template.title.contains(query)).options(
-        selectinload(Template.images),
-        selectinload(Template.features),
-        selectinload(Template.ratings)
-    )
-    result = await session.execute(query)
-    templates = result.scalars().all()
-
-    return templates
-
-
-@router.patch("/add/rating/{slug}")
-async def add_rating(
-        slug: str,
-        rating: int,
-        session: AsyncSession = Depends(get_db_session),
-        current_user: User = Depends(current_auth_user)
+@ router.get("/search")
+async def search_templates(
+    query: str,
+    language: str = Depends(get_accept_language),
+    session: AsyncSession = Depends(get_db_session)
 ):
-    query = select(Template).where(Template.slug == slug)
-    result = await session.execute(query)
-    template = result.scalar_one_or_none()
-    if template is None:
-        raise HTTPException(status_code=404, detail="Template not found")
-
-    query = select(Rating).where(
-        Rating.template_id == template.id,
-        Rating.user_id == current_user.id
-    )
-    result = await session.execute(query)
-    existing_rating = result.scalar_one_or_none()
-
-    if existing_rating:
-        raise HTTPException(
-            status_code=400,
-            detail="You have already rated this template"
-        )
-
-    query = select(Rating).where(Rating.template_id == template.id)
-    result = await session.execute(query)
-    ratings = result.scalars().all()
-
-    if len(ratings) == 0:
-        avarage_rating = rating
-    else:
-        total_rating = sum(rating.rating for rating in ratings)
-        avarage_rating = total_rating / len(ratings)
-
-    new_rating = Rating(
-        template_id=template.id,
-        user_id=current_user.id,
-        rating=rating
-    )
-    session.add(new_rating)
-
-    template.avarage_rating = avarage_rating
-
-    await session.commit()
-    await session.refresh(template)
-
-    return JSONResponse(
-        content={"message": "Rating added successfully"},
-        status_code=status.HTTP_201_CREATED
-    )
-
-
-@router.get("/{slug}", response_model=TemplateResponse)
-async def read_template(slug: str, session: AsyncSession = Depends(get_db_session)):
-    query = select(Template).filter(Template.slug == slug).options(
+    stmt = select(Template).join(Template.translations).filter(
+        TemplateTranslation.language == language,
+        TemplateTranslation.title.contains(query)
+    ).options(
+        selectinload(Template.translations),
         selectinload(Template.images),
-        selectinload(Template.features),
+        selectinload(Template.features).selectinload(Feature.translations),
+        selectinload(Template.ratings)
+    )
+
+    result = await session.execute(stmt)
+    return result.scalars().all()
+
+
+@ router.get("/{slug}")
+async def read_template(
+    slug: str,
+    session: AsyncSession = Depends(get_db_session)
+):
+    query = select(Template).where(Template.slug == slug).options(
+        selectinload(Template.translations),
+        selectinload(Template.images),
+        selectinload(Template.features).selectinload(Feature.translations),
         selectinload(Template.ratings)
     )
     result = await session.execute(query)
     template = result.scalar_one_or_none()
+
     if template is None:
         raise HTTPException(status_code=404, detail="Template not found")
-    template.views += 1
     return template
-
-
-@router.get("/download/{slug}")
-async def download_file(slug: str, session: AsyncSession = Depends(get_db_session)):
-    query = select(Template).where(Template.slug == slug)
-    result = await session.execute(query)
-    template = result.scalar_one_or_none()
-    if template is None:
-        raise HTTPException(status_code=404, detail="Template not found")
-
-    template.downloads += 1
-    await session.commit()
-    await session.refresh(template)
-
-    tem_dir = os.path.join(settings.TEMPLATE_DIR, slug)
-    file_path = os.path.join(tem_dir, f"{slug}.zip")
-    print(file_path)
-
-    if os.path.exists(file_path):
-        return FileResponse(file_path, media_type='application/zip', filename=f"{slug}.zip")
-    else:
-        return {"error": "File not found"}

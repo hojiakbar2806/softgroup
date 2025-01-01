@@ -8,11 +8,20 @@ export const SearchTemplateService = async (query: string) => {
 };
 
 export const AddTemplateService = async (data: FormData) => {
-  return await axiosWithAuth.post("/template/create", data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  try {
+    const res = await axiosWithAuth.post("/template/create", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    toast.success(res.data.message);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      toast.warning(error.response?.data.detail || "Template failed");
+    }
+  }
 };
 
 export const GetAllTemplateService = async (): Promise<Template[]> => {
@@ -35,7 +44,7 @@ export const AddRateService = async (data: { slug: string; rate: number }) => {
     toast.success(res.data.message);
     return res.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     if (isAxiosError(error)) {
       toast.warning(error.response?.data.detail || "Rate failed");
     }

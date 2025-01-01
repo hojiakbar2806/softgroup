@@ -1,35 +1,30 @@
 export interface Feature {
-  text: string;
+  id: number;
   available: boolean;
-}
-
-export interface TemplatePayload {
-  title: string;
-  current_price: number;
-  original_price: number;
-  description: string;
-  features: Feature[];
-  images: File[];
-  template_file: File | null;
+  translations: {
+    text: string;
+    language: string;
+  }[];
 }
 
 export interface Template {
   id: number;
-  title: string;
   slug: string;
-  description: string;
-  original_price: number;
   current_price: number;
-  rating: number;
+  original_price: number;
+  downloads: number;
   avarage_rating: number;
-  ratingCount: number;
+  likes: number;
   views: number;
+  ratings: number[];
   images: {
     id: number;
     url: string;
   }[];
-  features: {
-    text: string;
-    available: boolean;
+  translations: {
+    title: string;
+    language: string;
+    description: string;
   }[];
+  features: Feature[];
 }

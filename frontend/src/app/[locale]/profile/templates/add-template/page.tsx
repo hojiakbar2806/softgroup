@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { PlusCircle, X } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -11,22 +11,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useMutation } from "@tanstack/react-query";
 import { AddTemplateService } from "@/services/template.service";
-import Form from "next/form";
-import { Feature } from "@/types/template";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
-import { useAuthStore } from "@/store/authStore";
+import Form from "next/form";
+
+interface Feature {
+  text_uz: string;
+  text_ru: string;
+  text_en: string;
+  available: boolean;
+}
 
 const AddTemplatePage: React.FC = () => {
-  const { refreshToken } = useAuthStore();
-
-  useEffect(() => {
-    refreshToken();
-  }, []);
-
   const [features, setFeatures] = useState<Feature[]>([
     {
-      text: "",
+      text_uz: "",
+      text_ru: "",
+      text_en: "",
       available: true,
     },
   ]);
@@ -49,9 +50,9 @@ const AddTemplatePage: React.FC = () => {
     mutation.mutate(formData);
   };
 
-  const updateFeature = (index: number, text: string): void => {
+  const updateFeature = (index: number, field: string, value: string): void => {
     const newFeatures = features.map((feature, i) =>
-      i === index ? { ...feature, text } : feature
+      i === index ? { ...feature, [field]: value } : feature
     );
     setFeatures(newFeatures);
   };
@@ -74,8 +75,16 @@ const AddTemplatePage: React.FC = () => {
             <CardContent className="space-y-4 p-4">
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input name="title" id="title" placeholder="Title" />
+                  <Label htmlFor="title_uz">Title (UZ)</Label>
+                  <Input name="title_uz" id="title_uz" placeholder="Title" />
+                </div>
+                <div>
+                  <Label htmlFor="title_ru">Title (RU)</Label>
+                  <Input name="title_ru" id="title_ru" placeholder="Title" />
+                </div>
+                <div>
+                  <Label htmlFor="title_en">Title (EN)</Label>
+                  <Input name="title_en" id="title_en" placeholder="Title" />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -98,9 +107,25 @@ const AddTemplatePage: React.FC = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description_uz">Description (UZ)</Label>
                   <Textarea
-                    name="description"
+                    name="description_uz"
+                    className="resize-y min-h-24"
+                    placeholder="Description"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="description_ru">Description (RU)</Label>
+                  <Textarea
+                    name="description_ru"
+                    className="resize-y min-h-24"
+                    placeholder="Description"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="description_en">Description (EN)</Label>
+                  <Textarea
+                    name="description_en"
                     className="resize-y min-h-24"
                     placeholder="Description"
                   />
@@ -115,7 +140,15 @@ const AddTemplatePage: React.FC = () => {
                     variant="outline"
                     className="text-sm"
                     onClick={() =>
-                      setFeatures([...features, { text: "", available: true }])
+                      setFeatures([
+                        ...features,
+                        {
+                          text_uz: "",
+                          text_ru: "",
+                          text_en: "",
+                          available: true,
+                        },
+                      ])
                     }
                   >
                     <PlusCircle className="w-4 h-4 mr-2" />
@@ -126,11 +159,27 @@ const AddTemplatePage: React.FC = () => {
                 {features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 mb-2">
                     <Input
-                      placeholder="Feature"
-                      onChange={(e) => updateFeature(index, e.target.value)}
+                      placeholder="Feature (UZ)"
+                      value={feature.text_uz}
+                      onChange={(e) =>
+                        updateFeature(index, "text_uz", e.target.value)
+                      }
+                    />
+                    <Input
+                      placeholder="Feature (RU)"
+                      value={feature.text_ru}
+                      onChange={(e) =>
+                        updateFeature(index, "text_ru", e.target.value)
+                      }
+                    />
+                    <Input
+                      placeholder="Feature (EN)"
+                      value={feature.text_en}
+                      onChange={(e) =>
+                        updateFeature(index, "text_en", e.target.value)
+                      }
                     />
                     <Switch
-                      className="data-[state=checked]:bg-purple-600"
                       checked={feature.available}
                       onCheckedChange={(checked) => {
                         const newFeatures = features.map((f, i) =>

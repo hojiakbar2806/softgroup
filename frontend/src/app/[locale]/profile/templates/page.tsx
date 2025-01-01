@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -11,15 +10,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "@/i18n/routing";
-import { useAuthStore } from "@/store/authStore";
 
 export default function Profile() {
-  useEffect(() => {
-    refreshToken();
-  }, []);
-
   const router = useRouter();
-  const { refreshToken } = useAuthStore();
 
   return (
     <section className="flex-1 py-8">

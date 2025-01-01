@@ -4,14 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import Rating from "../common/rating";
-import {
-  CheckIcon,
-  DownloadIcon,
-  EyeIcon,
-  Heart,
-  Share2,
-  XIcon,
-} from "lucide-react";
+import { CheckIcon, DownloadIcon, EyeIcon, Heart, Share2 } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   AddRateService,
@@ -22,6 +15,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/utils/const";
+import { Link } from "@/i18n/routing";
+import { useLocale } from "next-intl";
 
 type TemplateDetailProps = {
   slug: string;
@@ -30,6 +25,7 @@ type TemplateDetailProps = {
 export default function TemplateDetails({ slug }: TemplateDetailProps) {
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const router = useRouter();
+  const locale = useLocale();
 
   const { data, isLoading, isError } = useQuery<Template>({
     queryKey: ["template", slug],
@@ -40,15 +36,6 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
   const mutation = useMutation({
     mutationFn: AddRateService,
   });
-
-  const handleDownload = () => {
-    router.push(`${BASE_URL}/template/download/${slug}`);
-  };
-
-  const handlePreview = () => {
-    const url = `${BASE_URL}/templates/${slug}/index.html`;
-    window.open(url, "_blank");
-  };
 
   if (isError) {
     return (
@@ -64,7 +51,10 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     return <TemplateDetailsSkeleton />;
   }
 
-  const imageList = data?.images?.length ? data.images : ["/images/imgre.webp"];
+  const imageList: { id: number; url: string }[] = data?.images || [];
+  const translated = data?.translations?.find(
+    (item) => item.language === locale
+  );
 
   return (
     <section className="container mx-auto px-4 py-6">
@@ -76,10 +66,10 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
             className="relative aspect-video rounded-2xl overflow-hidden"
           >
             <Image
-              src={"/images/imgre.webp"}
+              src={`${BASE_URL}/${imageList[selectedImage].url}`}
               fill
               priority
-              alt={data?.title || "Template preview"}
+              alt={translated?.title || "Template preview"}
               className="object-cover"
             />
           </motion.div>
@@ -97,7 +87,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                   className="relative w-24 aspect-video flex-shrink-0 cursor-pointer"
                 >
                   <Image
-                    src={"/images/imgre.webp"}
+                    src={`${BASE_URL}/${img.url}`}
                     fill
                     alt={`Preview ${index + 1}`}
                     className={`rounded-lg transition-all duration-300 object-cover
@@ -114,7 +104,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
         <div className="space-y-6">
           <div className="space-y-2">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              {data?.title}
+              {translated?.title}
             </h1>
           </div>
 
@@ -145,13 +135,13 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
             )}
           </div>
 
-          {data?.description && (
+          {translated?.description && (
             <div className="space-y-2">
               <h2 className="text-xl font-semibold text-gray-900">
                 Description
               </h2>
               <p className="text-gray-600 leading-relaxed">
-                {data.description}
+                {translated?.description}
               </p>
             </div>
           )}
@@ -162,24 +152,21 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                 Key Features
               </h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {data.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    {feature.available ? (
-                      <CheckIcon
-                        size={20}
-                        strokeWidth={3}
-                        className="text-purple-500"
-                      />
-                    ) : (
-                      <XIcon
-                        size={20}
-                        strokeWidth={3}
-                        className="text-red-500"
-                      />
-                    )}
-                    <span className="text-gray-600">{feature.text}</span>
-                  </li>
-                ))}
+                {data.features.map((feature, i) => {
+                  const text =
+                    feature.translations.find(
+                      (item) => item.language === locale
+                    )?.text || "";
+                  return (
+                    <li
+                      key={i}
+                      className="flex items-center gap-2 text-gray-600"
+                    >
+                      <CheckIcon size={20} />
+                      <span>{text}</span>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}
@@ -191,22 +178,25 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
                 bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
               aria-label="Download"
-              onClick={handleDownload}
+              onClick={() =>
+                router.push(`${BASE_URL}/template/download/${slug}`)
+              }
             >
               <DownloadIcon size={20} />
               Download Now
             </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
+            <Link href={`${slug}/preview`} target="_blank">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
                 bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
-              aria-label="Preview"
-              onClick={handlePreview}
-            >
-              <EyeIcon size={20} />
-              Preview
-            </motion.button>
+                aria-label="Preview"
+              >
+                <EyeIcon size={20} />
+                Preview
+              </motion.button>
+            </Link>
             <div className="flex gap-2">
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -231,8 +221,6 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     </section>
   );
 }
-
-// Loading skeleton component
 function TemplateDetailsSkeleton() {
   return (
     <div className="container mx-auto px-4 py-6">

@@ -84,5 +84,16 @@
       "message": "Message",
       "submit": "Submit"
     }
+  },
+  "TemplatePage": {
+    "Header": {
+      "title": "Advantages, convenience and low prices – in one place!",
+      "description": "Start shopping with the best quality products, fast delivery and competitive prices. Our offers are waiting for you!",
+      "button": "Add template",
+      "search": {
+        "placeholder": "Template search",
+        "button": "Search"
+      }
+    }
   }
 }

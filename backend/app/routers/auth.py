@@ -35,8 +35,10 @@ async def register(user: UserCreate, session: AsyncSession = Depends(get_db_sess
     await session.refresh(new_user)
 
     refresh_token = create_refresh_token(sub=new_user.username)
+    access_token = create_access_token(sub=new_user.username)
     response = JSONResponse(
-        content={"message": "User registered successfully"},
+        content={"message": "User registered successfully",
+                 "access_token": access_token},
         status_code=status.HTTP_201_CREATED
     )
     set_refresh_token_cookie(response, refresh_token)

@@ -46,7 +46,7 @@ const LanguageDropdown: React.FC = () => {
     setIsOpen(false);
   };
 
-  const currentLanguage = languages.find((l) => l.code === locale);
+  const currentLanguage = languages?.find((l) => l.code === locale);
 
   return (
     <div className="relative inline-block">
