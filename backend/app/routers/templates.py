@@ -2,7 +2,7 @@ import os
 import json
 import zipfile
 from sqlalchemy.future import select
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from fastapi import APIRouter, Depends, Form, HTTPException
@@ -200,3 +200,21 @@ async def read_template(
     if template is None:
         raise HTTPException(status_code=404, detail="Template not found")
     return template
+
+
+@router.get("/download/{slug}")
+async def download_template(
+    slug: str,
+    session: AsyncSession = Depends(get_db_session)
+):
+    query = select(Template).where(Template.slug == slug)
+    result = await session.execute(query)
+    template = result.scalar_one_or_none()
+
+    if template is None:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    zip_file_path = os.path.join(settings.TEMPLATES_DIR,slug, f"{slug}.zip")
+    template.downloads += 1
+
+    return FileResponse(zip_file_path)
