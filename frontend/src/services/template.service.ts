@@ -25,7 +25,7 @@ export const GetAllTemplateService = async (
 ): Promise<Template[]> => {
   let endpoint = "/templates";
   if (params) {
-    endpoint = `/templates/?${params}`;
+    endpoint = `/templates?${params}`;
   }
   const res = await defaultAxios.get(endpoint);
   return res.data.data;
