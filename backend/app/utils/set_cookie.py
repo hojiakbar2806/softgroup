@@ -12,5 +12,5 @@ def set_refresh_token_cookie(response: JSONResponse, refresh_token: str):
         expires=int(expires.timestamp()),
         httponly=True,
         secure=True,
-        samesite='None'
+        samesite="None",
     )

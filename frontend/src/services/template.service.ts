@@ -3,13 +3,9 @@ import { axiosWithAuth, defaultAxios } from "./api.service";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 
-export const SearchTemplateService = async (query: string) => {
-  return await defaultAxios.get(`/template/search/?query=${query}`);
-};
-
-export const AddTemplateService = async (data: FormData) => {
+export const CreateTemplateService = async (data: FormData) => {
   try {
-    const res = await axiosWithAuth.post("/template/create", data, {
+    const res = await axiosWithAuth.post("/templates", data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -24,15 +20,35 @@ export const AddTemplateService = async (data: FormData) => {
   }
 };
 
-export const GetAllTemplateService = async (): Promise<Template[]> => {
-  const res = await defaultAxios.get("/template/all");
-  return res.data;
+export const GetAllTemplateService = async (
+  params?: string
+): Promise<Template[]> => {
+  let endpoint = "/templates";
+  if (params) {
+    endpoint = `/templates/?${params}`;
+  }
+  const res = await defaultAxios.get(endpoint);
+  return res.data.data;
 };
 
 export const GetTemplateWithSlugService = async (
   slug: string
 ): Promise<Template> => {
-  const res = await defaultAxios.get(`/template/${slug}`);
+  const res = await defaultAxios.get(`/templates/${slug}`);
+  return res.data;
+};
+
+export const GetCategoriesService = async () => {
+  const res = await defaultAxios.get("/categories");
+  return res.data;
+};
+
+export const CreateCategoryService = async (data: FormData) => {
+  const res = await defaultAxios.post("/categories", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 

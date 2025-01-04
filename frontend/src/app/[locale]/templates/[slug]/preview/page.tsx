@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 
 const PreviewPage = () => {
   const pathname = usePathname();
-  const slug = pathname.split("/")[2];
+  const slug = pathname.split("/")[3];
 
   return (
     <>
       <iframe
         id="secure-iframe"
-        src={`${BASE_URL}/templates/${slug}/index.html`}
+        src={`${BASE_URL}/docs/templates/${slug}/index.html`}
         className="w-full h-screen"
         sandbox="allow-scripts"
       ></iframe>

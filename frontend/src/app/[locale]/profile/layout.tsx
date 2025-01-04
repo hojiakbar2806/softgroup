@@ -5,10 +5,8 @@ type RootLayoutProps = {
 };
 
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
-
-
   return (
-    <div className="w-full flex bg-blue-50">
+    <div className="w-full flex-1 flex bg-blue-50">
       <Sidebar />
       {children}
     </div>

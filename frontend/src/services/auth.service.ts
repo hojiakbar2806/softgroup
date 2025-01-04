@@ -41,7 +41,7 @@ export const RegisterService = async (data: IUserRegister) => {
 export const LogoutService = async () => {
   try {
     await axiosWithCredentials.post("auth/logout");
-    document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
+    document.cookie = "isLoggedIn=; Max-Age=0; path=/;";
     window.location.href = "/";
   } catch (error: unknown) {
     if (isAxiosError(error)) {

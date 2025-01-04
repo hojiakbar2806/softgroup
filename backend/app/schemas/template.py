@@ -11,6 +11,7 @@ class TemplateCreate(BaseModel):
     description_ru: str
     description_en: str
     current_price: float
+    category_slug: str
     original_price: Optional[float]
     template_file: UploadFile
     images: List[UploadFile]
@@ -21,6 +22,7 @@ class TemplateCreate(BaseModel):
         title_uz: str = Form(...),
         title_ru: str = Form(...),
         title_en: str = Form(...),
+        category_slug: str = Form(...),
         description_uz: str = Form(...),
         description_ru: str = Form(...),
         description_en: str = Form(...),
@@ -33,6 +35,7 @@ class TemplateCreate(BaseModel):
             title_uz=title_uz,
             title_ru=title_ru,
             title_en=title_en,
+            category_slug=category_slug,
             description_uz=description_uz,
             description_ru=description_ru,
             description_en=description_en,
@@ -83,3 +86,13 @@ class TemplateResponse(BaseModel):
     images: List[Image]
     translations: List[TemplateTranslation]
     features: List[Feature]
+
+
+class PaginatedTemplateResponse(BaseModel):
+    data: List[TemplateResponse]
+    current_page: int
+    per_page: int
+    total_pages: int
+    total_templates: int
+    has_next: bool
+    has_previous: bool

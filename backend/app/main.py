@@ -7,13 +7,13 @@ from app.database.session import async_engine as engine
 from fastapi.middleware.cors import CORSMiddleware
 
 
-from app.routers import auth, users, templates
+from app.routers import auth, categories, users, templates
 
 app = FastAPI(title="Template API", version="1.0.0")
 
-os.makedirs("templates", exist_ok=True)
+os.makedirs(settings.DOCS_DIR, exist_ok=True)
 
-app.mount("/templates", StaticFiles(directory="templates"), name="templates")
+app.mount(f"/{settings.DOCS_DIR}", StaticFiles(directory=settings.DOCS_DIR))
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,7 +34,8 @@ async def startup():
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/user", tags=["users"])
-app.include_router(templates.router, prefix="/template", tags=["templates"])
+app.include_router(templates.router, prefix="/templates", tags=["templates"])
+app.include_router(categories.router, prefix="/categories", tags=["categoris"])
 
 if __name__ == "__main__":
     import uvicorn

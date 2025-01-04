@@ -11,7 +11,7 @@ CORE = Path(__file__).resolve().parent
 class Settings(BaseSettings):
     DEBUG: bool = False
     APP_ENV: str = "development"
-    TEMPLATES_DIR: str = "templates"
+    DOCS_DIR: str = "docs"
 
     POSTGRES_DB: str = "postgres"
     POSTGRES_HOST: str = "localhost"

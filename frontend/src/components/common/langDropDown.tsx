@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 import { Locale, useRouter, usePathname } from "@/i18n/routing";
-import { motion, AnimatePresence } from "framer-motion";
 
 const languages = [
   { code: "uz", label: "O'zbek", icon: "/icons/uzbekistan.svg" },
@@ -14,32 +12,10 @@ const languages = [
 ];
 
 const LanguageDropdown: React.FC = () => {
-  const locale: string = useLocale();
+  const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const [buttonWidth, setButtonWidth] = useState(0);
-
-  useEffect(() => {
-    if (buttonRef.current) {
-      setButtonWidth(buttonRef.current.offsetWidth);
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const handleLanguageChange = (lang: string) => {
     router.replace({ pathname: pathname }, { locale: lang as Locale });
@@ -49,76 +25,53 @@ const LanguageDropdown: React.FC = () => {
   const currentLanguage = languages?.find((l) => l.code === locale);
 
   return (
-    <div className="relative inline-block">
+    <div className="relative">
       <button
-        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-3 py-2 rounded-lg
-          bg-white hover:bg-gray-50
-          border border-gray-200
-          transition-colors duration-200"
+        className="w-full flex p-2 items-center gap-1 transition  sm:px-4 border rounded"
       >
-        <div className="flex items-center gap-2">
-          <Image
-            src={currentLanguage?.icon || ""}
-            width={20}
-            height={20}
-            alt={currentLanguage?.label || ""}
-            className="rounded"
-          />
-          <span className="text-gray-700 text-lg px-2">
-            {currentLanguage?.label}
-          </span>
-        </div>
-        <ChevronDown
-          className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+        <Image
+          src={currentLanguage?.icon || ""}
+          width={20}
+          height={20}
+          alt={currentLanguage?.label || ""}
+          className="size-4 sm:size-5 lg:size-6 2xl:size-8"
         />
+        <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
+          {currentLanguage?.label}
+        </span>
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{ duration: 0.15 }}
-            className="absolute bottom-full right-0 mb-2
-          bg-white rounded-lg border border-gray-200 shadow-lg"
-            style={{
-              width: buttonWidth || "auto",
-              zIndex: 50,
-            }}
-            onClick={(e) => e.stopPropagation()}
+      <div
+        data-state={isOpen ? "open" : "close"}
+        className="w-full absolute right-0 overflow-hidden bottom-8 mb-2 -translate-y-4 opacity-0 bg-white rounded-lg border border-gray-200 shadow-lg transition
+        data-[state=open]:translate-y-0 
+        data-[state=open]:opacity-100 
+        data-[state=close]:translate-y-1 
+        data-[state=close]:opacity-0
+        "
+        onClick={(e) => e.stopPropagation()}
+      >
+        {languages.map((l) => (
+          <button
+            key={l.code}
+            onClick={() => handleLanguageChange(l.code)}
+            className="w-full flex p-2 items-center gap-1
+            hover:bg-gray-100 transition  sm:px-4"
           >
-            <div className="py-1">
-              {languages.map((l) => (
-                <motion.div
-                  key={l.code}
-                  whileTap={{ backgroundColor: "#f3f4f6" }}
-                  onClick={() => handleLanguageChange(l.code)}
-                  className={`flex items-center gap-3 px-4 py-2 cursor-pointer
-                  ${
-                    l.code === locale
-                      ? "bg-gray-50 text-blue-600"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <Image
-                    src={l.icon}
-                    width={20}
-                    height={20}
-                    alt={l.label}
-                    className="rounded"
-                  />
-                  <span className="text-lg font-medium">{l.label}</span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Image
+              src={l.icon}
+              width={20}
+              height={20}
+              alt={l.label}
+              className="size-4 sm:size-5 lg:size-6 2xl:size-8"
+            />
+            <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
+              {l.label}
+            </span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

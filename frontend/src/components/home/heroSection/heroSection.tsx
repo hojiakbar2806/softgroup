@@ -8,12 +8,14 @@ const HeroSection: FC = () => {
   const t = useTranslations("TemplatePage.Header");
   return (
     <section className="text-center flex flex-col items-center bg-purpleGradient py-14 gap-10">
-      <div className="flex flex-col gap-6">
-        <h1 className="text-3xl lg:text-4xl font-bold">{t("title")}</h1>
-        <p className="text-gray-600 max-w-6xl">{t("description")}</p>
-        <SearchComp />
+      <div className="container">
+        <div className="flex flex-col gap-6">
+          <h1 className="text-3xl lg:text-4xl font-bold">{t("title")}</h1>
+          <p className="text-gray-600 max-w-6xl">{t("description")}</p>
+          <SearchComp />
+        </div>
+        <CategoryComp />
       </div>
-      <CategoryComp />
     </section>
   );
 };

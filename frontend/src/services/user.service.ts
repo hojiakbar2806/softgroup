@@ -8,3 +8,8 @@ export const MyProfileService = async () => {
 export const UpdateProfileService = async (data: IUserUpdate) => {
   return await axiosWithAuth.patch("/user", data);
 };
+
+export const MyTemplatesService = async () => {
+  const res = await axiosWithAuth.get("/templates");
+  return res.data.data;
+};

@@ -22,11 +22,11 @@ const axiosWithCredentials = axios.create({ withCredentials: true });
 
 axiosWithCredentials.interceptors.response.use(
   (response) => {
-    document.cookie = "isLoggedIn=true; path=/; SameSite=Lax";
+    document.cookie = "isLoggedIn=eyJhbGciOiJIU; path=/; SameSite=Lax";
     return response;
   },
   async (error) => {
-    document.cookie = "isLoggedIn=false; path=/; SameSite=Lax";
+    document.cookie = "isLoggedIn=; Max-Age=0; path=/;";
     window.location.reload();
     return Promise.reject(error);
   }

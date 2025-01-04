@@ -12,3 +12,13 @@ export interface ISearchParams {
   color?: string;
   best_seller?: string;
 }
+
+export interface ICategory {
+  id: number;
+  image_url: string;
+  slug: string;
+  translations: {
+    title: string;
+    language: string;
+  }[];
+}

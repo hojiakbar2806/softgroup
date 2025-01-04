@@ -17,6 +17,13 @@ class Template(Base):
 
     owner_id = Column(Integer, ForeignKey("users.id"))
 
+    category_id = Column(Integer, ForeignKey("categories.id"))
+
+    categories = relationship(
+        "Category",
+        back_populates="templates"
+    )
+
     translations = relationship(
         "TemplateTranslation",
         back_populates="template",
@@ -56,6 +63,37 @@ class TemplateTranslation(Base):
         "Template",
         back_populates="translations"
     )
+
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    image_url = Column(String(255), nullable=False)
+    slug = Column(String(255), unique=True, nullable=False, index=True)
+    templates = relationship(
+        "Template",
+        back_populates="categories",
+        cascade="all, delete-orphan"
+    )
+
+    translations = relationship(
+        "CategoryTranslation",
+        back_populates="category",
+        cascade="all, delete-orphan"
+    )
+
+
+class CategoryTranslation(Base):
+    __tablename__ = "category_translations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    language = Column(String(2), nullable=False)
+    title = Column(String(255), nullable=False)
+
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
+
+    category = relationship("Category", back_populates="translations")
 
 
 class Feature(Base):

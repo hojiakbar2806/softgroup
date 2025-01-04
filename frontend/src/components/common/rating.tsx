@@ -53,7 +53,7 @@ const Rating: React.FC<RatingProps> = ({
               key={index}
               strokeWidth={1.4}
               className={cn(
-                "w-4 h-4 sm:w-4 sm:h-5 md:w-6 md:h-6 xl:w-7 xl:h-7 cursor-pointer text-gray-400",
+                "w-3 h-4 sm:w-4 sm:h-5 md:w-6 md:h-6 xl:w-7 xl:h-7 cursor-pointer text-gray-400",
                 {
                   "text-yellow-400 fill-yellow-400":
                     ratingValue <= (hoverValue || value),
