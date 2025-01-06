@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     BOT_TOKEN: str = "7958951230:AAGCU4oWRDXdyVT_LT8eB-m-u7RViiGtGPg"
     CHAT_ID: int = -1002489508446
-    WEBHOOK_URL: str = "https://c864-195-158-9-110.ngrok-free.app"
+    WEBHOOK_URL: str = "http://api.softgroup.uz"
 
     POSTGRES_DB: str = "postgres"
     POSTGRES_HOST: str = "localhost"
