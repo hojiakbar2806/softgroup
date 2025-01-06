@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.database.base import Base
@@ -25,6 +25,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    if request.url.path.startswith("/docs"):
+        print(f"Static file requested: {request.url.path}")
+    response = await call_next(request)
+    return response
 
 
 @app.on_event("startup")

@@ -49,7 +49,7 @@ const SearchComp = () => {
               name="search"
               autoComplete="off"
               placeholder={t("search.placeholder")}
-              className="w-full pl-1 placeholder:text-purple-500 text-purple-500  outline-none bg-transparent"
+              className="w-full pl-1 outline-none bg-transparent"
               aria-label="Search"
             />
           </label>
@@ -72,7 +72,7 @@ const SearchComp = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+              className="fixed inset-0 bg-white backdrop-blur-sm"
               onClick={() => setIsModalOpen(false)}
             />
 
@@ -80,7 +80,7 @@ const SearchComp = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative m-0 md:m-4"
+              className="relative m-0"
             >
               <div className="sticky  top-0 z-10 bg-white border-b px-4 py-3 sm:px-6 flex items-center justify-between">
                 <h2 className="text-base sm:text-lg font-medium text-gray-900">
