@@ -1,6 +1,6 @@
 import { IUserLogin, IUserRegister } from "@/types/user";
 import { toast } from "sonner";
-import { axiosWithCredentials, defaultAxios } from "./api.service";
+import { axiosWithCredentials } from "./api.service";
 import { isAxiosError } from "axios";
 import { useAuthStore } from "@/store/authStore";
 
