@@ -1,3 +1,4 @@
+import os
 from fastapi.staticfiles import StaticFiles
 from app import bot
 from fastapi import FastAPI
@@ -7,6 +8,7 @@ from app.routers import auth, categories, users, templates
 
 app = FastAPI(title="Template API", version="1.0.0")
 
+os.makedirs("docs/images", exist_ok=True)
 app.mount("/docs/images", StaticFiles(directory="docs/images"), name="images")
 
 app.add_middleware(
