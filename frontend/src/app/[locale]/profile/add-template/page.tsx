@@ -29,34 +29,22 @@ import {
   CreateCategoryService,
 } from "@/services/template.service";
 import { toast } from "sonner";
-import Form from "next/form";
 import { ICategory } from "@/types/mixin";
 import { useAuthStore } from "@/store/authStore";
 import TitleCard from "@/components/profile/titleCard";
-
-interface Feature {
-  text_uz: string;
-  text_ru: string;
-  text_en: string;
-  available: boolean;
-}
+import Form from "next/form";
 
 const AddTemplatePage: React.FC = () => {
   const { refreshToken } = useAuthStore();
   useEffect(() => {
     refreshToken();
-  }, []); // eslint-disable-line
-  const [features, setFeatures] = useState<Feature[]>([
-    { text_uz: "", text_ru: "", text_en: "", available: true },
-  ]);
+  }, []);
+
+  const [features, setFeatures] = useState([{ text: "", available: true }]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [isNewCategoryDialogOpen, setIsNewCategoryDialogOpen] = useState(false);
   const [newCategoryImage, setNewCategoryImage] = useState<File | null>(null);
-  const [newCategoryTitles, setNewCategoryTitles] = useState({
-    uz: "",
-    ru: "",
-    en: "",
-  });
+  const [newCategoryTitle, setNewCategoryTitle] = useState("");
 
   const { data: categories } = useQuery<ICategory[]>({
     queryKey: ["categories"],
@@ -103,69 +91,35 @@ const AddTemplatePage: React.FC = () => {
       return;
     }
 
-    if (
-      !newCategoryTitles.uz ||
-      !newCategoryTitles.ru ||
-      !newCategoryTitles.en
-    ) {
-      toast.warning("Please fill in all category titles.");
+    if (!newCategoryTitle) {
+      toast.warning("Please fill in the category title.");
       return;
     }
 
     const formData = new FormData();
     formData.append("image", newCategoryImage);
-    formData.append(
-      "translations",
-      JSON.stringify([
-        { language: "uz", title: newCategoryTitles.uz },
-        { language: "ru", title: newCategoryTitles.ru },
-        { language: "en", title: newCategoryTitles.en },
-      ])
-    );
-
+    formData.append("title", newCategoryTitle);
     categoryMutation.mutate(formData);
   };
 
-  const updateFeature = (index: number, field: string, value: string): void => {
-    const newFeatures = features.map((feature, i) =>
-      i === index ? { ...feature, [field]: value } : feature
+  const updateFeature = (index: number, value: string): void => {
+    setFeatures(
+      features.map((feature, i) =>
+        i === index ? { ...feature, text: value } : feature
+      )
     );
-    setFeatures(newFeatures);
   };
 
   return (
     <section className="flex-1">
       <div className="container max-w-4xl mx-auto">
         <TitleCard title="Add Template" href="/profile" linkName="Back" />
-
         <Form action={handleSubmit}>
           <Card className="shadow-md">
             <CardContent className="space-y-6 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="title_uz">Title (UZ)</Label>
-                  <Input
-                    name="title_uz"
-                    id="title_uz"
-                    placeholder="Title in Uzbek"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="title_ru">Title (RU)</Label>
-                  <Input
-                    name="title_ru"
-                    id="title_ru"
-                    placeholder="Title in Russian"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="title_en">Title (EN)</Label>
-                  <Input
-                    name="title_en"
-                    id="title_en"
-                    placeholder="Title in English"
-                  />
-                </div>
+              <div className="w-full gap-4">
+                <Label htmlFor="title">Title</Label>
+                <Input name="title" id="title" placeholder="Title" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -187,34 +141,16 @@ const AddTemplatePage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="description_uz">Description (UZ)</Label>
-                  <Textarea
-                    name="description_uz"
-                    className="resize-y min-h-24"
-                    placeholder="Description in Uzbek"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description_ru">Description (RU)</Label>
-                  <Textarea
-                    name="description_ru"
-                    className="resize-y min-h-24"
-                    placeholder="Description in Russian"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description_en">Description (EN)</Label>
-                  <Textarea
-                    name="description_en"
-                    className="resize-y min-h-24"
-                    placeholder="Description in English"
-                  />
-                </div>
+              <div className="w-full gap-4">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  name="description"
+                  className="resize-y min-h-24"
+                  placeholder="Description"
+                />
               </div>
 
-              <div className="flex flex-row gap-4 items-end">
+              <div className="flex gap-4 items-end">
                 <div className="w-full">
                   <Label htmlFor="category">Category</Label>
                   <Select
@@ -242,7 +178,7 @@ const AddTemplatePage: React.FC = () => {
                 >
                   <DialogTrigger asChild>
                     <Button variant="outline" className="shrink-0">
-                      <Plus className="" />
+                      <Plus />
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
@@ -261,42 +197,11 @@ const AddTemplatePage: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <Label>Title (UZ)</Label>
+                        <Label>Title</Label>
                         <Input
-                          value={newCategoryTitles.uz}
-                          onChange={(e) =>
-                            setNewCategoryTitles((prev) => ({
-                              ...prev,
-                              uz: e.target.value,
-                            }))
-                          }
-                          placeholder="Category title in Uzbek"
-                        />
-                      </div>
-                      <div>
-                        <Label>Title (RU)</Label>
-                        <Input
-                          value={newCategoryTitles.ru}
-                          onChange={(e) =>
-                            setNewCategoryTitles((prev) => ({
-                              ...prev,
-                              ru: e.target.value,
-                            }))
-                          }
-                          placeholder="Category title in Russian"
-                        />
-                      </div>
-                      <div>
-                        <Label>Title (EN)</Label>
-                        <Input
-                          value={newCategoryTitles.en}
-                          onChange={(e) =>
-                            setNewCategoryTitles((prev) => ({
-                              ...prev,
-                              en: e.target.value,
-                            }))
-                          }
-                          placeholder="Category title in English"
+                          value={newCategoryTitle}
+                          onChange={(e) => setNewCategoryTitle(e.target.value)}
+                          placeholder="Category title"
                         />
                       </div>
                       <Button
@@ -321,19 +226,10 @@ const AddTemplatePage: React.FC = () => {
                     variant="outline"
                     className="text-sm"
                     onClick={() =>
-                      setFeatures([
-                        ...features,
-                        {
-                          text_uz: "",
-                          text_ru: "",
-                          text_en: "",
-                          available: true,
-                        },
-                      ])
+                      setFeatures([...features, { text: "", available: true }])
                     }
                   >
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    Add Feature
+                    <PlusCircle className="w-4 h-4 mr-2" /> Add Feature
                   </Button>
                 </div>
 
@@ -341,37 +237,22 @@ const AddTemplatePage: React.FC = () => {
                   {features.map((feature, index) => (
                     <div
                       key={index}
-                      className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center"
+                      className="grid grid-cols-[1fr_auto] gap-2 items-center"
                     >
                       <Input
-                        placeholder="Feature (UZ)"
-                        value={feature.text_uz}
-                        onChange={(e) =>
-                          updateFeature(index, "text_uz", e.target.value)
-                        }
-                      />
-                      <Input
-                        placeholder="Feature (RU)"
-                        value={feature.text_ru}
-                        onChange={(e) =>
-                          updateFeature(index, "text_ru", e.target.value)
-                        }
-                      />
-                      <Input
-                        placeholder="Feature (EN)"
-                        value={feature.text_en}
-                        onChange={(e) =>
-                          updateFeature(index, "text_en", e.target.value)
-                        }
+                        placeholder="Feature"
+                        value={feature.text}
+                        onChange={(e) => updateFeature(index, e.target.value)}
                       />
                       <div className="flex items-center gap-2">
                         <Switch
                           checked={feature.available}
                           onCheckedChange={(checked) => {
-                            const newFeatures = features.map((f, i) =>
-                              i === index ? { ...f, available: checked } : f
+                            setFeatures(
+                              features.map((f, i) =>
+                                i === index ? { ...f, available: checked } : f
+                              )
                             );
-                            setFeatures(newFeatures);
                           }}
                         />
                         {index > 0 && (
@@ -379,12 +260,11 @@ const AddTemplatePage: React.FC = () => {
                             type="button"
                             variant="ghost"
                             className="text-red-500"
-                            onClick={() => {
-                              const newFeatures = features.filter(
-                                (_, i) => i !== index
-                              );
-                              setFeatures(newFeatures);
-                            }}
+                            onClick={() =>
+                              setFeatures(
+                                features.filter((_, i) => i !== index)
+                              )
+                            }
                           >
                             <X className="w-4 h-4" />
                           </Button>
@@ -401,22 +281,19 @@ const AddTemplatePage: React.FC = () => {
                   <Input type="file" name="template_file" accept=".zip" />
                 </div>
                 <div>
-                  <Label>Images</Label>
-                  <Input type="file" name="images" multiple accept="image/*" />
+                  <Label>Image Preview</Label>
+                  <Input type="file" name="images" accept="image/*" multiple />
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          <div className="flex justify-end gap-3 mt-4">
-            <Button
-              type="submit"
-              className="bg-purple-600 hover:bg-purple-700"
-              disabled={templateMutation.isPending}
-            >
-              {templateMutation.isPending ? "Saving..." : "Save Template"}
-            </Button>
-          </div>
+          <Button
+            className="w-full mt-8"
+            disabled={templateMutation.isPending}
+            type="submit"
+          >
+            {templateMutation.isPending ? "Submitting..." : "Submit"}
+          </Button>
         </Form>
       </div>
     </section>

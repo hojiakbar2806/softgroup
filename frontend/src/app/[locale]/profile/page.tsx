@@ -14,7 +14,7 @@ import OpenSidebar from "@/components/profile/sidebar/openSidebar";
 export default function Profile() {
   const router = useRouter();
   const { data, isLoading } = useQuery<Template[]>({
-    queryKey: ["templates"],
+    queryKey: ["my-templates"],
     queryFn: MyTemplatesService,
   });
 
@@ -36,7 +36,11 @@ export default function Profile() {
                 <TemplateCardSkeleton key={index} />
               ))
             : data?.map((template) => (
-                <TemplateCard key={template.id} product={template} />
+                <TemplateCard
+                  key={template.id}
+                  product={template}
+                  is_verified={template.is_verified}
+                />
               ))}
         </TemplateCardWrapper>
       </div>

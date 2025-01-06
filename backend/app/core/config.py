@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     DOCS_DIR: str = "docs"
 
+    BOT_TOKEN: str = "7958951230:AAGCU4oWRDXdyVT_LT8eB-m-u7RViiGtGPg"
+    CHAT_ID: int = -1002489508446
+    WEBHOOK_URL: str = "https://c864-195-158-9-110.ngrok-free.app"
+
     POSTGRES_DB: str = "postgres"
     POSTGRES_HOST: str = "localhost"
     POSTGRES_PORT: int = 5432
@@ -29,7 +33,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "RS256"
     PRIVATE_KEY_PATH: Path = CORE / "certs" / "jwt-private.pem"
     PUBLIC_KEY_PATH: Path = CORE / "certs" / "jwt-public.pem"
-    ACCESS_TOKEN_EXPIRES_MINUTES: float = 10
+    ACCESS_TOKEN_EXPIRES_MINUTES: float = 120
     REFRESH_TOKEN_EXPIRES_MINUTES: int = (60*24)
     ACTIVATION_TOKEN_EXPIRES_MINUTS: int = 2
 

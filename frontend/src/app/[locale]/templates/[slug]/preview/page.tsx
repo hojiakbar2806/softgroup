@@ -35,7 +35,7 @@ const PreviewPage = () => {
 
       <iframe
         id="secure-iframe"
-        src={`${BASE_URL}/docs/templates/${slug}/index.html`}
+        src={`${BASE_URL}/templates/${slug}/index.html`}
         className="w-full h-screen"
         sandbox="allow-scripts"
       ></iframe>

@@ -1,7 +1,7 @@
 "use client";
+
 import { FC } from "react";
 import SearchComp from "./searchComp";
-import CategoryComp from "./categoryComp";
 import { useTranslations } from "use-intl";
 
 const HeroSection: FC = () => {
@@ -14,7 +14,22 @@ const HeroSection: FC = () => {
           <p className="text-gray-600 max-w-6xl">{t("description")}</p>
           <SearchComp />
         </div>
-        <CategoryComp />
+        <div className="mt-5 flex gap-4 justify-center">
+          <button
+            className="bg-white text-white text-sm px-4 py-1 md:text-lg font-semibold rounded-full
+        hover:bg-gray-100 transition-all duration-300
+        active:bg-gray-200 bg-gradient-to-t from-purple-500 via-purple-600 to-purple-700"
+          >
+            Free
+          </button>
+          <button
+            className="bg-white text-purple-600 font-semibold text-sm px-4 py-2  md:text-lg rounded-full
+        hover:bg-gray-100 transition-all duration-300
+        active:bg-gray-200"
+          >
+            Premium
+          </button>
+        </div>
       </div>
     </section>
   );

@@ -4,12 +4,8 @@ from typing import List, Optional
 
 
 class TemplateCreate(BaseModel):
-    title_uz: str
-    title_ru: str
-    title_en: str
-    description_uz: str
-    description_ru: str
-    description_en: str
+    title: str
+    description: str
     current_price: float
     category_slug: str
     original_price: Optional[float]
@@ -19,26 +15,18 @@ class TemplateCreate(BaseModel):
     @classmethod
     def as_form(
         cls,
-        title_uz: str = Form(...),
-        title_ru: str = Form(...),
-        title_en: str = Form(...),
+        title: str = Form(...),
         category_slug: str = Form(...),
-        description_uz: str = Form(...),
-        description_ru: str = Form(...),
-        description_en: str = Form(...),
+        description: str = Form(...),
         current_price: float = Form(...),
         original_price: Optional[float] = Form(None),
         template_file: UploadFile = File(...),
         images: List[UploadFile] = File(...),
     ):
         return cls(
-            title_uz=title_uz,
-            title_ru=title_ru,
-            title_en=title_en,
+            title=title,
             category_slug=category_slug,
-            description_uz=description_uz,
-            description_ru=description_ru,
-            description_en=description_en,
+            description=description,
             current_price=current_price,
             original_price=original_price,
             template_file=template_file,

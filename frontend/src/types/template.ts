@@ -17,6 +17,7 @@ export interface Template {
   likes: number;
   views: number;
   ratings: number[];
+  is_verified?: boolean;
   images: {
     id: number;
     url: string;

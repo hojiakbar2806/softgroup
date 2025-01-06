@@ -9,7 +9,10 @@ import { Template } from "@/types/template";
 import { useLocale } from "next-intl";
 import { BASE_URL } from "@/utils/const";
 
-const TemplateCard: FC<{ product: Template }> = ({ product }) => {
+const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
+  product,
+  is_verified,
+}) => {
   const router = useRouter();
   const locale = useLocale();
 
@@ -19,8 +22,11 @@ const TemplateCard: FC<{ product: Template }> = ({ product }) => {
 
   return (
     <div
+      data-verified={is_verified}
       className="group flex flex-col cursor-pointer relative w-full bg-white shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden
-      rounded-lg md:rounded-xl lg:rounded-2xl 2xl:rounded-3xl"
+      rounded-lg md:rounded-xl lg:rounded-2xl 2xl:rounded-3xl
+      data-[verified=false]:brightness-75
+      data-[verified=false]:pointer-events-none"
       onClick={() => router.push(`/templates/${product?.slug}`)}
     >
       <div className="absolute top-2 right-2 z-10">
@@ -68,6 +74,9 @@ const TemplateCard: FC<{ product: Template }> = ({ product }) => {
             </span>
           </div>
         </div>
+        <p className="text-xs sm:text-sm line-clamp-2">
+          {translated?.description}
+        </p>
         <Link
           href={`${locale}/templates/${product?.slug}/preview`}
           target="_blank"

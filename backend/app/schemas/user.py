@@ -1,11 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 
 
 class UserBase(BaseModel):
     full_name: str
     username: str
-    email: str
+    email: EmailStr
     phone_number: str
 
 

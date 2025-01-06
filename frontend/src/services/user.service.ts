@@ -10,6 +10,7 @@ export const UpdateProfileService = async (data: IUserUpdate) => {
 };
 
 export const MyTemplatesService = async () => {
-  const res = await axiosWithAuth.get("/templates");
-  return res.data.data;
+  const res = await axiosWithAuth.get("/user/my-templates");
+  return res.data;
 };
+

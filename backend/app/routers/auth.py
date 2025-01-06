@@ -3,7 +3,6 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Cookie, Depends, HTTPException, status
 
-from app.core.dependencies import current_auth_user
 from app.core.security.jwt import create_access_token, create_refresh_token
 from app.core.security.utils import verify_user_token
 from app.database.session import get_db_session
@@ -11,16 +10,31 @@ from app.utils.set_cookie import set_refresh_token_cookie
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin
 
-router = APIRouter()
+router = APIRouter(prefix="/auth")
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreate, session: AsyncSession = Depends(get_db_session)):
+    query = select(User).where(User.username == user.username)
+    db_user = (await session.execute(query)).scalar_one_or_none()
+
+    if db_user:
+        raise HTTPException(
+            status_code=400, detail="Username already registered"
+        )
+
     query = select(User).where(User.email == user.email)
     db_user = (await session.execute(query)).scalar_one_or_none()
 
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
+
+    query = select(User).where(User.phone_number == user.phone_number)
+    db_user = (await session.execute(query)).scalar_one_or_none()
+
+    if db_user:
+        raise HTTPException(
+            status_code=400, detail="Phone number already registered")
 
     new_user = User(
         full_name=user.full_name,
@@ -36,6 +50,7 @@ async def register(user: UserCreate, session: AsyncSession = Depends(get_db_sess
 
     refresh_token = create_refresh_token(sub=new_user.username)
     access_token = create_access_token(sub=new_user.username)
+
     response = JSONResponse(
         content={"message": "User registered successfully",
                  "access_token": access_token},

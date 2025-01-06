@@ -14,7 +14,7 @@ import slugify
 from app.schemas.category import CategoryResponse, CategoryUpdate
 
 
-router = APIRouter()
+router = APIRouter(prefix="/categories")
 
 
 @router.post("")

@@ -16,15 +16,17 @@ from app.database.session import get_db_session
 from app.schemas.template import TemplateCreate, PaginatedTemplateResponse
 from app.core.dependencies import current_auth_user
 from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
+from app.utils.send_file_to_telegram import send_file_to_telegram
+from app.utils.translator import translate_text
 
-router = APIRouter()
+router = APIRouter(prefix="/templates")
 
 
 @router.post("")
 async def create_template(
     template: TemplateCreate = Depends(TemplateCreate.as_form),
-    features: str = Form(
-        ..., description='[{"text_uz": "text", "text_ru": "text", "text_en": "text", "available": true}]'),
+    features: str = Form(...,
+                         description='[{"text": "text", "available": true}]'),
     session: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(current_auth_user),
 ):
@@ -42,175 +44,170 @@ async def create_template(
             detail="Template file is required"
         )
 
+    query = select(Category).where(Category.slug == template.category_slug)
+    result = await session.execute(query)
+    category = result.scalar_one_or_none()
+
+    if not category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Category not found"
+        )
+
+    slug = await unique_slug(template.title, session)
+
+    current_template = os.path.join(settings.DOCS_DIR, "templates", slug)
+    images_dir = os.path.join(settings.DOCS_DIR, "images/templates", slug)
+
+    os.makedirs(current_template, exist_ok=True)
+    os.makedirs(images_dir, exist_ok=True)
+
+    zip_file_path = os.path.join(current_template, f"{slug}.zip")
     try:
-        query = select(Category).where(Category.slug == template.category_slug)
-        result = await session.execute(query)
-        category = result.scalar_one_or_none()
-        if not category:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Category not found"
-            )
-
-        slug = await unique_slug(template.title_en, session)
-
-        current_template = os.path.join(settings.DOCS_DIR, "templates", slug)
-        images_dir = os.path.join(settings.DOCS_DIR, "images")
-
-        try:
-            os.makedirs(current_template, exist_ok=True)
-            os.makedirs(images_dir, exist_ok=True)
-        except OSError as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to create template directories"
-            )
-
-        zip_file_path = os.path.join(current_template, f"{slug}.zip")
-        try:
-            with open(zip_file_path, "wb") as buffer:
-                buffer.write(await template.template_file.read())
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to save template file"
-            )
-
-        try:
-            with zipfile.ZipFile(template.template_file.file, "r") as zip_ref:
-                zip_ref.extractall(current_template)
-                filename = zip_ref.namelist()[0]
-        except zipfile.BadZipFile:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid zip file format"
-            )
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to extract template files"
-            )
-
-        current_zipfile_path = os.path.join(current_template, filename)
-        if not os.path.exists(current_zipfile_path):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid zip file structure"
-            )
-
-        try:
-            for f in os.listdir(current_zipfile_path):
-                os.rename(
-                    os.path.join(current_zipfile_path, f),
-                    os.path.join(current_template, f)
-                )
-            os.rmdir(current_zipfile_path)
-        except OSError as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to process template files"
-            )
-
-        try:
-            db_template = Template(
-                slug=slug,
-                current_price=template.current_price,
-                original_price=template.original_price,
-                owner_id=current_user.id,
-                category_id=category.id
-            )
-            session.add(db_template)
-            await session.flush()
-
-            translations = [
-                TemplateTranslation(
-                    language="uz",
-                    title=template.title_uz,
-                    description=template.description_uz,
-                    template_id=db_template.id
-                ),
-                TemplateTranslation(
-                    language="ru",
-                    title=template.title_ru,
-                    description=template.description_ru,
-                    template_id=db_template.id
-                ),
-                TemplateTranslation(
-                    language="en",
-                    title=template.title_en,
-                    description=template.description_en,
-                    template_id=db_template.id
-                )
-            ]
-            session.add_all(translations)
-
-            for feature in features:
-                db_feature = Feature(
-                    available=feature['available'],
-                    template_id=db_template.id
-                )
-                session.add(db_feature)
-                await session.flush()
-
-                feature_translations = [
-                    FeatureTranslation(
-                        language="uz",
-                        text=feature['text_uz'],
-                        feature_id=db_feature.id
-                    ),
-                    FeatureTranslation(
-                        language="ru",
-                        text=feature['text_ru'],
-                        feature_id=db_feature.id
-                    ),
-                    FeatureTranslation(
-                        language="en",
-                        text=feature['text_en'],
-                        feature_id=db_feature.id
-                    )
-                ]
-                session.add_all(feature_translations)
-
-            for index, image in enumerate(template.images):
-                try:
-                    file_extension = os.path.splitext(image.filename)[1]
-                    image_filename = f"{slug}_{index}{file_extension}"
-                    file_path = os.path.join(images_dir, image_filename)
-
-                    with open(file_path, "wb") as buffer:
-                        buffer.write(await image.read())
-
-                    db_image = Image(
-                        url=os.path.relpath(file_path),
-                        template_id=db_template.id
-                    )
-                    session.add(db_image)
-                except Exception as e:
-                    raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail=f"Failed to process image {index}"
-                    )
-
-            await session.commit()
-            return JSONResponse(
-                status_code=status.HTTP_201_CREATED,
-                content={"message": "Template created successfully"}
-            )
-
-        except Exception as e:
-            await session.rollback()
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to save template data"
-            )
-
-    except HTTPException:
-        raise
+        with open(zip_file_path, "wb") as buffer:
+            buffer.write(await template.template_file.read())
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred"
+            detail="Failed to save template file"
         )
+
+    try:
+        with zipfile.ZipFile(template.template_file.file, "r") as zip_ref:
+            zip_ref.extractall(current_template)
+            filename = zip_ref.namelist()[0]
+    except zipfile.BadZipFile:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid zip file format"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to extract template files"
+        )
+
+    current_zipfile_path = os.path.join(current_template, filename)
+    if not os.path.exists(current_zipfile_path):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid zip file structure"
+        )
+
+    try:
+        for f in os.listdir(current_zipfile_path):
+            os.rename(
+                os.path.join(current_zipfile_path, f),
+                os.path.join(current_template, f)
+            )
+        os.rmdir(current_zipfile_path)
+    except OSError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to process template files"
+        )
+
+    db_template = Template(
+        slug=slug,
+        current_price=template.current_price,
+        original_price=template.original_price,
+        owner_id=current_user.id,
+        category_id=category.id
+    )
+    session.add(db_template)
+    await session.flush()
+
+    translate_texts = await translate_text(template.title)
+    title_uz = translate_texts[0]
+    title_ru = translate_texts[1]
+    title_en = translate_texts[2]
+
+    translate_texts = await translate_text(template.description)
+    description_uz = translate_texts[0]
+    description_ru = translate_texts[1]
+    description_en = translate_texts[2]
+
+    translations = [
+        TemplateTranslation(
+            language="uz",
+            title=title_uz,
+            description=description_uz,
+            template_id=db_template.id
+        ),
+        TemplateTranslation(
+            language="ru",
+            title=title_ru,
+            description=description_ru,
+            template_id=db_template.id
+        ),
+        TemplateTranslation(
+            language="en",
+            title=title_en,
+            description=description_en,
+            template_id=db_template.id
+        )
+    ]
+    session.add_all(translations)
+
+    for feature in features:
+        db_feature = Feature(
+            available=feature['available'],
+            template_id=db_template.id
+        )
+        session.add(db_feature)
+        await session.flush()
+        print(feature['text'])
+        translate_texts = await translate_text(feature['text'])
+        print(translate_texts)
+        text_uz = translate_texts[0]
+        text_ru = translate_texts[1]
+        text_en = translate_texts[2]
+
+        feature_translations = [
+            FeatureTranslation(
+                language="uz",
+                text=text_uz,
+                feature_id=db_feature.id
+            ),
+            FeatureTranslation(
+                language="ru",
+                text=text_ru,
+                feature_id=db_feature.id
+            ),
+            FeatureTranslation(
+                language="en",
+                text=text_en,
+                feature_id=db_feature.id
+            )
+        ]
+        session.add_all(feature_translations)
+
+    for index, image in enumerate(template.images):
+        try:
+            file_extension = os.path.splitext(image.filename)[1]
+            image_filename = f"{slug}_{index}{file_extension}"
+            file_path = os.path.join(images_dir, image_filename)
+
+            with open(file_path, "wb") as buffer:
+                buffer.write(await image.read())
+
+            db_image = Image(
+                url=os.path.relpath(file_path),
+                template_id=db_template.id
+            )
+            session.add(db_image)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to process image {index}"
+            )
+
+    await session.commit()
+    await send_file_to_telegram(zip_file_path, slug)
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content={"message": "Template created successfully"}
+    )
 
 
 @router.get("", response_model=PaginatedTemplateResponse)
@@ -222,7 +219,7 @@ async def read_templates(
     db: AsyncSession = Depends(get_db_session),
 ):
     try:
-        query = select(Template)
+        query = select(Template).where(Template.is_verified == True)
 
         if slug:
             query = query.where(Template.slug.contains(slug))
@@ -365,3 +362,34 @@ async def download_template(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to download template"
         )
+
+
+@router.get("/{slug}/{path:path}", response_class=FileResponse)
+async def get_template_file(slug: str, path: str, session: AsyncSession = Depends(get_db_session)):
+    query = select(Template).where(Template.slug == slug)
+    result = await session.execute(query)
+    template = result.scalar_one_or_none()
+
+    if template is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Template not found"
+        )
+
+    current_template = os.path.join(settings.DOCS_DIR, "templates", slug)
+
+    if not os.path.exists(current_template):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Template not found"
+        )
+
+    file_path = os.path.join(current_template, path)
+
+    if not os.path.exists(file_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="File not found"
+        )
+
+    return FileResponse(file_path)

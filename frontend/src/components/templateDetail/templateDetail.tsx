@@ -4,7 +4,13 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import Rating from "../common/rating";
-import { CheckIcon, DownloadIcon, EyeIcon, Heart, Share2 } from "lucide-react";
+import {
+  CheckIcon,
+  CopyIcon,
+  DownloadIcon,
+  EyeIcon,
+  Heart,
+} from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   AddRateService,
@@ -17,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/utils/const";
 import { Link } from "@/i18n/routing";
 import { useLocale } from "next-intl";
+import { toast } from "sonner";
 
 type TemplateDetailProps = {
   slug: string;
@@ -211,8 +218,12 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                 whileTap={{ scale: 0.98 }}
                 className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600"
                 aria-label="Share"
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Link copied to clipboard");
+                }}
               >
-                <Share2 size={20} />
+                <CopyIcon size={20} />
               </motion.button>
             </div>
           </div>

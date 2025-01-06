@@ -14,9 +14,9 @@ class Template(Base):
     likes = Column(Integer, default=0, nullable=False)
     views = Column(Integer, default=0, nullable=False)
     avarage_rating = Column(Float, default=0, nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
-
     category_id = Column(Integer, ForeignKey("categories.id"))
 
     categories = relationship(
