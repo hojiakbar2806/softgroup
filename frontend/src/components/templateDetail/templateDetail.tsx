@@ -179,7 +179,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                 bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
               aria-label="Download"
               onClick={() =>
-                router.push(`${BASE_URL}/template/download/${slug}`)
+                router.push(`${BASE_URL}/templates/download/${slug}`)
               }
             >
               <DownloadIcon size={20} />

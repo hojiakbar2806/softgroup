@@ -23,7 +23,7 @@ export const LoginService = async (data: IUserLogin) => {
 
 export const RegisterService = async (data: IUserRegister) => {
   try {
-    const res = await defaultAxios.post("auth/register", data);
+    const res = await axiosWithCredentials.post("auth/register", data);
     toast.success(res.data.message);
     const { setAuth } = useAuthStore.getState();
     setAuth(res.data.access_token);

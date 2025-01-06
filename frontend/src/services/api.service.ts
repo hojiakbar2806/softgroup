@@ -27,7 +27,6 @@ axiosWithCredentials.interceptors.response.use(
   },
   async (error) => {
     document.cookie = "isLoggedIn=; Max-Age=0; path=/;";
-    window.location.reload();
     return Promise.reject(error);
   }
 );
