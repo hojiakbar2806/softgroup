@@ -14,7 +14,6 @@ app.mount("/docs/images", StaticFiles(directory="docs/images"), name="images")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "*",
         "http://localhost:3000",
         "https://templates.softgroup.uz"
     ],
