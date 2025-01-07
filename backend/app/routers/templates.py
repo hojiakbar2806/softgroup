@@ -12,12 +12,12 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, s
 from app.models.user import User
 from app.core.config import settings
 from app.utils.slug import unique_slug
+from app.utils.translator import translate_text
 from app.database.session import get_db_session
 from app.schemas.template import PaginatedTemplateResponse
 from app.core.dependencies import current_auth_user
 from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
 from app.utils.send_file_to_telegram import send_file_to_telegram
-from app.utils.translator import translate_text
 
 router = APIRouter(prefix="/templates")
 
@@ -222,7 +222,7 @@ async def create_template(
             )
 
     await session.commit()
-    await send_file_to_telegram(zip_file_path, slug)
+    await send_file_to_telegram(slug)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content={"message": "Template created successfully"}
