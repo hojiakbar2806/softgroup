@@ -1,7 +1,7 @@
-import json
 import os
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
+import slugify
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
@@ -9,9 +9,10 @@ from typing import List
 from app.database.session import get_db_session
 from app.models import Category, CategoryTranslation
 from app.core.config import settings
-import slugify
 
-from app.schemas.category import CategoryResponse, CategoryUpdate
+from app.schemas.category import CategoryResponse
+from app.utils.translator import translate_text
+from app.utils.slug import unique_slug
 
 
 router = APIRouter(prefix="/categories")
@@ -20,27 +21,36 @@ router = APIRouter(prefix="/categories")
 @router.post("")
 async def category_create(
     image: UploadFile = File(...),
-    translations: str = Form(
-        ..., description='[{"language": "uz", "title": "title"}, {"language": "ru", "title": "title"}, {"language": "en", "title": "title"}]'),
+    title: str = Form(...),
     db: AsyncSession = Depends(get_db_session)
 ):
-    translations = json.loads(translations)
 
-    title_en = next((t["title"]
-                    for t in translations if t["language"] == "en"), None)
-    if not title_en:
-        raise HTTPException(
-            status_code=400, detail="English translation is required for the category title")
+    uz, ru, en = await translate_text(title)
 
-    slug = slugify.slugify(title_en)
+    translations = [
+        {
+            "title": uz,
+            "language": "uz"
+        },
+        {
+            "title": ru,
+            "language": "ru"
+        },
+        {
+            "title": en,
+            "language": "en"
+        }
+    ]
+    slug = slugify.slugify(title, lowercase=True)
 
     image_path = os.path.join(settings.DOCS_DIR, "images", "categories")
     os.makedirs(image_path, exist_ok=True)
 
-    existing_category = await db.execute(
-        select(Category).where(Category.slug == slug)
-    )
-    if existing_category.scalar_one_or_none():
+    query = select(Category).where(Category.slug == slug)
+    result = await db.execute(query)
+    db_category = result.scalar_one_or_none()
+
+    if db_category:
         raise HTTPException(status_code=400, detail="Category already exists")
 
     file_ext = os.path.splitext(image.filename)[1]
