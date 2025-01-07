@@ -5,7 +5,7 @@ from app.bot.bot import set_update
 from app.core.config import settings
 
 WEBHOOK_PATH = f"/bot/{settings.BOT_TOKEN}"
-WEBHOOK_URL = settings.BASE_URL + WEBHOOK_PATH
+WEBHOOK_URL = settings.WEBHOOK_URL + WEBHOOK_PATH
 
 
 async def setup_webhook():
@@ -14,6 +14,14 @@ async def setup_webhook():
         if webhook_info.url != WEBHOOK_URL:
             await bot.delete_webhook()
             await bot.set_webhook(WEBHOOK_URL)
+            await bot.set_my_commands(
+                [
+                    types.BotCommand(
+                        command="/search",
+                        description="🔎 Template Qidirish",
+                    ),
+                ]
+            )
         print(f"Bot Webhook  Successfully Set to: {WEBHOOK_URL}")
     except Exception as e:
         print(e)

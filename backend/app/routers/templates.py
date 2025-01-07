@@ -1,6 +1,7 @@
 import os
 import json
 import zipfile
+
 from sqlalchemy import func
 from typing import List, Optional
 from sqlalchemy.future import select
@@ -12,12 +13,12 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, s
 from app.models.user import User
 from app.core.config import settings
 from app.utils.slug import unique_slug
-from app.utils.translator import translate_text
 from app.database.session import get_db_session
-from app.schemas.template import PaginatedTemplateResponse
+from app.utils.translator import translate_text
 from app.core.dependencies import current_auth_user
+from app.schemas.template import PaginatedTemplateResponse
+from app.bot.send_file_to_telegram import send_file_to_telegram
 from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
-from app.utils.send_file_to_telegram import send_file_to_telegram
 
 router = APIRouter(prefix="/templates")
 
@@ -31,18 +32,14 @@ async def create_template(
     original_price: Optional[float] = Form(None),
     template_file: UploadFile = File(...),
     images: List[UploadFile] = File(...),
-    features: str = Form(...,
-                         description='[{"text": "text", "available": true}]'),
+    features: str = Form(
+        ...,
+        description='[{"text": "text", "available": true}]'
+    ),
     session: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(current_auth_user),
 ):
-    try:
-        features = json.loads(features)
-    except json.JSONDecodeError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid features JSON format"
-        )
+    features = json.loads(features)
 
     if not template_file:
         raise HTTPException(
@@ -62,21 +59,16 @@ async def create_template(
 
     slug = await unique_slug(title, session)
 
-    current_template = os.path.join(settings.DOCS_DIR, "templates", slug)
-    images_dir = os.path.join(settings.DOCS_DIR, "images/templates", slug)
+    current_template = os.path.join("docs", "templates", slug)
+    images_dir = os.path.join("docs", "static", "images", "templates", slug)
 
     os.makedirs(current_template, exist_ok=True)
     os.makedirs(images_dir, exist_ok=True)
 
     zip_file_path = os.path.join(current_template, f"{slug}.zip")
-    try:
-        with open(zip_file_path, "wb") as buffer:
-            buffer.write(await template_file.read())
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to save template file"
-        )
+
+    with open(zip_file_path, "wb") as buffer:
+        buffer.write(await template_file.read())
 
     try:
         with zipfile.ZipFile(template_file.file, "r") as zip_ref:
@@ -87,31 +79,15 @@ async def create_template(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid zip file format"
         )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to extract template files"
-        )
 
     current_zipfile_path = os.path.join(current_template, filename)
-    if not os.path.exists(current_zipfile_path):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid zip file structure"
-        )
 
-    try:
-        for f in os.listdir(current_zipfile_path):
-            os.rename(
-                os.path.join(current_zipfile_path, f),
-                os.path.join(current_template, f)
-            )
-        os.rmdir(current_zipfile_path)
-    except OSError as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to process template files"
+    for f in os.listdir(current_zipfile_path):
+        os.rename(
+            os.path.join(current_zipfile_path, f),
+            os.path.join(current_template, f)
         )
+    os.rmdir(current_zipfile_path)
 
     db_template = Template(
         slug=slug,
@@ -124,7 +100,6 @@ async def create_template(
     await session.flush()
 
     translate_texts = await translate_text(title)
-    print(translate_texts)
 
     if translate_texts is None:
         title_uz = title
@@ -134,7 +109,6 @@ async def create_template(
         title_uz, title_ru, title_en = translate_texts
 
     translate_texts = await translate_text(description)
-    print(translate_texts)
 
     if translate_texts is None:
         description_uz = description
@@ -173,7 +147,6 @@ async def create_template(
         session.add(db_feature)
         await session.flush()
         translate_texts = await translate_text(feature['text'])
-        print(translate_texts)
 
         if translate_texts is None:
             text_uz = feature['text']
@@ -262,43 +235,36 @@ async def read_templates(
             selectinload(Template.ratings),
         )
 
-        try:
-            total_query = select(func.count(Template.id))
-            if slug:
-                total_query = total_query.where(Template.slug.contains(slug))
-            if category:
-                total_query = total_query.where(
-                    Template.category_id == db_category.id)
+        total_query = select(func.count(Template.id))
 
-            total_result = await db.execute(total_query)
-            templates_count = total_result.scalar()
-
-            skip = (page - 1) * per_page
-            query = query.offset(skip).limit(per_page)
-
-            result = await db.execute(query)
-            templates = result.scalars().all()
-
-            total_pages = (templates_count + per_page - 1) // per_page
-
-            return {
-                "data": templates,
-                "current_page": page,
-                "per_page": per_page,
-                "total_pages": total_pages,
-                "total_templates": templates_count,
-                "has_next": page < total_pages,
-                "has_previous": page > 1,
-            }
-
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to fetch templates"
+        if slug:
+            total_query = total_query.where(Template.slug.contains(slug))
+        if category:
+            total_query = total_query.where(
+                Template.category_id == db_category.id
             )
 
-    except HTTPException:
-        raise
+        total_result = await db.execute(total_query)
+        templates_count = total_result.scalar()
+
+        skip = (page - 1) * per_page
+        query = query.offset(skip).limit(per_page)
+
+        result = await db.execute(query)
+        templates = result.scalars().all()
+
+        total_pages = (templates_count + per_page - 1) // per_page
+
+        return {
+            "data": templates,
+            "current_page": page,
+            "per_page": per_page,
+            "total_pages": total_pages,
+            "total_templates": templates_count,
+            "has_next": page < total_pages,
+            "has_previous": page > 1,
+        }
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -328,8 +294,6 @@ async def read_template(
             )
         return template
 
-    except HTTPException:
-        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -410,5 +374,4 @@ async def get_template_file(slug: str, path: str, session: AsyncSession = Depend
             status_code=status.HTTP_404_NOT_FOUND,
             detail="File not found"
         )
-
     return FileResponse(file_path)

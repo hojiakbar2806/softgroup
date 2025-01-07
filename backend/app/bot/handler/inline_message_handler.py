@@ -5,10 +5,10 @@ from sqlalchemy.future import select
 from app.bot.session import get_db_session
 from app.models.template import Template
 
-inline_router = Router()
+inline_message_router = Router()
 
 
-@inline_router.callback_query(lambda query: query.data.startswith('verify_') or query.data.startswith('reject_'))
+@inline_message_router.callback_query(lambda query: query.data.startswith('verify_') or query.data.startswith('reject_'))
 async def process_callback(callback_query: CallbackQuery):
     data = callback_query.data
     slug = data.split("_")[1]
@@ -30,6 +30,8 @@ async def process_callback(callback_query: CallbackQuery):
             await callback_query.answer("✅ Template Verified!")
             await callback_query.message.answer(f"✅ Template `{slug}` tasdiqlandi.")
         elif data.startswith("reject_"):
+            template.is_verified = False
+            await session.commit()
             await callback_query.answer("❌ Template Rejected!")
             await callback_query.message.answer(f"❌ Template `{slug}` rad etildi.")
 

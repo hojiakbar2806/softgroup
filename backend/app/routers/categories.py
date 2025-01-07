@@ -1,18 +1,18 @@
 import os
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, File
-from fastapi.responses import JSONResponse
 import slugify
-from sqlalchemy.ext.asyncio import AsyncSession
+
+from typing import List
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from typing import List
-from app.database.session import get_db_session
-from app.models import Category, CategoryTranslation
-from app.core.config import settings
+from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, File
 
-from app.schemas.category import CategoryResponse
+from app.core.config import settings
 from app.utils.translator import translate_text
-from app.utils.slug import unique_slug
+from app.database.session import get_db_session
+from app.schemas.category import CategoryResponse
+from app.models import Category, CategoryTranslation
 
 
 router = APIRouter(prefix="/categories")
@@ -50,7 +50,7 @@ async def category_create(
     ]
     slug = slugify.slugify(title, lowercase=True)
 
-    image_path = os.path.join(settings.DOCS_DIR, "images", "categories")
+    image_path = os.path.join("docs", "static", "images", "categories")
     os.makedirs(image_path, exist_ok=True)
 
     query = select(Category).where(Category.slug == slug)
