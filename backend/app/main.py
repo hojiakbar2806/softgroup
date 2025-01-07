@@ -26,7 +26,6 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     await setup_webhook()
-    print("Bot Webhook Set!")
 
 
 app.include_router(auth.router, tags=["auth"])

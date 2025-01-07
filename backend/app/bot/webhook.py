@@ -16,6 +16,7 @@ async def setup_webhook():
         if webhook_info.url != WEBHOOK_URL:
             await bot.delete_webhook()
             await bot.set_webhook(WEBHOOK_URL)
+        print("Bot Webhook Set!")
     except Exception as e:
         print(e)
 

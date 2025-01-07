@@ -26,6 +26,7 @@ elasticsearch = "^8.17.0"
 aiogram = "^3.17.0"
 googletrans = "^4.0.2"
 email-validator = "^2.2.0"
+gunicorn = "^23.0.0"
 
 
 [build-system]

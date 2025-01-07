@@ -1,20 +1,24 @@
 FROM python:3.12-slim
 
+RUN apt-get update && apt-get install -y \
+    curl \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -sSL https://install.python-poetry.org | python3 - && \
-    apt-get clean
+RUN pip install poetry
 
-ENV PATH="/root/.local/bin:$PATH"
+ENV PATH="/root/.local/bin:${PATH}"
 
-COPY pyproject.toml poetry.lock /app/
+RUN poetry config virtualenvs.create false
+
+COPY pyproject.toml poetry.lock ./
 
 RUN poetry install --no-root
 
-COPY . /app/
+COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT ["sh", "-c", "poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+CMD ["poetry", "run", "gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
