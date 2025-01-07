@@ -5,7 +5,7 @@ from app.bot.bot import set_update
 from app.core.config import settings
 
 WEBHOOK_PATH = f"/bot/{settings.BOT_TOKEN}"
-WEBHOOK_URL = settings.URL + WEBHOOK_PATH
+WEBHOOK_URL = settings.BASE_URL + WEBHOOK_PATH
 
 
 async def setup_webhook():

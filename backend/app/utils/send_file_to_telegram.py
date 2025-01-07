@@ -1,6 +1,6 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.bot.bot import bot
 from app.core.config import settings
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 async def send_file_to_telegram(slug: str):
