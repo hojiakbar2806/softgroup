@@ -23,9 +23,11 @@ async def send_file_to_telegram(slug: str):
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="✅ Verify", callback_data=f"verify_{template.slug}"),
+                    text="✅", callback_data=f"verify_{template.slug}"),
                 InlineKeyboardButton(
-                    text="❌ Reject", callback_data=f"reject_{template.slug}")
+                    text="❌", callback_data=f"reject_{template.slug}"),
+                InlineKeyboardButton(
+                    text="🗑", callback_data=f"delete_{template.slug}"),
             ],
             [
                 InlineKeyboardButton(
