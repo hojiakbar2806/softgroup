@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     DOCS_DIR: str = "docs"
 
     BOT_TOKEN: str = "7958951230:AAGCU4oWRDXdyVT_LT8eB-m-u7RViiGtGPg"
-    CHAT_ID: int = -1002489508446
+    CHAT_IDS: list = [-1002489508446, 2055370981, 1960543012]
     WEBHOOK_URL: str = "https://api.softgroup.uz"
 
     POSTGRES_DB: str = "postgres"

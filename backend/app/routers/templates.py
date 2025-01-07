@@ -1,19 +1,19 @@
 import os
 import json
-from typing import Optional
 import zipfile
 from sqlalchemy import func
+from typing import List, Optional
 from sqlalchemy.future import select
-from fastapi.responses import FileResponse, JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 
 from app.models.user import User
 from app.core.config import settings
 from app.utils.slug import unique_slug
 from app.database.session import get_db_session
-from app.schemas.template import TemplateCreate, PaginatedTemplateResponse
+from app.schemas.template import PaginatedTemplateResponse
 from app.core.dependencies import current_auth_user
 from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
 from app.utils.send_file_to_telegram import send_file_to_telegram
@@ -24,7 +24,13 @@ router = APIRouter(prefix="/templates")
 
 @router.post("")
 async def create_template(
-    template: TemplateCreate = Depends(TemplateCreate.as_form),
+    title: str = Form(...),
+    category_slug: str = Form(...),
+    description: str = Form(...),
+    current_price: float = Form(...),
+    original_price: Optional[float] = Form(None),
+    template_file: UploadFile = File(...),
+    images: List[UploadFile] = File(...),
     features: str = Form(...,
                          description='[{"text": "text", "available": true}]'),
     session: AsyncSession = Depends(get_db_session),
@@ -38,13 +44,13 @@ async def create_template(
             detail="Invalid features JSON format"
         )
 
-    if not template.template_file:
+    if not template_file:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Template file is required"
         )
 
-    query = select(Category).where(Category.slug == template.category_slug)
+    query = select(Category).where(Category.slug == category_slug)
     result = await session.execute(query)
     category = result.scalar_one_or_none()
 
@@ -54,7 +60,7 @@ async def create_template(
             detail="Category not found"
         )
 
-    slug = await unique_slug(template.title, session)
+    slug = await unique_slug(title, session)
 
     current_template = os.path.join(settings.DOCS_DIR, "templates", slug)
     images_dir = os.path.join(settings.DOCS_DIR, "images/templates", slug)
@@ -65,7 +71,7 @@ async def create_template(
     zip_file_path = os.path.join(current_template, f"{slug}.zip")
     try:
         with open(zip_file_path, "wb") as buffer:
-            buffer.write(await template.template_file.read())
+            buffer.write(await template_file.read())
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -73,7 +79,7 @@ async def create_template(
         )
 
     try:
-        with zipfile.ZipFile(template.template_file.file, "r") as zip_ref:
+        with zipfile.ZipFile(template_file.file, "r") as zip_ref:
             zip_ref.extractall(current_template)
             filename = zip_ref.namelist()[0]
     except zipfile.BadZipFile:
@@ -109,23 +115,33 @@ async def create_template(
 
     db_template = Template(
         slug=slug,
-        current_price=template.current_price,
-        original_price=template.original_price,
+        current_price=current_price,
+        original_price=original_price,
         owner_id=current_user.id,
         category_id=category.id
     )
     session.add(db_template)
     await session.flush()
 
-    translate_texts = await translate_text(template.title)
-    title_uz = translate_texts[0]
-    title_ru = translate_texts[1]
-    title_en = translate_texts[2]
+    translate_texts = await translate_text(title)
+    print(translate_texts)
 
-    translate_texts = await translate_text(template.description)
-    description_uz = translate_texts[0]
-    description_ru = translate_texts[1]
-    description_en = translate_texts[2]
+    if translate_texts is None:
+        title_uz = title
+        title_ru = title
+        title_en = title
+    else:
+        title_uz, title_ru, title_en = translate_texts
+
+    translate_texts = await translate_text(description)
+    print(translate_texts)
+
+    if translate_texts is None:
+        description_uz = description
+        description_ru = description
+        description_en = description
+    else:
+        description_uz, description_ru, description_en = translate_texts
 
     translations = [
         TemplateTranslation(
@@ -156,12 +172,15 @@ async def create_template(
         )
         session.add(db_feature)
         await session.flush()
-        print(feature['text'])
         translate_texts = await translate_text(feature['text'])
         print(translate_texts)
-        text_uz = translate_texts[0]
-        text_ru = translate_texts[1]
-        text_en = translate_texts[2]
+
+        if translate_texts is None:
+            text_uz = feature['text']
+            text_ru = feature['text']
+            text_en = feature['text']
+        else:
+            text_uz, text_ru, text_en = translate_texts
 
         feature_translations = [
             FeatureTranslation(
@@ -182,7 +201,7 @@ async def create_template(
         ]
         session.add_all(feature_translations)
 
-    for index, image in enumerate(template.images):
+    for index, image in enumerate(images):
         try:
             file_extension = os.path.splitext(image.filename)[1]
             image_filename = f"{slug}_{index}{file_extension}"

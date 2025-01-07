@@ -17,12 +17,13 @@ async def send_file_to_telegram(file_path: str, slug: str):
 
     try:
         file = FSInputFile(file_path)
-        await bot.send_document(
-            chat_id=settings.CHAT_ID,
-            document=file,
-            caption=f"New Template: {slug}",
-            reply_markup=keyboard
-        )
+        for chat_id in settings.CHAT_IDS:
+            await bot.send_document(
+                chat_id=chat_id,
+                document=file,
+                caption=f"New Template: {slug}",
+                reply_markup=keyboard
+            )
         print(f"File '{file_path}' successfully sent to Telegram.")
     except Exception as e:
         print(f"Error while sending file to Telegram: {e}")

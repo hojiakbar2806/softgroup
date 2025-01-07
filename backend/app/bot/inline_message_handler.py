@@ -13,23 +13,24 @@ async def process_callback(callback_query: CallbackQuery):
     data = callback_query.data
     slug = data.split("_")[1]
 
-    if data.startswith("verify_"):
-        async with get_db_session() as session:
-            query = select(Template).where(Template.slug == slug)
-            result = await session.execute(query)
-            template = result.scalars().first()
+    async with get_db_session() as session:
+        query = select(Template).where(Template.slug == slug)
+        result = await session.execute(query)
+        template = result.scalars().first()
 
-            if template:
-                template.is_verified = True
-                await session.commit()
-            else:
-                await callback_query.answer("❌ Template topilmadi!")
+        if not template:
+            await callback_query.answer("❌ Template topilmadi!")
+            print("Template topilmadi!")
+            return
 
-        await callback_query.answer("✅ Template Verified!")
-        await callback_query.message.answer(f"✅ Template `{slug}` tasdiqlandi.")
+        if data.startswith("verify_"):
+            print("Template verified!")
+            template.is_verified = True
+            await session.commit()
+            await callback_query.answer("✅ Template Verified!")
+            await callback_query.message.answer(f"✅ Template `{slug}` tasdiqlandi.")
+        elif data.startswith("reject_"):
+            await callback_query.answer("❌ Template Rejected!")
+            await callback_query.message.answer(f"❌ Template `{slug}` rad etildi.")
 
-    elif data.startswith("reject_"):
-        await callback_query.answer("❌ Template Rejected!")
-        await callback_query.message.answer(f"❌ Template `{slug}` rad etildi.")
-
-    return await callback_query.message.delete()
+    await callback_query.message.delete()

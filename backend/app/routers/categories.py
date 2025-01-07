@@ -25,7 +25,14 @@ async def category_create(
     db: AsyncSession = Depends(get_db_session)
 ):
 
-    uz, ru, en = await translate_text(title)
+    translated_text = await translate_text(title)
+
+    if not translated_text:
+        uz = title
+        ru = title
+        en = title
+    else:
+        uz, ru, en = translated_text
 
     translations = [
         {
