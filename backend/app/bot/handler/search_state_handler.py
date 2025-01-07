@@ -1,15 +1,16 @@
 from aiogram import Router, Bot
-from aiogram.filters import StateFilter
-from app.bot.states import SearchState
-from aiogram.types import FSInputFile
 from aiogram.types import Message
-from aiogram.fsm.context import FSMContext
-from app.bot.session import get_db_session
 from sqlalchemy.future import select
+from aiogram.types import FSInputFile
+from aiogram.filters import StateFilter
+from sqlalchemy.orm import selectinload
+from aiogram.fsm.context import FSMContext
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from app.bot.session import get_db_session
 from app.core.config import settings
 from app.models.template import Template
-from sqlalchemy.orm import selectinload
+from app.bot.states import SearchState
 from app.bot.filters.admin_user import IsAdmin
 
 
@@ -32,9 +33,11 @@ async def search_state_handler(message: Message, state: FSMContext, bot: Bot):
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="✅ Verify", callback_data=f"verify_{template.slug}"),
+                    text="✅", callback_data=f"verify_{template.slug}"),
                 InlineKeyboardButton(
-                    text="❌ Reject", callback_data=f"reject_{template.slug}")
+                    text="❌", callback_data=f"reject_{template.slug}"),
+                InlineKeyboardButton(
+                    text="🗑", callback_data=f"delete_{template.slug}"),
             ],
             [
                 InlineKeyboardButton(
