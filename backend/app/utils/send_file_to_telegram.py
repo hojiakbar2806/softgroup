@@ -4,7 +4,7 @@ from app.core.config import settings
 
 
 async def send_file_to_telegram(slug: str):
-    url = f"{settings.URL}/templates/download/{slug}"
+    url = f"{settings.BASE_URL}/templates/download/{slug}"
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
