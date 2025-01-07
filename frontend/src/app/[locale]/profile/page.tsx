@@ -14,7 +14,7 @@ import OpenSidebar from "@/components/profile/sidebar/openSidebar";
 export default function Profile() {
   const router = useRouter();
   const { data, isLoading } = useQuery<Template[]>({
-    queryKey: ["my-templates"],
+    queryKey: ["template"],
     queryFn: MyTemplatesService,
   });
 

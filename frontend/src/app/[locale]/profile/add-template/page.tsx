@@ -48,7 +48,7 @@ const AddTemplatePage: React.FC = () => {
   const [newCategoryTitle, setNewCategoryTitle] = useState("");
 
   const { data: categories } = useQuery<ICategory[]>({
-    queryKey: ["categories"],
+    queryKey: ["category"],
     queryFn: GetCategoriesService,
     staleTime: 60000,
     refetchOnWindowFocus: false,
@@ -61,13 +61,13 @@ const AddTemplatePage: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  console.log(myData);
-
   const templateMutation = useMutation({
+    mutationKey: ["template"],
     mutationFn: (data: FormData) => CreateTemplateService(data),
   });
 
   const categoryMutation = useMutation({
+    mutationKey: ["category"],
     mutationFn: async (data: FormData) => {
       const result = await CreateCategoryService(data);
       setSelectedCategory(result.slug);
