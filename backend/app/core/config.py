@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     DOCS_DIR: str = "docs"
 
     BOT_TOKEN: str = "7958951230:AAGCU4oWRDXdyVT_LT8eB-m-u7RViiGtGPg"
-    CHAT_IDS: list = [2055370981, 1960543012, 5050150433]
+    CHAT_IDS: list = [2055370981, 1960543012, 5050150433, 6250209743]
     BASE_URL: str = "https://api.softgroup.uz"
     WEBHOOK_URL: str = "https://api.softgroup.uz"
 

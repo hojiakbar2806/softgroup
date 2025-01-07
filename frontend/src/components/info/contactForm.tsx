@@ -13,8 +13,8 @@ const ContactForm: React.FC = () => {
   const { openContact, toggleOpenContact } = useContactForm();
   const t = useTranslations("InfoPage.ContactForm");
 
-  const telegramToken = "7385022476:AAEuDbLPJBCrHCQzuXDwQ-MzCb17ECk9-xE";
-  const chatId = "-1002428200529";
+  const telegramToken = "7958951230:AAGCU4oWRDXdyVT_LT8eB-m-u7RViiGtGPg";
+  const chatId = "-1002489508446";
   const url = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
 
   const handleSubmit = async (formData: FormData) => {

@@ -2,7 +2,8 @@ import { IUserUpdate } from "@/types/user";
 import { axiosWithAuth } from "./api.service";
 
 export const MyProfileService = async () => {
-  return await axiosWithAuth.get("/user/me");
+  const res = await axiosWithAuth.get("/user/me");
+  return res.data;
 };
 
 export const UpdateProfileService = async (data: IUserUpdate) => {

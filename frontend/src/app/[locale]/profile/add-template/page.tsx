@@ -32,7 +32,8 @@ import { toast } from "sonner";
 import { ICategory } from "@/types/mixin";
 import { useAuthStore } from "@/store/authStore";
 import TitleCard from "@/components/profile/titleCard";
-import Form from "next/form";
+import { MyProfileService } from "@/services/user.service";
+import { IUser } from "@/types/user";
 
 const AddTemplatePage: React.FC = () => {
   const { refreshToken } = useAuthStore();
@@ -49,7 +50,18 @@ const AddTemplatePage: React.FC = () => {
   const { data: categories } = useQuery<ICategory[]>({
     queryKey: ["categories"],
     queryFn: GetCategoriesService,
+    staleTime: 60000,
+    refetchOnWindowFocus: false,
   });
+
+  const { data: myData } = useQuery<IUser>({
+    queryKey: ["user"],
+    queryFn: MyProfileService,
+    staleTime: 60000,
+    refetchOnWindowFocus: false,
+  });
+
+  console.log(myData);
 
   const templateMutation = useMutation({
     mutationFn: (data: FormData) => CreateTemplateService(data),
@@ -64,24 +76,62 @@ const AddTemplatePage: React.FC = () => {
     },
   });
 
-  const handleSubmit = (formData: FormData): void => {
-    const allKeys = Array.from(formData.keys());
-    const emptyKeys = allKeys.filter(
-      (key) => !formData.get(key) || formData.get(key)?.toString().trim() === ""
-    );
+  const handleSubmit = (e: React.FormEvent): void => {
+    e.preventDefault();
 
-    if (emptyKeys.length > 0) {
-      toast.warning("Please fill in all the required fields.");
-      return;
+    const formData = new FormData();
+    const formElements = e.target as HTMLFormElement;
+
+    const title = (
+      formElements.elements.namedItem("title") as HTMLInputElement
+    )?.value.trim();
+    if (title) formData.append("title", title);
+
+    const currentPrice =
+      (
+        formElements.elements.namedItem("current_price") as HTMLInputElement
+      )?.value.trim() || "0";
+    formData.append("current_price", currentPrice);
+
+    const originalPrice =
+      (
+        formElements.elements.namedItem("original_price") as HTMLInputElement
+      )?.value.trim() || "0";
+    formData.append("original_price", originalPrice);
+
+    const description = (
+      formElements.elements.namedItem("description") as HTMLTextAreaElement
+    )?.value.trim();
+    if (description) formData.append("description", description);
+
+    const templateFile = (
+      formElements.elements.namedItem("template_file") as HTMLInputElement
+    )?.files?.[0];
+    if (templateFile) formData.append("template_file", templateFile);
+
+    const images = (
+      formElements.elements.namedItem("images") as HTMLInputElement
+    )?.files;
+    if (images) {
+      Array.from(images).forEach((image) => formData.append("images", image));
     }
 
     if (!selectedCategory) {
       toast.warning("Please select a category.");
       return;
     }
+    formData.append("category_slug", selectedCategory);
 
     formData.append("features", JSON.stringify(features));
-    formData.append("category_slug", selectedCategory);
+
+    const emptyFields = Array.from(formData.keys()).filter(
+      (key) => !formData.get(key)
+    );
+    if (emptyFields.length > 0) {
+      toast.warning("Please fill in all the required fields.");
+      return;
+    }
+
     templateMutation.mutate(formData);
   };
 
@@ -114,7 +164,7 @@ const AddTemplatePage: React.FC = () => {
     <section className="flex-1">
       <div className="container max-w-4xl mx-auto">
         <TitleCard title="Add Template" href="/profile" linkName="Back" />
-        <Form action={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <Card className="shadow-md">
             <CardContent className="space-y-6 p-6">
               <div className="w-full gap-4">
@@ -122,24 +172,26 @@ const AddTemplatePage: React.FC = () => {
                 <Input name="title" id="title" placeholder="Title" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="current_price">Current Price</Label>
-                  <Input
-                    name="current_price"
-                    type="number"
-                    placeholder="Current Price"
-                  />
+              {myData?.username === "premium" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="current_price">Current Price</Label>
+                    <Input
+                      name="current_price"
+                      type="number"
+                      placeholder="Current Price"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="original_price">Original Price</Label>
+                    <Input
+                      name="original_price"
+                      type="number"
+                      placeholder="Original Price"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="original_price">Original Price</Label>
-                  <Input
-                    name="original_price"
-                    type="number"
-                    placeholder="Original Price"
-                  />
-                </div>
-              </div>
+              )}
 
               <div className="w-full gap-4">
                 <Label htmlFor="description">Description</Label>
@@ -278,23 +330,44 @@ const AddTemplatePage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Template File</Label>
-                  <Input type="file" name="template_file" accept=".zip" />
+                  <Input
+                    name="template_file"
+                    type="file"
+                    accept=".doc,.docx,.pdf,.zip"
+                    required
+                  />
                 </div>
                 <div>
-                  <Label>Image Preview</Label>
-                  <Input type="file" name="images" accept="image/*" multiple />
+                  <Label>Template Image</Label>
+                  <Input
+                    name="images"
+                    type="file"
+                    multiple
+                    accept=".jpg,.jpeg,.png,.webp"
+                    required
+                  />
                 </div>
+              </div>
+
+              <div className="flex justify-end gap-4">
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                  type="reset"
+                >
+                  Reset
+                </Button>
+                <Button
+                  className="w-full sm:w-auto"
+                  type="submit"
+                  disabled={templateMutation.isPending}
+                >
+                  {templateMutation.isPending ? "Saving..." : "Save Template"}
+                </Button>
               </div>
             </CardContent>
           </Card>
-          <Button
-            className="w-full mt-8"
-            disabled={templateMutation.isPending}
-            type="submit"
-          >
-            {templateMutation.isPending ? "Submitting..." : "Submit"}
-          </Button>
-        </Form>
+        </form>
       </div>
     </section>
   );

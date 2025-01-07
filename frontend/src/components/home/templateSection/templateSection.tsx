@@ -17,12 +17,12 @@ interface TemplateSectionProps {
 
 const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const categoryParam = `${category ? `category=${category}` : ""}`;
+  const tier = searchParams.get("tier");
+  const query = `${tier ? `tier=${tier}` : ""}`;
 
   const { data: templates, isLoading } = useQuery<Template[]>({
-    queryKey: ["templates", categoryParam],
-    queryFn: () => GetAllTemplateService(categoryParam),
+    queryKey: ["templates", query],
+    queryFn: () => GetAllTemplateService(query),
   });
 
   return (

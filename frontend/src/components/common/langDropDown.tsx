@@ -28,23 +28,23 @@ const LanguageDropdown: React.FC = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex p-2 items-center gap-1 transition  sm:px-4 border rounded"
+        className="w-full flex items-center gap-1 transition rounded p-2"
       >
         <Image
           src={currentLanguage?.icon || ""}
-          width={20}
-          height={20}
+          width={24}
+          height={24}
           alt={currentLanguage?.label || ""}
           className="size-4 sm:size-5 lg:size-6 2xl:size-8"
         />
-        <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
+        {/* <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
           {currentLanguage?.label}
-        </span>
+        </span> */}
       </button>
 
       <div
         data-state={isOpen ? "open" : "close"}
-        className="w-full absolute right-0 overflow-hidden bottom-8 mb-2 -translate-y-4 opacity-0 bg-white rounded-lg border border-gray-200 shadow-lg transition
+        className="w-full absolute right-0 overflow-hidden top-full mb-2 -translate-y-4 opacity-0 bg-white rounded border border-gray-200 shadow-lg transition
         data-[state=open]:translate-y-0 
         data-[state=open]:opacity-100 
         data-[state=close]:translate-y-1 
@@ -52,25 +52,27 @@ const LanguageDropdown: React.FC = () => {
         "
         onClick={(e) => e.stopPropagation()}
       >
-        {languages.map((l) => (
-          <button
-            key={l.code}
-            onClick={() => handleLanguageChange(l.code)}
-            className="w-full flex p-2 items-center gap-1
-            hover:bg-gray-100 transition  sm:px-4"
-          >
-            <Image
-              src={l.icon}
-              width={20}
-              height={20}
-              alt={l.label}
-              className="size-4 sm:size-5 lg:size-6 2xl:size-8"
-            />
-            <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
+        {languages
+          .filter((l) => l.code !== locale)
+          .map((l) => (
+            <button
+              key={l.code}
+              onClick={() => handleLanguageChange(l.code)}
+              className="w-full flex items-center px-2 py-1
+            hover:bg-gray-100 transition"
+            >
+              <Image
+                src={l.icon}
+                width={24}
+                height={24}
+                alt={l.label}
+                className="size-4 sm:size-5 lg:size-6 2xl:size-8"
+              />
+              {/* <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
               {l.label}
-            </span>
-          </button>
-        ))}
+            </span> */}
+            </button>
+          ))}
       </div>
     </div>
   );

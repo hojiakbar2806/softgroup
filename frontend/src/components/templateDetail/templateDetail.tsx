@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
-import Rating from "../common/rating";
 import {
   CheckIcon,
   CopyIcon,
@@ -11,19 +10,16 @@ import {
   EyeIcon,
   Heart,
 } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  AddRateService,
-  GetTemplateWithSlugService,
-} from "@/services/template.service";
+import { useQuery } from "@tanstack/react-query";
+import { GetTemplateWithSlugService } from "@/services/template.service";
 import { Template } from "@/types/template";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/utils/const";
 import { Link } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 import { toast } from "sonner";
+import useWishListStore from "@/store/wishListStore";
 
 type TemplateDetailProps = {
   slug: string;
@@ -31,8 +27,8 @@ type TemplateDetailProps = {
 
 export default function TemplateDetails({ slug }: TemplateDetailProps) {
   const [selectedImage, setSelectedImage] = useState<number>(0);
-  const router = useRouter();
   const locale = useLocale();
+  const { toggleItem, hasInWishList } = useWishListStore();
 
   const { data, isLoading, isError } = useQuery<Template>({
     queryKey: ["template", slug],
@@ -40,9 +36,9 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     retry: 1,
   });
 
-  const mutation = useMutation({
-    mutationFn: AddRateService,
-  });
+  // const mutation = useMutation({
+  //   mutationFn: AddRateService,
+  // });
 
   if (isError) {
     return (
@@ -116,13 +112,16 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            <Rating
+            {/* <Rating
               value={data?.avarage_rating || 0}
               onChange={(rate) => {
                 mutation.mutate({ slug, rate });
               }}
-            />
-            <span className="text-gray-600">{data?.views || 0} views</span>
+            /> */}
+            {/* <span className="text-gray-600">Views: {data?.views || 0}</span> */}
+            <span className="text-gray-600">
+              Downloads: {data?.downloads || 0}
+            </span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -179,39 +178,48 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           )}
 
           <div className="flex flex-wrap gap-4 pt-6">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
-                bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
-              aria-label="Download"
-              onClick={() =>
-                router.push(`${BASE_URL}/templates/download/${slug}`)
-              }
+            <Link
+              target="_blank"
+              href={`${BASE_URL}/templates/download/${slug}`}
             >
-              <DownloadIcon size={20} />
-              Download Now
-            </motion.button>
-            <Link href={`${slug}/preview`} target="_blank">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
                 bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
-                aria-label="Preview"
+                aria-label="Download"
               >
-                <EyeIcon size={20} />
-                Preview
+                <DownloadIcon size={20} />
+                Download Now
               </motion.button>
             </Link>
+            {!slug.split(".")[1] && (
+              <Link href={`${slug}/preview`} target="_blank">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
+                bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
+                  aria-label="Preview"
+                >
+                  <EyeIcon size={20} />
+                  Preview
+                </motion.button>
+              </Link>
+            )}
             <div className="flex gap-2">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600"
                 aria-label="Like"
+                onClick={() => toggleItem(data)}
               >
-                <Heart size={20} />
+                <Heart
+                  size={20}
+                  fill={hasInWishList(data?.id) ? "red" : "none"}
+                  stroke="red"
+                />
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.02 }}

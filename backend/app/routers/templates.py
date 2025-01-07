@@ -41,12 +41,6 @@ async def create_template(
 ):
     features = json.loads(features)
 
-    if not template_file:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Template file is required"
-        )
-
     query = select(Category).where(Category.slug == category_slug)
     result = await session.execute(query)
     category = result.scalar_one_or_none()
@@ -58,36 +52,44 @@ async def create_template(
         )
 
     slug = await unique_slug(title, session)
-
-    current_template = os.path.join("docs", "templates", slug)
     images_dir = os.path.join("docs", "static", "images", "templates", slug)
-
-    os.makedirs(current_template, exist_ok=True)
     os.makedirs(images_dir, exist_ok=True)
 
-    zip_file_path = os.path.join(current_template, f"{slug}.zip")
+    if template_file.filename.endswith(".zip"):
+        current_template = os.path.join("docs", "templates", slug)
 
-    with open(zip_file_path, "wb") as buffer:
-        buffer.write(await template_file.read())
+        os.makedirs(current_template, exist_ok=True)
 
-    try:
-        with zipfile.ZipFile(template_file.file, "r") as zip_ref:
-            zip_ref.extractall(current_template)
-            filename = zip_ref.namelist()[0]
-    except zipfile.BadZipFile:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid zip file format"
-        )
+        zip_file_path = os.path.join(current_template, f"{slug}.zip")
 
-    current_zipfile_path = os.path.join(current_template, filename)
+        with open(zip_file_path, "wb") as buffer:
+            buffer.write(await template_file.read())
 
-    for f in os.listdir(current_zipfile_path):
-        os.rename(
-            os.path.join(current_zipfile_path, f),
-            os.path.join(current_template, f)
-        )
-    os.rmdir(current_zipfile_path)
+        try:
+            with zipfile.ZipFile(template_file.file, "r") as zip_ref:
+                zip_ref.extractall(current_template)
+                filename = zip_ref.namelist()[0]
+        except zipfile.BadZipFile:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid zip file format"
+            )
+
+        current_zipfile_path = os.path.join(current_template, filename)
+
+        for f in os.listdir(current_zipfile_path):
+            os.rename(
+                os.path.join(current_zipfile_path, f),
+                os.path.join(current_template, f)
+            )
+        os.rmdir(current_zipfile_path)
+
+    else:
+        slug = f"{slug}.{template_file.filename.split('.')[-1]}"
+        current_docs = os.path.join("docs", slug)
+
+        with open(current_docs, "wb") as buffer:
+            buffer.write(await template_file.read())
 
     db_template = Template(
         slug=slug,
@@ -208,6 +210,7 @@ async def read_templates(
     per_page: int = 10,
     slug: Optional[str] = None,
     category: Optional[str] = None,
+    tier: Optional[str] = None,
     db: AsyncSession = Depends(get_db_session),
 ):
     try:
@@ -227,6 +230,11 @@ async def read_templates(
                 )
 
             query = query.where(Template.category_id == db_category.id)
+
+        if tier == "premium":
+            query = query.where(Template.current_price > 0)
+        else:
+            query = query.where(Template.current_price == 0)
 
         query = query.options(
             selectinload(Template.translations),
@@ -306,45 +314,46 @@ async def download_template(
     slug: str,
     session: AsyncSession = Depends(get_db_session)
 ):
-    try:
-        query = select(Template).where(Template.slug == slug)
-        result = await session.execute(query)
-        template = result.scalar_one_or_none()
+    query = select(Template).where(Template.slug == slug)
+    result = await session.execute(query)
+    template = result.scalar_one_or_none()
 
-        if template is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Template not found"
-            )
+    if template is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Template not found"
+        )
 
-        zip_file_path = os.path.join(
-            settings.DOCS_DIR, "templates", slug, f"{slug}.zip")
+    if len(slug.split(".")) == 1:
+        file_path = os.path.join("docs", "templates", slug, f"{slug}.zip")
 
-        if not os.path.exists(zip_file_path):
+        if not os.path.exists(file_path):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Template file not found"
             )
-
-        try:
-            template.downloads += 1
-            await session.commit()
-        except Exception as e:
-            await session.rollback()
-
-        return FileResponse(
-            zip_file_path,
+        response = FileResponse(
+            file_path,
             media_type='application/zip',
             filename=f"{slug}.zip"
         )
+    else:
+        file_path = os.path.join("docs", slug)
 
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to download template"
+        if not os.path.exists(file_path):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Template file not found"
+            )
+        response = FileResponse(
+            file_path,
+            media_type=f"application/{slug.split('.')[1]}",
+            filename=slug
         )
+    template.downloads += 1
+    await session.commit()
+
+    return response
 
 
 @router.get("/{slug}/{path:path}", response_class=FileResponse)
