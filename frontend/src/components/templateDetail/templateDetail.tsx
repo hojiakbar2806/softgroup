@@ -13,7 +13,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { GetTemplateWithSlugService } from "@/services/template.service";
 import { Template } from "@/types/template";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BASE_URL } from "@/utils/const";
 import { Link } from "@/i18n/routing";
@@ -22,6 +21,7 @@ import { toast } from "sonner";
 import useWishListStore from "@/store/wishListStore";
 import { IUser } from "@/types/user";
 import { MyProfileService } from "@/services/user.service";
+import { notFound } from "next/navigation";
 
 type TemplateDetailProps = {
   slug: string;
@@ -46,18 +46,8 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     enabled: !!isLoggedIn,
   });
 
-  // const mutation = useMutation({
-  //   mutationFn: AddRateService,
-  // });
-
   if (isError) {
-    return (
-      <Alert variant="destructive" className="my-4">
-        <AlertDescription>
-          Failed to load template details. Please try again later.
-        </AlertDescription>
-      </Alert>
-    );
+    return notFound();
   }
 
   if (isLoading) {
@@ -122,13 +112,6 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* <Rating
-              value={data?.avarage_rating || 0}
-              onChange={(rate) => {
-                mutation.mutate({ slug, rate });
-              }}
-            /> */}
-            {/* <span className="text-gray-600">Views: {data?.views || 0}</span> */}
             <span className="text-gray-600">
               Downloads: {data?.downloads || 0}
             </span>
@@ -190,12 +173,14 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           <div className="flex flex-wrap gap-4 pt-6">
             <Link
               href={`${BASE_URL}/templates/download/${slug}`}
-              data-disabled={user?.is_verified !== true}
+              data-disabled={
+                user?.is_verified !== true && slug.split(".").length > 1
+              }
               className="flex-1 min-w-[180px] select-none flex items-center justify-center gap-2 
-                bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium
-            data-[disabled=true]:pointer-events-none
-            data-[disabled=true]:opacity-50
-            data-[disabled=true]:cursor-not-allowed"
+              bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium
+              data-[disabled=true]:pointer-events-none
+              data-[disabled=true]:opacity-50
+              data-[disabled=true]:cursor-not-allowed"
               onClick={(e) => e.stopPropagation()}
             >
               Downloads
@@ -204,7 +189,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                 className="group-hover:translate-x-1 transition-transform"
               />
             </Link>
-            {!slug.split(".")[1] && (
+            {slug.split(".").length == 1 && (
               <Link href={`${slug}/preview`} target="_blank">
                 <motion.button
                   whileHover={{ scale: 1.02 }}

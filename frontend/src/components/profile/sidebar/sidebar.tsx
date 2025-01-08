@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuthStore } from "@/store/authStore";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebarDialogStore } from "@/store/profileStore";
 
@@ -33,14 +32,8 @@ const Sidebar: FC = () => {
     >
       <div>
         <div className="w-full flex items-center justify-between border-b pb-4">
-          <Link href={"/"}>
-            <Image
-              src="/icons/logo-dark.svg"
-              alt="logo"
-              width={140}
-              height={44}
-              className="w-24 sm:w-28 lg:w-32 xl:w-36 2xl:w-40"
-            />
+          <Link href="/">
+            <h1 className="text-2xl md:text-3xl text-black">Softgroup</h1>
           </Link>
           <button className="md:hidden" onClick={closeDialog}>
             <ChevronLeft />

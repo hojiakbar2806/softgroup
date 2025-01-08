@@ -81,7 +81,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
           {translated?.description}
         </p>
 
-        {product?.slug.split(".")[1] ? (
+        {product?.slug.split(".").length > 1 ? (
           <Link
             href={`${BASE_URL}/templates/download/${product?.slug}`}
             target="_blank"

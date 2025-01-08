@@ -3,7 +3,6 @@
 import { HeartIcon, User2Icon } from "lucide-react";
 import { FC } from "react";
 import { Link } from "@/i18n/routing";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import LanguageDropdown from "./langDropDown";
 import useWishListStore from "@/store/wishListStore";
@@ -17,13 +16,7 @@ const Header: FC = () => {
     <header className="flex justify-center bg-[#3a4352] shadow-sm py-3 sticky top-0 z-50">
       <div className="container flex justify-between items-center">
         <Link href="/">
-          <Image
-            src="/icons/logo.svg"
-            width={176}
-            height={55}
-            alt="logo"
-            className="w-24 sm:w-28 lg:w-32 xl:w-36 2xl:w-40"
-          />
+          <h1 className="text-2xl md:text-3xl text-white">Softgroup</h1>
         </Link>
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-5 2xl:gap-6">
           <LanguageDropdown />

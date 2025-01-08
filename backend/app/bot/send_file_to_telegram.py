@@ -38,9 +38,9 @@ async def send_file_to_telegram(slug: str):
         photo = FSInputFile(template.images[0].url)
 
         if template.is_verified:
-            caption = "✅ Template tasdiqlangan"
+            caption = f"✅ Template ({template.slug}) tasdiqlangan"
         else:
-            caption = "❌ Template tasdiqlanmagan"
+            caption = f"❌ Template ({template.slug}) tasdiqlanmagan"
 
     try:
         for chat_id in settings.CHAT_IDS:
