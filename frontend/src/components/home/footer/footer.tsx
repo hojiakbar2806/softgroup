@@ -28,14 +28,14 @@ const Footer: FC = () => {
           </Link>
           <Link
             target="_blank"
-            href="https://www.linkedin.com/in/soft-group-81b30433a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+            href="https://www.linkedin.com/company/softgroup-uzbekistan/"
             className="hover:text-purple-500 transition duration-300"
           >
             <LinkedinIcon size={28} />
           </Link>
           <Link
             target="_blank"
-            href="https://t.me/+NPLkASilimo1NzVi"
+            href="https://t.me/Softgroup_uz"
             className="hover:text-purple-500 transition duration-300"
           >
             <SendIcon size={28} />
