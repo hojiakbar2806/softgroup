@@ -41,6 +41,11 @@ async def process_callback(callback_query: CallbackQuery):
             if os.path.exists(current_template):
                 shutil.rmtree(current_template)
 
+            template_images = os.path.join(
+                "docs", "static", "images", "templates", slug)
+            if os.path.exists(template_images):
+                shutil.rmtree(template_images)
+
             await session.delete(template)
             await session.commit()
             await callback_query.answer("🗑 Template muvafaqiyatli o'chirildi")
