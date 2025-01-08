@@ -53,12 +53,12 @@ async def create_template(
             )
 
         slug = await unique_slug(title, session)
-        images_dir = os.path.join(
-            "docs", "static", "images", "templates", slug)
-        os.makedirs(images_dir, exist_ok=True)
 
         if template_file.filename.endswith(".zip"):
             current_template = os.path.join("docs", "templates", slug)
+            images_dir = os.path.join(
+                "docs", "static", "images", "templates", slug)
+            os.makedirs(images_dir, exist_ok=True)
 
             os.makedirs(current_template, exist_ok=True)
 
@@ -89,6 +89,9 @@ async def create_template(
         else:
             slug = f"{slug}.{template_file.filename.split('.')[-1]}"
             current_docs = os.path.join("docs", slug)
+            images_dir = os.path.join(
+                "docs", "static", "images", "templates", slug)
+            os.makedirs(images_dir, exist_ok=True)
 
             with open(current_docs, "wb") as buffer:
                 buffer.write(await template_file.read())
@@ -238,10 +241,11 @@ async def read_templates(
 
             query = query.where(Template.category_id == db_category.id)
 
-        if tier == "premium":
-            query = query.where(Template.current_price > 0)
-        else:
-            query = query.where(Template.current_price == 0)
+        if tier:
+            if tier == "premium":
+                query = query.where(Template.current_price > 0)
+            else:
+                query = query.where(Template.current_price == 0)
 
         query = query.options(
             selectinload(Template.translations),

@@ -23,7 +23,6 @@ async def process_callback(callback_query: CallbackQuery):
         if not template:
             await callback_query.answer("❌ Template topilmadi!")
             print("Template topilmadi!")
-            return
 
         if data.startswith("verify_"):
             print("Template verified!")
@@ -37,9 +36,15 @@ async def process_callback(callback_query: CallbackQuery):
             await callback_query.answer("❌ Template muvafaqiyatli rad etildi!")
             await callback_query.message.answer(f"❌ Template `{slug}` rad etildi.")
         elif data.startswith("delete_"):
-            current_template = os.path.join("docs", "templates", slug)
-            if os.path.exists(current_template):
-                shutil.rmtree(current_template)
+
+            if len(slug.split(".")) == 1:
+                current_template = os.path.join("docs", "templates", slug)
+                if os.path.exists(current_template):
+                    shutil.rmtree(current_template)
+            else:
+                file_path = os.path.join("docs", slug)
+                if os.path.exists(file_path):
+                    shutil.rmtree(file_path)
 
             template_images = os.path.join(
                 "docs", "static", "images", "templates", slug)
