@@ -4,10 +4,12 @@ import Image from "next/image";
 import { Link, useRouter } from "@/i18n/routing";
 import { FC } from "react";
 import { ArrowUpRight } from "lucide-react";
-import Rating from "../rating";
 import { Template } from "@/types/template";
 import { useLocale } from "next-intl";
 import { BASE_URL } from "@/utils/const";
+import { useQuery } from "@tanstack/react-query";
+import { MyProfileService } from "@/services/user.service";
+import { IUser } from "@/types/user";
 
 const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
   product,
@@ -19,6 +21,14 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
   const translated = product.translations?.find(
     (item) => item.language === locale
   );
+
+  const isLoggedIn = document.cookie.includes("isLoggedIn");
+
+  const { data } = useQuery<IUser>({
+    queryKey: ["user"],
+    queryFn: MyProfileService,
+    enabled: !!isLoggedIn,
+  });
 
   return (
     <div
@@ -59,7 +69,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
         </div>
 
         <div className="flex  items-center justify-between">
-          <Rating value={product?.avarage_rating} readonly />
+          {/* <Rating value={product?.avarage_rating} readonly /> */}
 
           <div className="flex items-center gap-2">
             {product?.original_price > 0 && (
@@ -77,18 +87,40 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
         <p className="text-xs sm:text-sm line-clamp-2">
           {translated?.description}
         </p>
-        <Link
-          href={`${locale}/templates/${product?.slug}/preview`}
-          target="_blank"
-          className="mt-auto flex items-center justify-center gap-2 text-xs whiterap px-3 py-1 text-white bg-gradient-to-br from-purple-600 to-blue-500 font-medium rounded-lg
+
+        {product?.slug.split(".")[1] ? (
+          <Link
+            href={`${BASE_URL}/templates/download/${product?.slug}`}
+            target="_blank"
+            data-disabled={data?.is_verified !== true}
+            className="mt-auto flex items-center justify-center gap-2 text-xs whiterap px-3 py-1 text-white bg-gradient-to-br from-purple-600 to-blue-500 font-medium rounded-lg
+            sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg
+            data-[disabled=true]:pointer-events-none
+            data-[disabled=true]:opacity-50
+            data-[disabled=true]:cursor-not-allowed"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Downloads
+            <ArrowUpRight
+              size={18}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </Link>
+        ) : (
+          <Link
+            href={`${locale}/templates/${product?.slug}/preview`}
+            onClick={(e) => e.stopPropagation()}
+            target="_blank"
+            className="mt-auto flex items-center justify-center gap-2 text-xs whiterap px-3 py-1 text-white bg-gradient-to-br from-purple-600 to-blue-500 font-medium rounded-lg
             sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg"
-        >
-          View Preview
-          <ArrowUpRight
-            size={18}
-            className="group-hover:translate-x-1 transition-transform"
-          />
-        </Link>
+          >
+            View Preview
+            <ArrowUpRight
+              size={18}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </Link>
+        )}
       </div>
 
       <div

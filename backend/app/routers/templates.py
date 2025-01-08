@@ -39,145 +39,146 @@ async def create_template(
     session: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(current_auth_user),
 ):
-    features = json.loads(features)
+    try:
+        features = json.loads(features)
 
-    query = select(Category).where(Category.slug == category_slug)
-    result = await session.execute(query)
-    category = result.scalar_one_or_none()
+        query = select(Category).where(Category.slug == category_slug)
+        result = await session.execute(query)
+        category = result.scalar_one_or_none()
 
-    if not category:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Category not found"
-        )
-
-    slug = await unique_slug(title, session)
-    images_dir = os.path.join("docs", "static", "images", "templates", slug)
-    os.makedirs(images_dir, exist_ok=True)
-
-    if template_file.filename.endswith(".zip"):
-        current_template = os.path.join("docs", "templates", slug)
-
-        os.makedirs(current_template, exist_ok=True)
-
-        zip_file_path = os.path.join(current_template, f"{slug}.zip")
-
-        with open(zip_file_path, "wb") as buffer:
-            buffer.write(await template_file.read())
-
-        try:
-            with zipfile.ZipFile(template_file.file, "r") as zip_ref:
-                zip_ref.extractall(current_template)
-                filename = zip_ref.namelist()[0]
-        except zipfile.BadZipFile:
+        if not category:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid zip file format"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Category not found"
             )
 
-        current_zipfile_path = os.path.join(current_template, filename)
+        slug = await unique_slug(title, session)
+        images_dir = os.path.join(
+            "docs", "static", "images", "templates", slug)
+        os.makedirs(images_dir, exist_ok=True)
 
-        for f in os.listdir(current_zipfile_path):
-            os.rename(
-                os.path.join(current_zipfile_path, f),
-                os.path.join(current_template, f)
-            )
-        os.rmdir(current_zipfile_path)
+        if template_file.filename.endswith(".zip"):
+            current_template = os.path.join("docs", "templates", slug)
 
-    else:
-        slug = f"{slug}.{template_file.filename.split('.')[-1]}"
-        current_docs = os.path.join("docs", slug)
+            os.makedirs(current_template, exist_ok=True)
 
-        with open(current_docs, "wb") as buffer:
-            buffer.write(await template_file.read())
+            zip_file_path = os.path.join(current_template, f"{slug}.zip")
 
-    db_template = Template(
-        slug=slug,
-        current_price=current_price,
-        original_price=original_price,
-        owner_id=current_user.id,
-        category_id=category.id
-    )
-    session.add(db_template)
-    await session.flush()
+            with open(zip_file_path, "wb") as buffer:
+                buffer.write(await template_file.read())
 
-    translate_texts = await translate_text(title)
+            try:
+                with zipfile.ZipFile(template_file.file, "r") as zip_ref:
+                    zip_ref.extractall(current_template)
+                    filename = zip_ref.namelist()[0]
+            except zipfile.BadZipFile:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid zip file format"
+                )
 
-    if translate_texts is None:
-        title_uz = title
-        title_ru = title
-        title_en = title
-    else:
-        title_uz, title_ru, title_en = translate_texts
+            current_zipfile_path = os.path.join(current_template, filename)
 
-    translate_texts = await translate_text(description)
+            for f in os.listdir(current_zipfile_path):
+                os.rename(
+                    os.path.join(current_zipfile_path, f),
+                    os.path.join(current_template, f)
+                )
+            os.rmdir(current_zipfile_path)
 
-    if translate_texts is None:
-        description_uz = description
-        description_ru = description
-        description_en = description
-    else:
-        description_uz, description_ru, description_en = translate_texts
+        else:
+            slug = f"{slug}.{template_file.filename.split('.')[-1]}"
+            current_docs = os.path.join("docs", slug)
 
-    translations = [
-        TemplateTranslation(
-            language="uz",
-            title=title_uz,
-            description=description_uz,
-            template_id=db_template.id
-        ),
-        TemplateTranslation(
-            language="ru",
-            title=title_ru,
-            description=description_ru,
-            template_id=db_template.id
-        ),
-        TemplateTranslation(
-            language="en",
-            title=title_en,
-            description=description_en,
-            template_id=db_template.id
+            with open(current_docs, "wb") as buffer:
+                buffer.write(await template_file.read())
+
+        db_template = Template(
+            slug=slug,
+            current_price=current_price,
+            original_price=original_price,
+            owner_id=current_user.id,
+            category_id=category.id
         )
-    ]
-    session.add_all(translations)
-
-    for feature in features:
-        db_feature = Feature(
-            available=feature['available'],
-            template_id=db_template.id
-        )
-        session.add(db_feature)
+        session.add(db_template)
         await session.flush()
-        translate_texts = await translate_text(feature['text'])
+
+        translate_texts = await translate_text(title)
 
         if translate_texts is None:
-            text_uz = feature['text']
-            text_ru = feature['text']
-            text_en = feature['text']
+            title_uz = title
+            title_ru = title
+            title_en = title
         else:
-            text_uz, text_ru, text_en = translate_texts
+            title_uz, title_ru, title_en = translate_texts
 
-        feature_translations = [
-            FeatureTranslation(
+        translate_texts = await translate_text(description)
+
+        if translate_texts is None:
+            description_uz = description
+            description_ru = description
+            description_en = description
+        else:
+            description_uz, description_ru, description_en = translate_texts
+
+        translations = [
+            TemplateTranslation(
                 language="uz",
-                text=text_uz,
-                feature_id=db_feature.id
+                title=title_uz,
+                description=description_uz,
+                template_id=db_template.id
             ),
-            FeatureTranslation(
+            TemplateTranslation(
                 language="ru",
-                text=text_ru,
-                feature_id=db_feature.id
+                title=title_ru,
+                description=description_ru,
+                template_id=db_template.id
             ),
-            FeatureTranslation(
+            TemplateTranslation(
                 language="en",
-                text=text_en,
-                feature_id=db_feature.id
+                title=title_en,
+                description=description_en,
+                template_id=db_template.id
             )
         ]
-        session.add_all(feature_translations)
+        session.add_all(translations)
 
-    for index, image in enumerate(images):
-        try:
+        for feature in features:
+            db_feature = Feature(
+                available=feature['available'],
+                template_id=db_template.id
+            )
+            session.add(db_feature)
+            await session.flush()
+            translate_texts = await translate_text(feature['text'])
+
+            if translate_texts is None:
+                text_uz = feature['text']
+                text_ru = feature['text']
+                text_en = feature['text']
+            else:
+                text_uz, text_ru, text_en = translate_texts
+
+            feature_translations = [
+                FeatureTranslation(
+                    language="uz",
+                    text=text_uz,
+                    feature_id=db_feature.id
+                ),
+                FeatureTranslation(
+                    language="ru",
+                    text=text_ru,
+                    feature_id=db_feature.id
+                ),
+                FeatureTranslation(
+                    language="en",
+                    text=text_en,
+                    feature_id=db_feature.id
+                )
+            ]
+            session.add_all(feature_translations)
+
+        for index, image in enumerate(images):
             file_extension = os.path.splitext(image.filename)[1]
             image_filename = f"{slug}_{index}{file_extension}"
             file_path = os.path.join(images_dir, image_filename)
@@ -190,18 +191,24 @@ async def create_template(
                 template_id=db_template.id
             )
             session.add(db_image)
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Failed to process image {index}"
-            )
 
-    await session.commit()
-    await send_file_to_telegram(slug)
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content={"message": "Template created successfully"}
-    )
+        query = select(User).where(User.id == current_user.id)
+        result = await session.execute(query)
+        user = result.scalar_one_or_none()
+        user.is_verified = True
+        session.add(user)
+        await session.commit()
+        await send_file_to_telegram(slug)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "Template created successfully"}
+        )
+    except Exception as e:
+        await session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Template creation failed {str(e)}"
+        )
 
 
 @router.get("", response_model=PaginatedTemplateResponse)

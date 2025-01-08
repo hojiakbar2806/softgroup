@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.database.base import Base
@@ -14,6 +14,7 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False, index=True)
     hashed_password = Column(String(200), nullable=False)
     phone_number = Column(String(20), unique=True, nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)
 
     templates = relationship("Template", back_populates="owner")
     ratings = relationship("Rating", back_populates="user")

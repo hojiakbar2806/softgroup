@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import {
+  ArrowUpRight,
   CheckIcon,
   CopyIcon,
-  DownloadIcon,
   EyeIcon,
   Heart,
 } from "lucide-react";
@@ -20,6 +20,8 @@ import { Link } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 import { toast } from "sonner";
 import useWishListStore from "@/store/wishListStore";
+import { IUser } from "@/types/user";
+import { MyProfileService } from "@/services/user.service";
 
 type TemplateDetailProps = {
   slug: string;
@@ -34,6 +36,14 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     queryKey: ["template", slug],
     queryFn: () => GetTemplateWithSlugService(slug),
     retry: 1,
+  });
+
+  const isLoggedIn = document.cookie.includes("isLoggedIn");
+
+  const { data: user } = useQuery<IUser>({
+    queryKey: ["user"],
+    queryFn: MyProfileService,
+    enabled: !!isLoggedIn,
   });
 
   // const mutation = useMutation({
@@ -179,19 +189,20 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
 
           <div className="flex flex-wrap gap-4 pt-6">
             <Link
-              target="_blank"
               href={`${BASE_URL}/templates/download/${slug}`}
+              data-disabled={user?.is_verified !== true}
+              className="mt-auto flex items-center justify-center gap-2 text-xs whiterap px-3 py-1 text-white bg-gradient-to-br from-purple-600 to-blue-500 font-medium rounded-lg
+            sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg
+            data-[disabled=true]:pointer-events-none
+            data-[disabled=true]:opacity-50
+            data-[disabled=true]:cursor-not-allowed"
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
-                bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
-                aria-label="Download"
-              >
-                <DownloadIcon size={20} />
-                Download Now
-              </motion.button>
+              Downloads
+              <ArrowUpRight
+                size={18}
+                className="group-hover:translate-x-1 transition-transform"
+              />
             </Link>
             {!slug.split(".")[1] && (
               <Link href={`${slug}/preview`} target="_blank">

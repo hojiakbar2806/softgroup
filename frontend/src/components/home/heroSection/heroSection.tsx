@@ -24,7 +24,7 @@ const HeroSection: FC = () => {
   return (
     <section className="text-center flex flex-col items-center bg-purpleGradient py-14 gap-10">
       <div className="container">
-        <div className="flex flex-col gap-6">
+        <div className="flex items-center flex-col gap-6">
           <h1 className="text-3xl lg:text-4xl font-bold">{t("title")}</h1>
           <p className="text-gray-600 max-w-6xl">{t("description")}</p>
           <SearchComp />

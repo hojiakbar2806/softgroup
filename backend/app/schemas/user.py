@@ -15,6 +15,8 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
+    is_verified: bool
+
 
 
 class UserLogin(BaseModel):
