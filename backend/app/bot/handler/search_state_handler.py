@@ -47,10 +47,16 @@ async def search_state_handler(message: Message, state: FSMContext, bot: Bot):
 
         photo = FSInputFile(template.images[0].url)
 
+        if template.is_verified:
+            caption = "✅ Template tasdiqlangan"
+        else:
+            caption = "❌ Template tasdiqlanmagan"
+
         await bot.send_photo(
             chat_id=message.chat.id,
             photo=photo,
-            reply_markup=keyboard
+            reply_markup=keyboard,
+            caption=caption
         )
 
     await state.clear()
