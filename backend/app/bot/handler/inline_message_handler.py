@@ -44,7 +44,7 @@ async def process_callback(callback_query: CallbackQuery):
             else:
                 file_path = os.path.join("docs", slug)
                 if os.path.exists(file_path):
-                    shutil.rmtree(file_path)
+                    os.remove(file_path)
 
             template_images = os.path.join(
                 "docs", "static", "images", "templates", slug)
