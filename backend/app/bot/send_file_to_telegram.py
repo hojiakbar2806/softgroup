@@ -37,12 +37,18 @@ async def send_file_to_telegram(slug: str):
 
         photo = FSInputFile(template.images[0].url)
 
+        if template.is_verified:
+            caption = "✅ Template tasdiqlangan"
+        else:
+            caption = "❌ Template tasdiqlanmagan"
+
     try:
         for chat_id in settings.CHAT_IDS:
             await bot.send_photo(
                 chat_id=chat_id,
                 photo=photo,
-                reply_markup=keyboard
+                reply_markup=keyboard,
+                caption=caption
             )
         print(f"File link '{url}' successfully sent to Telegram.")
     except Exception as e:
