@@ -191,8 +191,8 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
             <Link
               href={`${BASE_URL}/templates/download/${slug}`}
               data-disabled={user?.is_verified !== true}
-              className="mt-auto flex items-center justify-center gap-2 text-xs whiterap px-3 py-1 text-white bg-gradient-to-br from-purple-600 to-blue-500 font-medium rounded-lg
-            sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg
+              className="flex-1 min-w-[180px] select-none flex items-center justify-center gap-2 
+                bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium
             data-[disabled=true]:pointer-events-none
             data-[disabled=true]:opacity-50
             data-[disabled=true]:cursor-not-allowed"

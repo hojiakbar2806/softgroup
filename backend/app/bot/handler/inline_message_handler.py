@@ -1,3 +1,5 @@
+import os
+import shutil
 from aiogram import Router
 from aiogram.types import CallbackQuery
 from sqlalchemy.future import select
@@ -35,6 +37,10 @@ async def process_callback(callback_query: CallbackQuery):
             await callback_query.answer("❌ Template muvafaqiyatli rad etildi!")
             await callback_query.message.answer(f"❌ Template `{slug}` rad etildi.")
         elif data.startswith("delete_"):
+            current_template = os.path.join("docs", "templates", slug)
+            if os.path.exists(current_template):
+                shutil.rmtree(current_template)
+
             await session.delete(template)
             await session.commit()
             await callback_query.answer("🗑 Template muvafaqiyatli o'chirildi")

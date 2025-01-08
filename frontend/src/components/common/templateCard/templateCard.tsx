@@ -56,21 +56,13 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
       />
 
       <div className="flex flex-1 flex-col p-2 gap-1 sm:gap-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between my-2">
           <h2
             className="text-sm sm:text-lg font-semibold text-gray-800 group-hover:text-purple-600 
               transition-colors line-clamp-1"
           >
             {translated?.title}
           </h2>
-          <span className="ml-2 text-[8px] sm:text-xs text-gray-600">
-            ({product?.views} views)
-          </span>
-        </div>
-
-        <div className="flex  items-center justify-between">
-          {/* <Rating value={product?.avarage_rating} readonly /> */}
-
           <div className="flex items-center gap-2">
             {product?.original_price > 0 && (
               <span className="text-xs sm:text-lg text-gray-400 line-through">
@@ -84,6 +76,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
             </span>
           </div>
         </div>
+
         <p className="text-xs sm:text-sm line-clamp-2">
           {translated?.description}
         </p>
