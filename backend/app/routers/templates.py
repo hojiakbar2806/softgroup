@@ -244,6 +244,8 @@ async def read_templates(
         if tier:
             if tier == "premium":
                 query = query.where(Template.current_price > 0)
+            else:
+                query = query.where(Template.current_price == 0)
         else:
             query = query.where(Template.current_price == 0)
 
