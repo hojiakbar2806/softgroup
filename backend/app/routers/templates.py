@@ -1,7 +1,7 @@
-import os
 import json
-import zipfile
+import shutil
 
+from pathlib import Path
 from sqlalchemy import func
 from typing import List, Optional
 from sqlalchemy.future import select
@@ -14,11 +14,13 @@ from app.models.user import User
 from app.core.config import settings
 from app.utils.slug import unique_slug
 from app.database.session import get_db_session
-from app.utils.translator import translate_text
+from app.utils.save_image import save_image_file
 from app.core.dependencies import current_auth_user
+from app.utils.save_template import  save_template_file
 from app.schemas.template import PaginatedTemplateResponse
 from app.bot.send_file_to_telegram import send_file_to_telegram
 from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
+from app.utils.translate import handle_translations
 
 router = APIRouter(prefix="/templates")
 
@@ -32,69 +34,24 @@ async def create_template(
     original_price: Optional[float] = Form(None),
     template_file: UploadFile = File(...),
     images: List[UploadFile] = File(...),
-    features: str = Form(
-        ...,
-        description='[{"text": "text", "available": true}]'
-    ),
+    features: str = Form(...,
+                         description='[{"text": "text", "available": true}]'),
     session: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(current_auth_user),
 ):
+    template_dir = None
+    images_dir = None
+
     try:
-        features = json.loads(features)
 
-        query = select(Category).where(Category.slug == category_slug)
-        result = await session.execute(query)
-        category = result.scalar_one_or_none()
-
+        category = await session.scalar(
+            select(Category).where(Category.slug == category_slug)
+        )
         if not category:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Category not found"
-            )
+            raise HTTPException(status_code=404, detail="Category not found")
 
         slug = await unique_slug(title, session)
-
-        if template_file.filename.endswith(".zip"):
-            current_template = os.path.join("docs", "templates", slug)
-            images_dir = os.path.join(
-                "docs", "static", "images", "templates", slug)
-            os.makedirs(images_dir, exist_ok=True)
-
-            os.makedirs(current_template, exist_ok=True)
-
-            zip_file_path = os.path.join(current_template, f"{slug}.zip")
-
-            with open(zip_file_path, "wb") as buffer:
-                buffer.write(await template_file.read())
-
-            try:
-                with zipfile.ZipFile(template_file.file, "r") as zip_ref:
-                    zip_ref.extractall(current_template)
-                    filename = zip_ref.namelist()[0]
-            except zipfile.BadZipFile:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Invalid zip file format"
-                )
-
-            current_zipfile_path = os.path.join(current_template, filename)
-
-            for f in os.listdir(current_zipfile_path):
-                os.rename(
-                    os.path.join(current_zipfile_path, f),
-                    os.path.join(current_template, f)
-                )
-            os.rmdir(current_zipfile_path)
-
-        else:
-            slug = f"{slug}.{template_file.filename.split('.')[-1]}"
-            current_docs = os.path.join("docs", slug)
-            images_dir = os.path.join(
-                "docs", "static", "images", "templates", slug)
-            os.makedirs(images_dir, exist_ok=True)
-
-            with open(current_docs, "wb") as buffer:
-                buffer.write(await template_file.read())
+        slug, template_dir, images_dir = await save_template_file(template_file, slug)
 
         db_template = Template(
             slug=slug,
@@ -106,111 +63,75 @@ async def create_template(
         session.add(db_template)
         await session.flush()
 
-        translate_texts = await translate_text(title)
-
-        if translate_texts is None:
-            title_uz = title
-            title_ru = title
-            title_en = title
-        else:
-            title_uz, title_ru, title_en = translate_texts
-
-        translate_texts = await translate_text(description)
-
-        if translate_texts is None:
-            description_uz = description
-            description_ru = description
-            description_en = description
-        else:
-            description_uz, description_ru, description_en = translate_texts
+        title_uz, title_ru, title_en = await handle_translations(title)
+        desc_uz, desc_ru, desc_en = await handle_translations(description)
 
         translations = [
             TemplateTranslation(
-                language="uz",
-                title=title_uz,
-                description=description_uz,
-                template_id=db_template.id
-            ),
-            TemplateTranslation(
-                language="ru",
-                title=title_ru,
-                description=description_ru,
-                template_id=db_template.id
-            ),
-            TemplateTranslation(
-                language="en",
-                title=title_en,
-                description=description_en,
+                language=lang,
+                title=title_,
+                description=desc_,
                 template_id=db_template.id
             )
+            for lang, title_, desc_ in [
+                ("uz", title_uz, desc_uz),
+                ("ru", title_ru, desc_ru),
+                ("en", title_en, desc_en)
+            ]
         ]
         session.add_all(translations)
 
-        for feature in features:
+        features_data = json.loads(features)
+        for feature in features_data:
             db_feature = Feature(
-                available=feature['available'],
-                template_id=db_template.id
-            )
+                available=feature['available'], template_id=db_template.id)
             session.add(db_feature)
             await session.flush()
-            translate_texts = await translate_text(feature['text'])
 
-            if translate_texts is None:
-                text_uz = feature['text']
-                text_ru = feature['text']
-                text_en = feature['text']
-            else:
-                text_uz, text_ru, text_en = translate_texts
-
+            text_uz, text_ru, text_en = await handle_translations(feature['text'])
             feature_translations = [
-                FeatureTranslation(
-                    language="uz",
-                    text=text_uz,
-                    feature_id=db_feature.id
-                ),
-                FeatureTranslation(
-                    language="ru",
-                    text=text_ru,
-                    feature_id=db_feature.id
-                ),
-                FeatureTranslation(
-                    language="en",
-                    text=text_en,
-                    feature_id=db_feature.id
-                )
+                FeatureTranslation(language=lang, text=text_,
+                                   feature_id=db_feature.id)
+                for lang, text_ in [
+                    ("uz", text_uz),
+                    ("ru", text_ru),
+                    ("en", text_en)
+                ]
             ]
             session.add_all(feature_translations)
 
-        for index, image in enumerate(images):
-            file_extension = os.path.splitext(image.filename)[1]
-            image_filename = f"{slug}_{index}{file_extension}"
-            file_path = os.path.join(images_dir, image_filename)
+        for idx, image in enumerate(images):
+            file_ext = Path(image.filename).suffix
+            image_path = images_dir / f"{slug}_{idx}{file_ext}"
+            await save_image_file(image, image_path)
 
-            with open(file_path, "wb") as buffer:
-                buffer.write(await image.read())
-
-            db_image = Image(
-                url=os.path.relpath(file_path),
+            session.add(Image(
+                url=str(image_path.relative_to(settings.PROJECT_DIR)),
                 template_id=db_template.id
-            )
-            session.add(db_image)
+            ))
 
-        query = select(User).where(User.id == current_user.id)
-        result = await session.execute(query)
-        user = result.scalar_one_or_none()
-        user.is_verified = True
-        session.add(user)
+        current_user.is_verified = True
+        session.add(current_user)
+
         await session.commit()
         await send_file_to_telegram(slug)
+
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
             content={"message": "Template created successfully"}
         )
+
     except Exception as e:
         await session.rollback()
+
+        if template_dir and template_dir.exists():
+            shutil.rmtree(template_dir)
+        if images_dir and images_dir.exists():
+            shutil.rmtree(images_dir)
+
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Template creation failed {str(e)}"
+            detail=f"Template creation failed: {str(e)}"
         )
 
 
@@ -230,22 +151,16 @@ async def read_templates(
             query = query.where(Template.slug.contains(slug))
 
         if category:
-            c_query = select(Category).where(Category.slug == category)
-            c_result = await db.execute(c_query)
-            db_category = c_result.scalar_one_or_none()
+            db_category = await db.scalar(
+                select(Category).where(Category.slug == category)
+            )
             if not db_category:
                 raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Category not found"
-                )
-
+                    status_code=404, detail="Category not found")
             query = query.where(Template.category_id == db_category.id)
 
-        if tier:
-            if tier == "premium":
-                query = query.where(Template.current_price > 0)
-            else:
-                query = query.where(Template.current_price == 0)
+        if tier == "premium":
+            query = query.where(Template.current_price > 0)
         else:
             query = query.where(Template.current_price == 0)
 
@@ -256,32 +171,22 @@ async def read_templates(
             selectinload(Template.ratings),
         )
 
-        total_query = select(func.count(Template.id))
+        total_templates = await db.scalar(
+            select(func.count()).select_from(query.subquery())
+        )
 
-        if slug:
-            total_query = total_query.where(Template.slug.contains(slug))
-        if category:
-            total_query = total_query.where(
-                Template.category_id == db_category.id
-            )
+        templates = await db.scalars(
+            query.offset((page - 1) * per_page).limit(per_page)
+        )
 
-        total_result = await db.execute(total_query)
-        templates_count = total_result.scalar()
-
-        skip = (page - 1) * per_page
-        query = query.offset(skip).limit(per_page)
-
-        result = await db.execute(query)
-        templates = result.scalars().all()
-
-        total_pages = (templates_count + per_page - 1) // per_page
+        total_pages = (total_templates + per_page - 1) // per_page
 
         return {
-            "data": templates,
+            "data": templates.all(),
             "current_page": page,
             "per_page": per_page,
             "total_pages": total_pages,
-            "total_templates": templates_count,
+            "total_templates": total_templates,
             "has_next": page < total_pages,
             "has_previous": page > 1,
         }
@@ -289,7 +194,7 @@ async def read_templates(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred"
+            detail=f"An unexpected error occurred: {str(e)}"
         )
 
 
@@ -299,26 +204,27 @@ async def read_template(
     session: AsyncSession = Depends(get_db_session)
 ):
     try:
-        query = select(Template).where(Template.slug == slug).options(
-            selectinload(Template.translations),
-            selectinload(Template.images),
-            selectinload(Template.features).selectinload(Feature.translations),
-            selectinload(Template.ratings)
+        template = await session.scalar(
+            select(Template)
+            .where(Template.slug == slug)
+            .options(
+                selectinload(Template.translations),
+                selectinload(Template.images),
+                selectinload(Template.features).selectinload(
+                    Feature.translations),
+                selectinload(Template.ratings)
+            )
         )
-        result = await session.execute(query)
-        template = result.scalar_one_or_none()
 
         if template is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Template not found"
-            )
+            raise HTTPException(status_code=404, detail="Template not found")
+
         return template
 
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to fetch template"
+            detail=f"Failed to fetch template: {str(e)}"
         )
 
 
@@ -327,73 +233,54 @@ async def download_template(
     slug: str,
     session: AsyncSession = Depends(get_db_session)
 ):
-    query = select(Template).where(Template.slug == slug)
-    result = await session.execute(query)
-    template = result.scalar_one_or_none()
+    template = await session.scalar(
+        select(Template).where(Template.slug == slug)
+    )
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
 
-    if template is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Template not found"
-        )
-
-    if len(slug.split(".")) == 1:
-        file_path = os.path.join("docs", "templates", slug, f"{slug}.zip")
-
-        if not os.path.exists(file_path):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Template file not found"
-            )
-        response = FileResponse(
-            file_path,
-            media_type='application/zip',
-            filename=f"{slug}.zip"
-        )
+    if '.' not in slug:
+        file_path = settings.TEMPLATES_DIR / slug / f"{slug}.zip"
+        media_type = 'application/zip'
+        filename = f"{slug}.zip"
     else:
-        file_path = os.path.join("docs", slug)
+        file_path = settings.DOCS_DIR / "documents" / slug
+        ext = slug.split('.')[-1]
+        media_type = f"application/{ext}"
+        filename = slug
 
-        if not os.path.exists(file_path):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Template file not found"
-            )
-        response = FileResponse(
-            file_path,
-            media_type=f"application/{slug.split('.')[1]}",
-            filename=slug
-        )
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Template file not found")
+
     template.downloads += 1
     await session.commit()
 
-    return response
+    return FileResponse(
+        path=file_path,
+        media_type=media_type,
+        filename=filename
+    )
 
 
-@router.get("/{slug}/{path:path}", response_class=FileResponse)
-async def get_template_file(slug: str, path: str, session: AsyncSession = Depends(get_db_session)):
-    query = select(Template).where(Template.slug == slug)
-    result = await session.execute(query)
-    template = result.scalar_one_or_none()
+@router.get("/{slug}/{path:path}")
+async def get_template_file(
+    slug: str,
+    path: str,
+    session: AsyncSession = Depends(get_db_session)
+):
+    template = await session.scalar(
+        select(Template).where(Template.slug == slug)
+    )
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
 
-    if template is None:
+    template_dir = settings.TEMPLATES_DIR / slug
+    if not template_dir.exists():
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Template not found"
-        )
+            status_code=404, detail="Template directory not found")
 
-    current_template = os.path.join(settings.DOCS_DIR, "templates", slug)
+    file_path = template_dir / path
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
 
-    if not os.path.exists(current_template):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Template not found"
-        )
-
-    file_path = os.path.join(current_template, path)
-
-    if not os.path.exists(file_path):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="File not found"
-        )
     return FileResponse(file_path)

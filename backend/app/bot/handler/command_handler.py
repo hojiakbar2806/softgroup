@@ -5,8 +5,6 @@ from app.bot.states import SearchState
 from aiogram.fsm.context import FSMContext
 
 
-from app.bot.session import get_db_session
-
 command_router = Router()
 
 

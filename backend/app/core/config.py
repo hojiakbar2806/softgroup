@@ -4,18 +4,30 @@ from pydantic_settings import BaseSettings
 
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-CORE = Path(__file__).resolve().parent
+CURRENT = Path(__file__).resolve()
+CORE_DIR = CURRENT.parent
+APP_DIR = CORE_DIR.parent
+PROJECT_DIR = APP_DIR.parent
 
 
 class Settings(BaseSettings):
     DEBUG: bool = False
     APP_ENV: str = "development"
-    DOCS_DIR: str = "docs"
+
+    APP_DIR: Path = APP_DIR
+    PROJECT_DIR: Path = PROJECT_DIR
+    DOCS_DIR: Path = PROJECT_DIR / "docs"
+    TEMPLATES_DIR: Path = PROJECT_DIR / DOCS_DIR / "templates"
+    IMAGES_DIR: Path = PROJECT_DIR / DOCS_DIR / "static" / "images"
+
+    TEMPLATE_IMAGES_DIR: Path = IMAGES_DIR / "template"
+    DOC_IMAGES_DIR: Path = IMAGES_DIR / "document"
+
+    ALLOWED_IMAGE_TYPES: list = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+    ALLOWED_TEMPLATE_TYPES: list = ['.zip', '.pdf', '.doc', '.docx']
 
     BOT_TOKEN: str = "7958951230:AAGCU4oWRDXdyVT_LT8eB-m-u7RViiGtGPg"
-    CHAT_IDS: list = [2055370981, 1960543012,
-                      5050150433, 6250209743, -1002489508446]
+    CHAT_IDS: list = [1960543012]
     BASE_URL: str = "https://api.softgroup.uz"
     WEBHOOK_URL: str = "https://api.softgroup.uz"
 
@@ -30,11 +42,11 @@ class Settings(BaseSettings):
         if self.APP_ENV == "production":
             return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         else:
-            return f"sqlite+aiosqlite:///{str(BASE_DIR/self.POSTGRES_DB)}.db"
+            return f"sqlite+aiosqlite:///{str(APP_DIR/self.POSTGRES_DB)}.db"
 
     ALGORITHM: str = "RS256"
-    PRIVATE_KEY_PATH: Path = CORE / "certs" / "jwt-private.pem"
-    PUBLIC_KEY_PATH: Path = CORE / "certs" / "jwt-public.pem"
+    PRIVATE_KEY_PATH: Path = CORE_DIR / "certs" / "jwt-private.pem"
+    PUBLIC_KEY_PATH: Path = CORE_DIR / "certs" / "jwt-public.pem"
     ACCESS_TOKEN_EXPIRES_MINUTES: float = 120
     REFRESH_TOKEN_EXPIRES_MINUTES: int = (60*24)
     ACTIVATION_TOKEN_EXPIRES_MINUTS: int = 2

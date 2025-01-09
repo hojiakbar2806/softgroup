@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, File
 
 from app.core.config import settings
-from app.utils.translator import translate_text
+from app.utils.translate import translate_text
 from app.database.session import get_db_session
 from app.schemas.category import CategoryResponse
 from app.models import Category, CategoryTranslation

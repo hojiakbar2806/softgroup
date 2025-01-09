@@ -34,3 +34,10 @@ async def translate_text(text: str) -> Optional[Tuple[str, str, str]]:
     except Exception as e:
         print(f"Translation error: {str(e)}")
         return None
+
+
+async def handle_translations(text: str) -> tuple[str, str, str]:
+    translated = await translate_text(text)
+    if translated is None:
+        return text, text, text
+    return translated
