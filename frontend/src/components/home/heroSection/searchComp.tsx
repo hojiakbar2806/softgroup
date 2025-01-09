@@ -103,9 +103,9 @@ const SearchComp = () => {
                       <TemplateCardSkeleton key={index} />
                     ))}
                   </TemplateCardWrapper>
-                ) : data?.length ? (
+                ) : data?.data.length ? (
                   <TemplateCardWrapper>
-                    {data.map((product) => (
+                    {data.data.map((product) => (
                       <TemplateCard key={product.id} product={product} />
                     ))}
                   </TemplateCardWrapper>
