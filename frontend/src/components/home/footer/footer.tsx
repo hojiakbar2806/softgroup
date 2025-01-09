@@ -14,21 +14,21 @@ const Footer: FC = () => {
         <div className="flex space-x-6 mb-4">
           <Link
             target="_blank"
-            href="https://www.facebook.com/softgroupuz/"
+            href="https://www.facebook.com/softgroupuz"
             className="hover:text-purple-500 transition duration-300"
           >
             <FacebookIcon size={28} />
           </Link>
           <Link
             target="_blank"
-            href="https://www.instagram.com/uz_digit/profilecard/?igsh=MTk2NGxlcWx6YmF3eA=="
+            href="https://www.instagram.com/softgroup_uz"
             className="hover:text-purple-500 transition duration-300"
           >
             <InstagramIcon size={28} />
           </Link>
           <Link
             target="_blank"
-            href="https://www.linkedin.com/company/softgroup-uzbekistan/"
+            href="https://www.linkedin.com/company/softgroup-uzbekistan"
             className="hover:text-purple-500 transition duration-300"
           >
             <LinkedinIcon size={28} />
