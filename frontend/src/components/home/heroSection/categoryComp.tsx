@@ -7,7 +7,7 @@ import { useLocale } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GetCategoriesService } from "@/services/template.service";
 import { ICategory } from "@/types/mixin";
-import { BASE_URL } from "@/utils/const";
+import { BASE_URL } from "@/lib/const";
 
 const CategoryComp = () => {
   const router = useRouter();

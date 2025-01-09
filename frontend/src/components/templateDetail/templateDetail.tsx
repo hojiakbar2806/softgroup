@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { GetTemplateWithSlugService } from "@/services/template.service";
 import { Template } from "@/types/template";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BASE_URL } from "@/utils/const";
+import { BASE_URL } from "@/lib/const";
 import { Link } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 import { toast } from "sonner";

@@ -8,7 +8,7 @@ import CartDialog from "@/components/cartDialog/cartDialog";
 import { Locale, routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
-import ReactQueryProvider from "@/utils/reactQueryProvider";
+import ReactQueryProvider from "@/lib/reactQueryProvider";
 
 const sora = Sora({
   subsets: ["latin"],

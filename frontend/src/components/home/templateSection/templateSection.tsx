@@ -6,10 +6,11 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronRightCircle } from "lucide-react";
 import { GetAllTemplateService } from "@/services/template.service";
-import { Template } from "@/types/template";
+import { Templates } from "@/types/template";
 import TemplateCard from "@/components/common/templateCard/templateCard";
 import { TemplateCardSkeleton } from "@/components/common/templateCard/templateCardSkeleton";
 import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
+import CustomPagination from "@/components/common/pagination";
 
 interface TemplateSectionProps {
   sectionTitle?: string;
@@ -20,14 +21,14 @@ const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
   const tier = searchParams.get("tier");
   const query = `${tier ? `tier=${tier}` : ""}`;
 
-  const { data: templates, isLoading } = useQuery<Template[]>({
+  const { data: templates, isLoading } = useQuery<Templates>({
     queryKey: ["templates", query],
     queryFn: () => GetAllTemplateService(query),
   });
 
   return (
     <section className="flex-1 py-10 bg-blue-50">
-      <div className="container px-4 mx-auto">
+      <div className="container px-4 mx-auto flex flex-col gap-4">
         {sectionTitle && (
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">{sectionTitle}</h1>
@@ -45,8 +46,8 @@ const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
             Array.from({ length: 8 }).map((_, index) => (
               <TemplateCardSkeleton key={`skeleton-${index}`} />
             ))
-          ) : templates && templates.length > 0 ? (
-            templates.map((template) => (
+          ) : templates?.data && templates.data.length > 0 ? (
+            templates.data.map((template) => (
               <TemplateCard key={template.id} product={template} />
             ))
           ) : (
@@ -55,6 +56,9 @@ const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
             </h1>
           )}
         </TemplateCardWrapper>
+        {(templates?.total_pages || 1) > 1 && (
+          <CustomPagination totalPages={templates?.total_pages || 1} />
+        )}
       </div>
     </section>
   );

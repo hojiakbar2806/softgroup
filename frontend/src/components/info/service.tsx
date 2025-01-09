@@ -32,7 +32,7 @@ const Service = () => {
               onClick={() => toggleOpenCard(index)}
             >
               <div className="w-full flex border-b items-center justify-between cursor-pointer">
-                <h1 className="font-semibold text-white text-xl md:text-2xl xl:text-3xl transition-all duration-300">
+                <h1 className=" text-white text-xl md:text-2xl transition-all duration-300">
                   {t(`Services.${index}.name`)}
                 </h1>
                 <button

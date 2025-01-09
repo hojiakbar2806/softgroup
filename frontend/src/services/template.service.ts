@@ -1,4 +1,4 @@
-import { Template } from "@/types/template";
+import { Template, Templates } from "@/types/template";
 import { axiosWithAuth, defaultAxios } from "./api.service";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
@@ -22,13 +22,13 @@ export const CreateTemplateService = async (data: FormData) => {
 
 export const GetAllTemplateService = async (
   params?: string
-): Promise<Template[]> => {
+): Promise<Templates> => {
   let endpoint = "/templates";
   if (params) {
     endpoint = `/templates?${params}`;
   }
   const res = await defaultAxios.get(endpoint);
-  return res.data.data;
+  return res.data;
 };
 
 export const GetTemplateWithSlugService = async (

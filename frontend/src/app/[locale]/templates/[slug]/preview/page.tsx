@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/routing";
 import { MyProfileService } from "@/services/user.service";
 import { IUser } from "@/types/user";
-import { BASE_URL } from "@/utils/const";
+import { BASE_URL } from "@/lib/const";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";

@@ -41,7 +41,7 @@ const HeroSection: FC = () => {
             data-[active=true]:text-white"
             onClick={() => handleCategoryClick("free")}
           >
-            Free
+            {t("category.free")}
           </button>
           <button
           
@@ -54,7 +54,7 @@ const HeroSection: FC = () => {
             data-[active=true]:text-white"
             onClick={() => handleCategoryClick("premium")}
           >
-            Premium
+            {t("category.premium")}
           </button>
         </div>
       </div>

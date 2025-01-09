@@ -6,7 +6,7 @@ import { FC } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Template } from "@/types/template";
 import { useLocale } from "next-intl";
-import { BASE_URL } from "@/utils/const";
+import { BASE_URL } from "@/lib/const";
 import { useQuery } from "@tanstack/react-query";
 import { MyProfileService } from "@/services/user.service";
 import { IUser } from "@/types/user";

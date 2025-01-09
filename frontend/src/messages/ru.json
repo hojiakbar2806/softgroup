@@ -95,6 +95,32 @@
       "search": {
         "placeholder": "Поиск шаблонов",
         "button": "Поиск"
+      },
+      "category": {
+        "free": "Бесплатно",
+        "premium": "Премиум"
+      }
+    }
+  },
+  "ProfilePage": {
+    "Templates": {
+      "header": {
+        "title": "Ваши шаблоны",
+        "button": "Добавить шаблон"
+      }
+    },
+    "AddTemplate": {
+      "title": "Добавить шаблон",
+      "button": "Назад",
+
+      "form": {
+        "title": "Название шаблона",
+        "description": "Описание шаблона",
+        "category": "Категория",
+        "feature": "Особенности",
+        "image": "Изображение шаблона",
+        "file": "Файл шаблона",
+        "submit": "Отправить"
       }
     }
   }

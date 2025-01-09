@@ -16,12 +16,12 @@ export const MissionLine: React.FC = () => {
           return (
             <div
               key={i}
-              className="animate-appear  relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
+              className="group animate-appear  relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
             >
               <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-nightSkyRadial  text-slate-500  shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
                 <h1 className="text-md lg:text-2xl text-white">{i + 1}</h1>
               </div>
-              <div className="w-[calc(100%-4rem)] bg-white/5 md:w-[calc(50%-2.5rem)] p-4 md:p-6 rounded-xl  shadow shadow-white">
+              <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 md:p-6 shadow border-b group-odd:border-l group-even:border-l md:group-even:border-l-0 md:group-even:border-r group-odd:rounded-bl-2xl group-even:rounded-bl-2xl md:group-even:rounded-bl-none md:group-even:rounded-br-2xl border-white/50">
                 <div className="flex items-center justify-between space-x-3 mb-1 md:mb-4">
                   <h1 className="font-semibold text-white text-xl md:text-2xl xl:text-3xl">
                     {t(`Missions.${i}.name`)}

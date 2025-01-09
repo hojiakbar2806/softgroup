@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/utils/utils";
+import { cn } from "@/lib/utils";
 import React, { useState } from "react";
 
 interface InputProps extends React.ComponentProps<"input"> {

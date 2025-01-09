@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { PlusCircle, X, Plus } from "lucide-react";
+import { PlusCircle, X, Plus, PlusIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,8 @@ import { useAuthStore } from "@/store/authStore";
 import TitleCard from "@/components/profile/titleCard";
 import { MyProfileService } from "@/services/user.service";
 import { IUser } from "@/types/user";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 
 const AddTemplatePage: React.FC = () => {
   const { refreshToken } = useAuthStore();
@@ -46,6 +48,10 @@ const AddTemplatePage: React.FC = () => {
   const [isNewCategoryDialogOpen, setIsNewCategoryDialogOpen] = useState(false);
   const [newCategoryImage, setNewCategoryImage] = useState<File | null>(null);
   const [newCategoryTitle, setNewCategoryTitle] = useState("");
+
+  const t = useTranslations("ProfilePage.AddTemplate");
+
+  const router = useRouter();
 
   const { data: categories } = useQuery<ICategory[]>({
     queryKey: ["category"],
@@ -64,6 +70,9 @@ const AddTemplatePage: React.FC = () => {
   const templateMutation = useMutation({
     mutationKey: ["template"],
     mutationFn: (data: FormData) => CreateTemplateService(data),
+    onSuccess: () => {
+      router.push("/");
+    },
   });
 
   const categoryMutation = useMutation({
@@ -163,13 +172,13 @@ const AddTemplatePage: React.FC = () => {
   return (
     <section className="flex-1">
       <div className="container max-w-4xl mx-auto">
-        <TitleCard title="Add Template" href="/profile" linkName="Back" />
+        <TitleCard title={t("title")} href="/profile" linkName={t("button")} />
         <form onSubmit={handleSubmit}>
           <Card className="shadow-md">
             <CardContent className="space-y-6 p-6">
               <div className="w-full gap-4">
-                <Label htmlFor="title">Title</Label>
-                <Input name="title" id="title" placeholder="Title" />
+                <Label htmlFor="title">{t("form.title")}</Label>
+                <Input name="title" id="title" placeholder={t("form.title")} />
               </div>
 
               {myData?.username === "premium" && (
@@ -194,23 +203,23 @@ const AddTemplatePage: React.FC = () => {
               )}
 
               <div className="w-full gap-4">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t("form.description")}</Label>
                 <Textarea
                   name="description"
                   className="resize-y min-h-24"
-                  placeholder="Description"
+                  placeholder={t("form.description")}
                 />
               </div>
 
               <div className="flex gap-4 items-end">
                 <div className="w-full">
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category">{t("form.category")}</Label>
                   <Select
                     value={selectedCategory}
                     onValueChange={setSelectedCategory}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={t("form.category")} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories?.map((category) => (
@@ -272,7 +281,7 @@ const AddTemplatePage: React.FC = () => {
 
               <div className="bg-gray-50 p-4 rounded-lg">
                 <div className="flex justify-between items-center mb-4">
-                  <Label>Features</Label>
+                  <Label>{t("form.feature")}</Label>
                   <Button
                     type="button"
                     variant="outline"
@@ -281,7 +290,7 @@ const AddTemplatePage: React.FC = () => {
                       setFeatures([...features, { text: "", available: true }])
                     }
                   >
-                    <PlusCircle className="w-4 h-4 mr-2" /> Add Feature
+                    <PlusIcon className="w-4 h-4 mr-2" />
                   </Button>
                 </div>
 
@@ -292,7 +301,7 @@ const AddTemplatePage: React.FC = () => {
                       className="grid grid-cols-[1fr_auto] gap-2 items-center"
                     >
                       <Input
-                        placeholder="Feature"
+                        placeholder={t("form.feature")}
                         value={feature.text}
                         onChange={(e) => updateFeature(index, e.target.value)}
                       />
@@ -329,7 +338,7 @@ const AddTemplatePage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label>Template File</Label>
+                  <Label>{t("form.file")}</Label>
                   <Input
                     name="template_file"
                     type="file"
@@ -338,7 +347,7 @@ const AddTemplatePage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <Label>Template Image</Label>
+                  <Label>{t("form.image")}</Label>
                   <Input
                     name="images"
                     type="file"
@@ -351,18 +360,11 @@ const AddTemplatePage: React.FC = () => {
 
               <div className="flex justify-end gap-4">
                 <Button
-                  variant="outline"
-                  className="w-full sm:w-auto"
-                  type="reset"
-                >
-                  Reset
-                </Button>
-                <Button
                   className="w-full sm:w-auto"
                   type="submit"
                   disabled={templateMutation.isPending}
                 >
-                  {templateMutation.isPending ? "Saving..." : "Save Template"}
+                  {templateMutation.isPending ? t("form.loading") : t("form.submit")}
                 </Button>
               </div>
             </CardContent>

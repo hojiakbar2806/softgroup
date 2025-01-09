@@ -93,6 +93,32 @@
       "search": {
         "placeholder": "Template search",
         "button": "Search"
+      },
+      "category":{
+        "free":"Free",
+        "premium":"Premium"
+      }
+  }
+  },
+  "ProfilePage": {
+    "Templates": {
+      "header": {
+        "title": "Your Templates",
+        "button": "Add Template"
+      }
+    },
+    "AddTemplate": {
+      "title": "Add Template",
+      "button": "Go Back",
+
+      "form": {
+        "title": "Template Name",
+        "description": "Template Description",
+        "category": "Category",
+        "feature": "Features",
+        "image": "Template Image",
+        "file": "Template File",
+        "submit": "Submit"
       }
     }
   }

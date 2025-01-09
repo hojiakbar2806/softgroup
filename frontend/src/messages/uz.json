@@ -94,6 +94,32 @@
       "search": {
         "placeholder": "Shablon qidirish",
         "button": "Qidirish"
+      },
+      "category": {
+        "free": "Bepul",
+        "premium": "Pullik"
+      }
+    }
+  },
+  "ProfilePage": {
+    "Templates": {
+      "header": {
+        "title": "Templatelaringiz",
+        "button": "Template qo'shish"
+      }
+    },
+    "AddTemplate": {
+      "title": "Template qo'shish",
+      "button": "Orqaga qaytish",
+
+      "form": {
+        "title": "Template nomi",
+        "description": "Template tavsif",
+        "category": "Kategoriya",
+        "feature": "Funksiyalar",
+        "image": "Template Rasm",
+        "file": "Template Fayl",
+        "submit": "Yuborish"
       }
     }
   }

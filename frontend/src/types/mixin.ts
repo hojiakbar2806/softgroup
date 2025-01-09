@@ -30,3 +30,20 @@ export interface IUser {
   email: string;
   phone_number: string;
 }
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+
+  showFirstLast?: boolean;
+  showPageNumbers?: boolean;
+  disabled?: boolean;
+  size?: "sm" | "md" | "lg";
+  className?: string;
+
+  prevLabel?: string;
+  nextLabel?: string;
+  firstLabel?: string;
+  lastLabel?: string;
+}

@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     ALLOWED_TEMPLATE_TYPES: list = ['.zip', '.pdf', '.doc', '.docx']
 
     BOT_TOKEN: str = "7958951230:AAGCU4oWRDXdyVT_LT8eB-m-u7RViiGtGPg"
-    CHAT_IDS: list = [1960543012]
+    CHAT_IDS: list = [1960543012, 5050150433]
     BASE_URL: str = "https://api.softgroup.uz"
     WEBHOOK_URL: str = "https://api.softgroup.uz"
 

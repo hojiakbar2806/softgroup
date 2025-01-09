@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/store/authStore";
-import axios from "@/utils/axios";
+import axios from "@/lib/axios";
 const axiosWithAuth = axios.create();
 
 axiosWithAuth.interceptors.request.use(async (config) => {
