@@ -7,9 +7,8 @@ import { ArrowUpRight } from "lucide-react";
 import { Template } from "@/types/template";
 import { useLocale } from "next-intl";
 import { BASE_URL } from "@/lib/const";
-import { useQuery } from "@tanstack/react-query";
-import { MyProfileService } from "@/services/user.service";
-import { IUser } from "@/types/user";
+import { useMutation } from "@tanstack/react-query";
+import { DownloadTemplateService } from "@/services/template.service";
 
 const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
   product,
@@ -22,12 +21,8 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
     (item) => item.language === locale
   );
 
-  const isLoggedIn = document.cookie.includes("isLoggedIn");
-
-  const { data } = useQuery<IUser>({
-    queryKey: ["user"],
-    queryFn: MyProfileService,
-    enabled: !!isLoggedIn,
+  const download = useMutation({
+    mutationFn: () => DownloadTemplateService(product.slug),
   });
 
   return (
@@ -82,30 +77,25 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
         </p>
 
         {product?.slug.split(".").length > 1 ? (
-          <Link
-            href={`${BASE_URL}/templates/download/${product?.slug}`}
-            target="_blank"
-            data-disabled={data?.is_verified !== true}
-            className="mt-auto flex items-center justify-center gap-2 text-xs whiterap px-3 py-1 text-white bg-gradient-to-br from-purple-600 to-blue-500 font-medium rounded-lg
-            sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg
-            data-[disabled=true]:pointer-events-none
-            data-[disabled=true]:opacity-50
-            data-[disabled=true]:cursor-not-allowed"
-            onClick={(e) => e.stopPropagation()}
+          <button
+            className="text-xs sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg
+            whitespace-nowrap px-3 py-1.5 text-white  font-medium rounded-lg transition 
+            bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:brightness-105"
+            onClick={(e) => {
+              download.mutate();
+              e.stopPropagation();
+            }}
           >
-            Downloads
-            <ArrowUpRight
-              size={18}
-              className="group-hover:translate-x-1 transition-transform"
-            />
-          </Link>
+            Downoads
+          </button>
         ) : (
           <Link
-            href={`${locale}/templates/${product?.slug}/preview`}
-            onClick={(e) => e.stopPropagation()}
             target="_blank"
-            className="mt-auto flex items-center justify-center gap-2 text-xs whiterap px-3 py-1 text-white bg-gradient-to-br from-purple-600 to-blue-500 font-medium rounded-lg
-            sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg"
+            href={`/templates/${product?.slug}/preview`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex justify-center items-center gap-1 text-xs sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg
+            whitespace-nowrap px-3 py-1.5 text-white  font-medium rounded-lg transition 
+            bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:brightness-105"
           >
             View Preview
             <ArrowUpRight

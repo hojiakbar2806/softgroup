@@ -15,12 +15,12 @@ from app.core.config import settings
 from app.utils.slug import unique_slug
 from app.database.session import get_db_session
 from app.utils.save_image import save_image_file
+from app.utils.translate import handle_translations
 from app.core.dependencies import current_auth_user
-from app.utils.save_template import  save_template_file
+from app.utils.save_template import save_template_file
 from app.schemas.template import PaginatedTemplateResponse
 from app.bot.send_file_to_telegram import send_file_to_telegram
 from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
-from app.utils.translate import handle_translations
 
 router = APIRouter(prefix="/templates")
 
@@ -231,8 +231,15 @@ async def read_template(
 @router.get("/download/{slug}")
 async def download_template(
     slug: str,
-    session: AsyncSession = Depends(get_db_session)
+    session: AsyncSession = Depends(get_db_session),
+    current_user: User = Depends(current_auth_user),
 ):
+    if not current_user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please add one template and your account will be verified"
+        )
+
     template = await session.scalar(
         select(Template).where(Template.slug == slug)
     )

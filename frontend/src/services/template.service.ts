@@ -66,3 +66,25 @@ export const AddRateService = async (data: { slug: string; rate: number }) => {
     }
   }
 };
+
+export const DownloadTemplateService = async (slug: string) => {
+  try {
+    const response = await axiosWithAuth.get(`/templates/download/${slug}`, {
+      responseType: "blob",
+    });
+    console.log(response)
+    const href = URL.createObjectURL(response.data);
+    const link = document.createElement("a");
+    link.href = href;
+    link.setAttribute("download", "file.zip");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      toast.warning(error.response?.data.detail || "Download failed");
+    }
+  }
+};

@@ -1,6 +1,7 @@
 import Header from "@/components/common/header";
 import TemplateDetails from "@/components/templateDetail/templateDetail";
 import Footer from "@/components/home/footer/footer";
+import { Fragment } from "react";
 
 type TemplateDetailProps = {
   params: Promise<{ slug: string }>;
@@ -12,10 +13,10 @@ export default async function TemplateDetailPage({
   const { slug } = await params;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <Fragment>
       <Header />
       <TemplateDetails slug={slug} />
       <Footer />
-    </div>
+    </Fragment>
   );
 }
