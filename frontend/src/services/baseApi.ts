@@ -14,7 +14,7 @@ import { RefreshTokenResponse } from "@/types/user";
 import { clearAllData } from "@/lib/utils";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000",
+  baseUrl: "https://api.softgroup.uz",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
