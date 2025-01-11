@@ -1,3 +1,28 @@
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+}
+
+export interface RegisterRequest {
+  username: string;
+  password: string;
+  email: string;
+  phone_number: string;
+  full_name: string;
+}
+
+export interface RegisterResponse {
+  access_token: string;
+}
+
+export interface RefreshTokenResponse {
+  access_token: string;
+}
+
 export interface IUser {
   id: number;
   username: string;

@@ -72,7 +72,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
           </div>
         </div>
 
-        <p className="text-xs sm:text-sm line-clamp-2">
+        <p className="flex-1 text-xs sm:text-sm line-clamp-2">
           {translated?.description}
         </p>
 

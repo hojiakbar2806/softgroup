@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-sitemap.config.js"
-  ],
+, "src/redux/serivces/authService.ts"  ],
   "exclude": [
     "node_modules"
   ]

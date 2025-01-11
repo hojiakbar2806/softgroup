@@ -9,9 +9,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@/i18n/routing";
-import { useAuthStore } from "@/store/authStore";
 import { usePathname } from "next/navigation";
 import { useSidebarDialogStore } from "@/store/profileStore";
+import { useLogoutMutation } from "@/services/authService";
 
 const links = [
   { href: "/profile", label: "Dashboard", icon: <LayoutDashboard /> },
@@ -19,10 +19,11 @@ const links = [
 ];
 
 const Sidebar: FC = () => {
-  const { logout } = useAuthStore();
   const { isOpen, closeDialog } = useSidebarDialogStore();
   const pathname = usePathname();
   const router = useRouter();
+
+  const [logout] = useLogoutMutation();
 
   return (
     <div
@@ -58,7 +59,7 @@ const Sidebar: FC = () => {
           ))}
         </div>
       </div>
-      <Button className="w-full flex gap-4" onClick={logout}>
+      <Button className="w-full flex gap-4" onClick={() => logout()}>
         <LogOutIcon />
         Logout
       </Button>

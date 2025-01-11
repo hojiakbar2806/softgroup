@@ -9,6 +9,7 @@ import { Locale, routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import ReactQueryProvider from "@/lib/reactQueryProvider";
+import { RTKProviders } from "@/lib/provider";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -33,11 +34,13 @@ export default async function RootLayout({
     <NextIntlClientProvider messages={messages}>
       <html lang={locale}>
         <body className={sora.className}>
-          <ReactQueryProvider>
-            <main>{children}</main>
-            <Toaster position="bottom-right" richColors />
-            <CartDialog />
-          </ReactQueryProvider>
+          <RTKProviders>
+            <ReactQueryProvider>
+              <main>{children}</main>
+              <Toaster position="bottom-right" richColors />
+              <CartDialog />
+            </ReactQueryProvider>
+          </RTKProviders>
         </body>
       </html>
     </NextIntlClientProvider>

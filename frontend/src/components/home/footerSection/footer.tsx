@@ -17,32 +17,32 @@ const Footer: FC = () => {
             href="https://www.facebook.com/softgroupuz"
             className="hover:text-purple-500 transition duration-300"
           >
-            <FacebookIcon size={28} />
+            <FacebookIcon size={28} strokeWidth={1.2}/>
           </Link>
           <Link
             target="_blank"
             href="https://www.instagram.com/softgroup_uz"
             className="hover:text-purple-500 transition duration-300"
           >
-            <InstagramIcon size={28} />
+            <InstagramIcon size={28} strokeWidth={1.2}/>
           </Link>
           <Link
             target="_blank"
             href="https://www.linkedin.com/company/softgroup-uzbekistan"
             className="hover:text-purple-500 transition duration-300"
           >
-            <LinkedinIcon size={28} />
+            <LinkedinIcon size={28} strokeWidth={1.2}/>
           </Link>
           <Link
             target="_blank"
             href="https://t.me/Softgroup_uz"
             className="hover:text-purple-500 transition duration-300"
           >
-            <SendIcon size={28} />
+            <SendIcon size={28} strokeWidth={1.2}/>
           </Link>
         </div>
 
-        <p className="text-sm sm:text-base lg:text-lg text-gray-600 transition duration-300">
+        <p className="text-sm sm:text-base lg:text-lg text-gray-600 transition duration-300 font-light">
           Copyright ©2024 - 2025 Softgroup
         </p>
       </div>

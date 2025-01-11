@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { X, Plus, PlusIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,6 @@ import {
 } from "@/services/template.service";
 import { toast } from "sonner";
 import { ICategory } from "@/types/mixin";
-import { useAuthStore } from "@/store/authStore";
 import TitleCard from "@/components/profile/titleCard";
 import { MyProfileService } from "@/services/user.service";
 import { IUser } from "@/types/user";
@@ -38,11 +37,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 
 const AddTemplatePage: React.FC = () => {
-  const { refreshToken } = useAuthStore();
-  useEffect(() => {
-    refreshToken();
-  }, []);
-
   const [features, setFeatures] = useState([{ text: "", available: true }]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [isNewCategoryDialogOpen, setIsNewCategoryDialogOpen] = useState(false);
@@ -364,7 +358,9 @@ const AddTemplatePage: React.FC = () => {
                   type="submit"
                   disabled={templateMutation.isPending}
                 >
-                  {templateMutation.isPending ? t("form.loading") : t("form.submit")}
+                  {templateMutation.isPending
+                    ? t("form.loading")
+                    : t("form.submit")}
                 </Button>
               </div>
             </CardContent>

@@ -28,18 +28,18 @@ const LanguageDropdown: React.FC = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-1 transition rounded p-2"
+        className="w-24 md:w-28 flex items-center gap-1 transition rounded p-2"
       >
         <Image
           src={currentLanguage?.icon || ""}
           width={24}
           height={24}
           alt={currentLanguage?.label || ""}
-          className="size-4 sm:size-5 lg:size-6 2xl:size-8"
+          className=" sm:size-5 lg:size-6 2xl:size-8"
         />
-        {/* <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
+        <span className="text-xs text-white sm:text-sm lg:text-base 2xl:text-lg">
           {currentLanguage?.label}
-        </span> */}
+        </span>
       </button>
 
       <div
@@ -58,7 +58,7 @@ const LanguageDropdown: React.FC = () => {
             <button
               key={l.code}
               onClick={() => handleLanguageChange(l.code)}
-              className="w-full flex items-center px-2 py-1
+              className="w-full flex items-center px-2 py-1 gap-1
             hover:bg-gray-100 transition"
             >
               <Image
@@ -66,11 +66,11 @@ const LanguageDropdown: React.FC = () => {
                 width={24}
                 height={24}
                 alt={l.label}
-                className="size-4 sm:size-5 lg:size-6 2xl:size-8"
+                className="sm:size-5 lg:size-6 2xl:size-8"
               />
-              {/* <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
+              <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
               {l.label}
-            </span> */}
+            </span>
             </button>
           ))}
       </div>

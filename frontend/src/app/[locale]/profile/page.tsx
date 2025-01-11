@@ -5,18 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "@/i18n/routing";
 import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
 import TemplateCard from "@/components/common/templateCard/templateCard";
-import { useQuery } from "@tanstack/react-query";
-import { MyTemplatesService } from "@/services/user.service";
 import { TemplateCardSkeleton } from "@/components/common/templateCard/templateCardSkeleton";
-import { Template } from "@/types/template";
 import OpenSidebar from "@/components/profile/sidebar/openSidebar";
+import { useGetUserTemplatesQuery } from "@/services/userService";
 
 export default function Profile() {
   const router = useRouter();
-  const { data, isLoading } = useQuery<Template[]>({
-    queryKey: ["template"],
-    queryFn: MyTemplatesService,
-  });
+  const { data, isLoading } = useGetUserTemplatesQuery();
 
   return (
     <section className="flex-1">
@@ -35,7 +30,7 @@ export default function Profile() {
             ? Array.from({ length: 10 }).map((_, index) => (
                 <TemplateCardSkeleton key={index} />
               ))
-            : data?.map((template) => (
+            : data?.data?.map((template) => (
                 <TemplateCard
                   key={template.id}
                   product={template}

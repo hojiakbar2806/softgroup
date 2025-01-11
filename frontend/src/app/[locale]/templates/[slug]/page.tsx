@@ -1,6 +1,6 @@
 import Header from "@/components/common/header";
 import TemplateDetails from "@/components/templateDetail/templateDetail";
-import Footer from "@/components/home/footer/footer";
+import Footer from "@/components/home/footerSection/footer";
 import { Fragment } from "react";
 
 type TemplateDetailProps = {

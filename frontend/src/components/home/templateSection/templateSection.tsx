@@ -1,16 +1,14 @@
 "use client";
 
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronRightCircle } from "lucide-react";
-import { GetAllTemplateService } from "@/services/template.service";
-import { Templates } from "@/types/template";
 import TemplateCard from "@/components/common/templateCard/templateCard";
 import { TemplateCardSkeleton } from "@/components/common/templateCard/templateCardSkeleton";
 import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
 import CustomPagination from "@/components/common/pagination";
+import { useGetAllTemplatesQuery } from "@/services/templateService";
 
 interface TemplateSectionProps {
   sectionTitle?: string;
@@ -21,10 +19,7 @@ const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
   const tier = searchParams.get("tier");
   const query = `${tier ? `tier=${tier}` : ""}`;
 
-  const { data: templates, isLoading } = useQuery<Templates>({
-    queryKey: ["templates", query],
-    queryFn: () => GetAllTemplateService(query),
-  });
+  const { data: templates, isLoading } = useGetAllTemplatesQuery(query);
 
   return (
     <section className="flex-1 py-10 bg-blue-50">
