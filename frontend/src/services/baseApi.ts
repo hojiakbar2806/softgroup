@@ -50,7 +50,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
   if (
     result.error &&
-    result.error.status === 401 &&
+    result.error.status === 403 &&
     protectedEndpoints.includes(api.endpoint)
   ) {
     const refreshResult = (await baseQuery(
