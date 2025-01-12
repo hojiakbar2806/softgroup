@@ -27,6 +27,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.clear();
       sessionStorage.clear();
+      window.location.reload();
     },
   },
 });
