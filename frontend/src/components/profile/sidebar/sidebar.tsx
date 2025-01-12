@@ -12,6 +12,7 @@ import { Link, useRouter } from "@/i18n/routing";
 import { usePathname } from "next/navigation";
 import { useSidebarDialogStore } from "@/store/profileStore";
 import { useLogoutMutation } from "@/services/authService";
+import { toast } from "sonner";
 
 const links = [
   { href: "/profile", label: "Dashboard", icon: <LayoutDashboard /> },
@@ -24,6 +25,14 @@ const Sidebar: FC = () => {
   const router = useRouter();
 
   const [logout] = useLogoutMutation();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    logout();
+    router.push("/");
+    toast.success("Logout successful");
+  };
 
   return (
     <div
@@ -59,7 +68,7 @@ const Sidebar: FC = () => {
           ))}
         </div>
       </div>
-      <Button className="w-full flex gap-4" onClick={() => logout()}>
+      <Button className="w-full flex gap-4" onClick={() => handleLogout()}>
         <LogOutIcon />
         Logout
       </Button>

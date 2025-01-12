@@ -12,7 +12,12 @@ export const makeStore = () => {
       loginModal: loginMessageModalReducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(baseApi.middleware),
+      getDefaultMiddleware({
+        serializableCheck: false,
+        ignoredActions: ["api/executeMutation/fulfilled"],
+        ignoredActionPaths: ["payload"],
+        ignoredPaths: ["api.mutations"],
+      }).concat(baseApi.middleware),
   });
   setupListeners(store.dispatch);
   return store;

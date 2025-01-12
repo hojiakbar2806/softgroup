@@ -8,6 +8,15 @@ const templateApi = baseApi.injectEndpoints({
       providesTags: ["Template"],
     }),
 
+    createTemplate: builder.mutation<Template, FormData>({
+      query: (data) => ({
+        url: "/templates",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Template"],
+    }),
+
     getTemplateWithSlug: builder.query<Template, string>({
       query: (slug) => `/templates/${slug}`,
       providesTags: ["Template"],
@@ -20,8 +29,12 @@ const templateApi = baseApi.injectEndpoints({
       }),
     }),
 
-    downloadTemplate: builder.mutation<any, string>({
-      query: (slug) => `/templates/download/${slug}`,
+    downloadTemplate: builder.mutation<Blob, string>({
+      query: (slug) => ({
+        url: `/templates/download/${slug}`,
+        method: "GET",
+        responseHandler: (res) => res.blob(),
+      }),
     }),
 
     deleteTemplate: builder.mutation<any, string>({
@@ -34,6 +47,7 @@ const templateApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useCreateTemplateMutation,
   useGetAllTemplatesQuery,
   useGetTemplateWithSlugQuery,
   useDownloadTemplateMutation,

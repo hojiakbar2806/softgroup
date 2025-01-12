@@ -1,5 +1,5 @@
+import { RootState } from "@/lib/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../store";
 
 interface AuthState {
   token: string | null;

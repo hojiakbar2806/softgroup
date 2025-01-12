@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Plus, PlusIcon } from "lucide-react";
+import { X, PlusIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,77 +9,29 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  CreateTemplateService,
-  GetCategoriesService,
-  CreateCategoryService,
-} from "@/services/template.service";
 import { toast } from "sonner";
-import { ICategory } from "@/types/mixin";
 import TitleCard from "@/components/profile/titleCard";
-import { MyProfileService } from "@/services/user.service";
-import { IUser } from "@/types/user";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { useGetMeQuery } from "@/services/userService";
+import { useGetCategoriesQuery } from "@/services/categoryService";
+import { useCreateTemplateMutation } from "@/services/templateService";
 
 const AddTemplatePage: React.FC = () => {
   const [features, setFeatures] = useState([{ text: "", available: true }]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [isNewCategoryDialogOpen, setIsNewCategoryDialogOpen] = useState(false);
-  const [newCategoryImage, setNewCategoryImage] = useState<File | null>(null);
-  const [newCategoryTitle, setNewCategoryTitle] = useState("");
-  const {} = useGetMeQuery();
-
   const t = useTranslations("ProfilePage.AddTemplate");
-
   const router = useRouter();
 
-  const { data: categories } = useQuery<ICategory[]>({
-    queryKey: ["category"],
-    queryFn: GetCategoriesService,
-    staleTime: 60000,
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: myData } = useQuery<IUser>({
-    queryKey: ["user"],
-    queryFn: MyProfileService,
-    staleTime: 60000,
-    refetchOnWindowFocus: false,
-  });
-
-  const templateMutation = useMutation({
-    mutationKey: ["template"],
-    mutationFn: (data: FormData) => CreateTemplateService(data),
-    onSuccess: () => {
-      router.push("/");
-    },
-  });
-
-  const categoryMutation = useMutation({
-    mutationKey: ["category"],
-    mutationFn: async (data: FormData) => {
-      const result = await CreateCategoryService(data);
-      setSelectedCategory(result.slug);
-      setIsNewCategoryDialogOpen(false);
-      return result;
-    },
-  });
+  const { data: user } = useGetMeQuery();
+  const { data: categories } = useGetCategoriesQuery();
+  const [create, { isLoading }] = useCreateTemplateMutation();
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -137,24 +89,10 @@ const AddTemplatePage: React.FC = () => {
       return;
     }
 
-    templateMutation.mutate(formData);
-  };
-
-  const handleCreateCategory = () => {
-    if (!newCategoryImage) {
-      toast.warning("Please select a category image.");
-      return;
-    }
-
-    if (!newCategoryTitle) {
-      toast.warning("Please fill in the category title.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("image", newCategoryImage);
-    formData.append("title", newCategoryTitle);
-    categoryMutation.mutate(formData);
+    create(formData).unwrap().then(() => {
+      toast.success("Template created successfully");
+      router.push("/profile");
+    });
   };
 
   const updateFeature = (index: number, value: string): void => {
@@ -177,7 +115,7 @@ const AddTemplatePage: React.FC = () => {
                 <Input name="title" id="title" placeholder={t("form.title")} />
               </div>
 
-              {myData?.username === "premium" && (
+              {user?.username === "premium" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="current_price">Current Price</Label>
@@ -228,51 +166,6 @@ const AddTemplatePage: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
-                <Dialog
-                  open={isNewCategoryDialogOpen}
-                  onOpenChange={setIsNewCategoryDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="shrink-0">
-                      <Plus />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create New Category</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label>Category Image</Label>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) =>
-                            setNewCategoryImage(e.target.files?.[0] || null)
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label>Title</Label>
-                        <Input
-                          value={newCategoryTitle}
-                          onChange={(e) => setNewCategoryTitle(e.target.value)}
-                          placeholder="Category title"
-                        />
-                      </div>
-                      <Button
-                        className="w-full"
-                        onClick={handleCreateCategory}
-                        disabled={categoryMutation.isPending}
-                      >
-                        {categoryMutation.isPending
-                          ? "Creating..."
-                          : "Create Category"}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-lg">
@@ -358,11 +251,9 @@ const AddTemplatePage: React.FC = () => {
                 <Button
                   className="w-full sm:w-auto"
                   type="submit"
-                  disabled={templateMutation.isPending}
+                  disabled={isLoading}
                 >
-                  {templateMutation.isPending
-                    ? t("form.loading")
-                    : t("form.submit")}
+                  {isLoading ? t("form.loading") : t("form.submit")}
                 </Button>
               </div>
             </CardContent>

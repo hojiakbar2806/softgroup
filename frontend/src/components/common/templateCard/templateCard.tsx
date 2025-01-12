@@ -31,6 +31,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
     >
       <Image
         src={`${BASE_URL}/${product?.images[0].url}`}
+        priority
         width={500}
         height={350}
         alt={translated?.title || ""}

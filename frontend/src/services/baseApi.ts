@@ -9,10 +9,9 @@ import type {
   FetchBaseQueryMeta,
 } from "@reduxjs/toolkit/query/react";
 import { setCredentials, logout } from "../features/auth/authSlice";
-import { RootState } from "../store";
 import { clearAllData } from "@/lib/utils";
-import { BASE_URL } from "@/lib/const";
 import { openModal } from "@/features/modal/loginMessageModalSlice";
+import { RootState } from "@/lib/store";
 
 const getConfig = async (locale: string) => {
   if (!locale || !["uz", "en", "ru"].includes(locale)) {
@@ -27,13 +26,14 @@ const getConfig = async (locale: string) => {
 };
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: BASE_URL,
+  baseUrl: "https://api.softgroup.uz",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }
+    headers.set("Cache-Control", "no-store");
     return headers;
   },
 });

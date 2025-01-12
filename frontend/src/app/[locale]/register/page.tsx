@@ -4,9 +4,11 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Input from "@/components/common/input";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { useRegisterMutation } from "@/services/authService";
 import { toast } from "sonner";
+import { setCredentials } from "@/features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 const validationSchema = Yup.object({
   full_name: Yup.string().required("Full name is required"),
@@ -22,6 +24,8 @@ const validationSchema = Yup.object({
 
 export default function RegisterPage() {
   const [register, { isLoading, error }] = useRegisterMutation();
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
@@ -34,7 +38,9 @@ export default function RegisterPage() {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await register(values).unwrap();
+        const result = await register(values).unwrap();
+        dispatch(setCredentials({ token: result.access_token }));
+        router.push("/");
         toast.success("Registration successful");
       } catch (err) {
         console.error("Registration failed:", err);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
   ArrowUpRight,
@@ -34,7 +34,25 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const { toggleItem, hasInWishList } = useWishListStore();
   const { data, isLoading, isError } = useGetTemplateWithSlugQuery(slug);
-  const [download, { error }] = useDownloadTemplateMutation();
+  const [downloadTemplate, { isError: isDownloadError, error }] =
+    useDownloadTemplateMutation();
+
+  const handleDownload = async () => {
+    try {
+      const blob = await downloadTemplate(slug).unwrap();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${slug}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (isError) {
     return (
@@ -45,7 +63,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     );
   }
 
-  if (error) {
+  if (isDownloadError) {
     const status = (error as FetchBaseQueryError).status;
 
     if (status === 403) {
@@ -54,6 +72,15 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           message: t("TemplateDetail.permissionError"),
           path: "/profile/add-template",
           button: t("Common.modal.addTemplate"),
+        })
+      );
+    }
+    if (status === 401) {
+      dispatch(
+        openModal({
+          message: t("Common.modal.unauthorized"),
+          path: "/register",
+          button: t("Common.modal.register"),
         })
       );
     }
@@ -179,7 +206,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               className="flex-1 min-w-[180px] select-none flex items-center justify-center gap-2 
               bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-3 font-medium transition-all duration-300"
               aria-label="Download"
-              onClick={() => download(slug)}
+              onClick={handleDownload}
             >
               Download
               <ArrowUpRight
