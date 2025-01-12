@@ -105,6 +105,7 @@
     "description": "Description",
     "feature": "Key Features",
     "download": "Download",
+    "downloading": "Downloading...",
     "notfound": "Template not found",
     "free": "Free",
     "premium": "Premium",

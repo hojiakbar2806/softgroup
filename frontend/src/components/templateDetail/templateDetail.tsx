@@ -35,8 +35,10 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const { toggleItem, hasInWishList } = useWishListStore();
   const { data, isLoading, isError } = useGetTemplateWithSlugQuery(slug);
-  const [downloadTemplate, { isError: isDownloadError, error }] =
-    useDownloadTemplateMutation();
+  const [
+    downloadTemplate,
+    { isError: isDownloadError, isLoading: isDownloading, error },
+  ] = useDownloadTemplateMutation();
   const [addView] = useAddViewMutation();
 
   useEffect(() => {
@@ -209,7 +211,9 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               aria-label="Download"
               onClick={handleDownload}
             >
-              {t("TemplateDetailPage.download")}
+              {isDownloading
+                ? t("TemplateDetailPage.downloading")
+                : t("TemplateDetailPage.download")}
               <ArrowUpRight
                 size={18}
                 className="group-hover:translate-x-1 transition-transform"

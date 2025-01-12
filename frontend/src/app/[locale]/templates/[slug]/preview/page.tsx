@@ -2,18 +2,59 @@
 
 import { Link } from "@/i18n/routing";
 import { BASE_URL } from "@/lib/const";
-import { useMutation } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
-import { DownloadTemplateService } from "@/services/template.service";
+import { useDownloadTemplateMutation } from "@/services/templateService";
+import { useTranslations } from "next-intl";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { openModal } from "@/features/modal/loginMessageModalSlice";
+import { useDispatch } from "react-redux";
 
 const PreviewPage = () => {
   const pathname = usePathname();
   const slug = pathname.split("/")[3];
+  const t = useTranslations();
+  const dispatch = useDispatch();
 
-  const download = useMutation({
-    mutationFn: () => DownloadTemplateService(slug),
-  });
+  const [
+    downloadTemplate,
+    { isError: isDownloadError, isLoading: isDownloading, error },
+  ] = useDownloadTemplateMutation();
+
+  const handleDownload = async () => {
+    try {
+      const blob = await downloadTemplate(slug).unwrap();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      if (slug.split(".").length > 1) {
+        link.download = slug;
+      } else {
+        link.download = `${slug}.zip`;
+      }
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  if (isDownloadError) {
+    const status = (error as FetchBaseQueryError).status;
+
+    if (status === 406) {
+      dispatch(
+        openModal({
+          message: t("Common.modal.permissionError"),
+          path: "/profile/add-template",
+          button: t("Common.modal.addTemplate"),
+        })
+      );
+    }
+  }
 
   return (
     <Fragment>
@@ -26,9 +67,11 @@ const PreviewPage = () => {
             className="text-xs sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg
             whitespace-nowrap px-3 py-1.5 text-white  font-medium rounded-lg transition 
             bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:brightness-105"
-            onClick={() => download.mutate()}
+            onClick={handleDownload}
           >
-            Downoads
+            {isDownloading
+              ? t("TemplateDetailPage.downloading")
+              : t("TemplateDetailPage.download")}
           </button>
         </div>
       </header>
