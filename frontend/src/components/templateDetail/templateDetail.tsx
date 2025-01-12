@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   ArrowUpRight,
@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import useWishListStore from "@/store/wishListStore";
 import TemplateDetailsSkeleton from "./templateDetailSkeleton";
 import {
+  useAddViewMutation,
   useDownloadTemplateMutation,
   useGetTemplateWithSlugQuery,
 } from "@/services/templateService";
@@ -36,6 +37,11 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
   const { data, isLoading, isError } = useGetTemplateWithSlugQuery(slug);
   const [downloadTemplate, { isError: isDownloadError, error }] =
     useDownloadTemplateMutation();
+  const [addView] = useAddViewMutation();
+
+  useEffect(() => {
+    addView(slug);
+  }, []);
 
   const handleDownload = async () => {
     try {

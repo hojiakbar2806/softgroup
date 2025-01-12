@@ -311,3 +311,21 @@ async def add_like(
     await session.commit()
 
     return template
+
+
+@router.patch("/add-view/{slug}")
+async def add_view(
+    slug: str,
+    session: AsyncSession = Depends(get_db_session),
+    _: User = Depends(current_auth_user),
+):
+    template = await session.scalar(
+        select(Template).where(Template.slug == slug)
+    )
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    template.views += 1
+    await session.commit()
+
+    return template
