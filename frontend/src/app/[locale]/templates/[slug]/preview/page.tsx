@@ -36,7 +36,7 @@ const PreviewPage = () => {
       <iframe
         id="secure-iframe"
         src={`${BASE_URL}/templates/${slug}/index.html`}
-        className="w-full h-screen"
+        className="w-full flex-1"
         sandbox="allow-scripts"
       ></iframe>
     </Fragment>
