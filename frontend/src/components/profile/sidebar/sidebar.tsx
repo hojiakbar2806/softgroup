@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import {
   ChevronLeft,
   HeartIcon,
@@ -16,7 +16,6 @@ import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { logout } from "@/features/auth/authSlice";
 import { baseApi } from "@/services/baseApi";
-import { closeModal } from "@/features/modal/loginMessageModalSlice";
 
 const links = [
   { href: "/profile", label: "Dashboard", icon: <LayoutDashboard /> },
