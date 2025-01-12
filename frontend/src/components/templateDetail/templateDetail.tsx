@@ -66,7 +66,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
   if (isDownloadError) {
     const status = (error as FetchBaseQueryError).status;
 
-    if (status === 403) {
+    if (status === 401) {
       dispatch(
         openModal({
           message: t("TemplateDetail.permissionError"),
@@ -75,7 +75,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
         })
       );
     }
-    if (status === 401) {
+    if (status === 403) {
       dispatch(
         openModal({
           message: t("Common.modal.unauthorized"),
