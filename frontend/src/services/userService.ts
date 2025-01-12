@@ -1,5 +1,6 @@
 import { Templates } from "@/types/template";
 import { baseApi } from "./baseApi";
+import { IUser } from "@/types/user";
 
 const userService = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -7,7 +8,12 @@ const userService = baseApi.injectEndpoints({
       query: () => `/users/templates`,
       providesTags: ["Template", "User"],
     }),
+
+    getMe: builder.query<IUser, void>({
+      query: () => `/users/me`,
+      providesTags: ["User"],
+    }),
   }),
 });
 
-export const { useGetUserTemplatesQuery } = userService;
+export const { useGetUserTemplatesQuery, useGetMeQuery } = userService;

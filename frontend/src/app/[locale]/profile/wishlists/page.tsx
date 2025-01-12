@@ -3,10 +3,12 @@
 import TemplateCard from "@/components/common/templateCard/templateCard";
 import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
 import TitleCard from "@/components/profile/titleCard";
+import { useGetMeQuery } from "@/services/userService";
 import useWishListStore from "@/store/wishListStore";
 
 export default function WishtlistPage() {
   const { wishListItems } = useWishListStore();
+  const {} = useGetMeQuery();
 
   return (
     <section className="flex-1">

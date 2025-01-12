@@ -35,6 +35,7 @@ import { MyProfileService } from "@/services/user.service";
 import { IUser } from "@/types/user";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import { useGetMeQuery } from "@/services/userService";
 
 const AddTemplatePage: React.FC = () => {
   const [features, setFeatures] = useState([{ text: "", available: true }]);
@@ -42,6 +43,7 @@ const AddTemplatePage: React.FC = () => {
   const [isNewCategoryDialogOpen, setIsNewCategoryDialogOpen] = useState(false);
   const [newCategoryImage, setNewCategoryImage] = useState<File | null>(null);
   const [newCategoryTitle, setNewCategoryTitle] = useState("");
+  const {} = useGetMeQuery();
 
   const t = useTranslations("ProfilePage.AddTemplate");
 

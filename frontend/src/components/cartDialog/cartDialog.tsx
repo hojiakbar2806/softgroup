@@ -4,7 +4,7 @@
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { redirect } from "next/navigation";
 import useCartStore from "@/store/cartStore";
-import DialogHeader from "../common/dialog/dialogHeader";
+import DialogHeader from "../common/dialogHeader";
 import DialogWrapper from "../common/dialog/dialog";
 
 const CartDialog = (): JSX.Element => {

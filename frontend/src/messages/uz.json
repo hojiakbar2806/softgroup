@@ -101,6 +101,9 @@
       }
     }
   },
+  "TemplateDetail": {
+    "permissionError": "Shablonlarni olish uchun, iltimos biror shablon yuklang."
+  },
   "ProfilePage": {
     "Templates": {
       "header": {
@@ -121,6 +124,16 @@
         "file": "Template Fayl",
         "submit": "Yuborish"
       }
+    }
+  },
+  "Common": {
+    "modal": {
+      "cancel": "Bekor qilish",
+      "login": "Kirish",
+      "register": "Ro'yxatdan o'tish",
+      "addTemplate": "Template qo'shish",
+      "refreshError": "Sessiya tugagan",
+      "unauthorized": "Siz ro'yxatdan o'tmagansiz"
     }
   }
 }

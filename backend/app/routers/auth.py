@@ -112,7 +112,7 @@ async def refresh_session(
     session: AsyncSession = Depends(get_db_session)
 ):
     if not refresh_token:
-        raise HTTPException(status_code=400, detail="You are not logged in")
+        raise HTTPException(status_code=403, detail="You are not logged in")
 
     user = await verify_user_token(refresh_token, session, "refresh")
     access_token = create_access_token(user.username)

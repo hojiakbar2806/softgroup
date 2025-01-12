@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import ReactQueryProvider from "@/lib/reactQueryProvider";
 import { RTKProviders } from "@/lib/provider";
+import LoginMessageModal from "@/components/common/loginMessageModal";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default async function RootLayout({
               <main>{children}</main>
               <Toaster position="bottom-right" richColors />
               <CartDialog />
+              <LoginMessageModal/>
             </ReactQueryProvider>
           </RTKProviders>
         </body>

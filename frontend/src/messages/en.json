@@ -94,11 +94,14 @@
         "placeholder": "Template search",
         "button": "Search"
       },
-      "category":{
-        "free":"Free",
-        "premium":"Premium"
+      "category": {
+        "free": "Free",
+        "premium": "Premium"
       }
-  }
+    }
+  },
+  "TemplateDetail": {
+    "permissionError": "To get templates, please upload any template."
   },
   "ProfilePage": {
     "Templates": {
@@ -120,6 +123,16 @@
         "file": "Template File",
         "submit": "Submit"
       }
+    }
+  },
+  "Common": {
+    "modal": {
+      "cancel": "Cancel",
+      "login": "Login",
+      "register": "Register",
+      "addTemplate": "Add Template",
+      "refreshError": "Session expired",
+      "unauthorized": "You are not logged in"
     }
   }
 }

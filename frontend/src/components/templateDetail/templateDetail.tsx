@@ -9,18 +9,19 @@ import {
   EyeIcon,
   Heart,
 } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  GetTemplateWithSlugService,
-  DownloadTemplateService,
-} from "@/services/template.service";
-import { Template } from "@/types/template";
 import { BASE_URL } from "@/lib/const";
 import { Link } from "@/i18n/routing";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import useWishListStore from "@/store/wishListStore";
 import TemplateDetailsSkeleton from "./templateDetailSkeleton";
+import {
+  useDownloadTemplateMutation,
+  useGetTemplateWithSlugQuery,
+} from "@/services/templateService";
+import { useDispatch } from "react-redux";
+import { openModal } from "@/features/modal/loginMessageModalSlice";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 type TemplateDetailProps = {
   slug: string;
@@ -28,18 +29,12 @@ type TemplateDetailProps = {
 
 export default function TemplateDetails({ slug }: TemplateDetailProps) {
   const locale = useLocale();
+  const dispatch = useDispatch();
+  const t = useTranslations();
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const { toggleItem, hasInWishList } = useWishListStore();
-
-  const { data, isLoading, isError } = useQuery<Template>({
-    queryKey: ["template", slug],
-    queryFn: () => GetTemplateWithSlugService(slug),
-    retry: 1,
-  });
-
-  const download = useMutation({
-    mutationFn: () => DownloadTemplateService(slug),
-  });
+  const { data, isLoading, isError } = useGetTemplateWithSlugQuery(slug);
+  const [download, { error }] = useDownloadTemplateMutation();
 
   if (isError) {
     return (
@@ -48,6 +43,20 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
         <p className="text-lg">Template not found</p>
       </div>
     );
+  }
+
+  if (error) {
+    const status = (error as FetchBaseQueryError).status;
+
+    if (status === 403) {
+      dispatch(
+        openModal({
+          message: t("TemplateDetail.permissionError"),
+          path: "/profile/add-template",
+          button: t("Common.modal.addTemplate"),
+        })
+      );
+    }
   }
 
   if (isLoading) {
@@ -168,9 +177,9 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           <div className="flex flex-wrap gap-4 pt-6">
             <button
               className="flex-1 min-w-[180px] select-none flex items-center justify-center gap-2 
-              bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
+              bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-3 font-medium transition-all duration-300"
               aria-label="Download"
-              onClick={() => download.mutate()}
+              onClick={() => download(slug)}
             >
               Download
               <ArrowUpRight
@@ -182,7 +191,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               <Link href={`${slug}/preview`} target="_blank">
                 <button
                   className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
-                bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 font-medium"
+                bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-3 font-medium transition-all duration-300"
                   aria-label="Preview"
                 >
                   <EyeIcon size={20} />
@@ -192,7 +201,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
             )}
             <div className="flex gap-2">
               <button
-                className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600"
+                className="p-3 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all duration-300"
                 aria-label="Like"
                 onClick={() => toggleItem(data)}
               >
@@ -203,7 +212,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                 />
               </button>
               <button
-                className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600"
+                className="p-3 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-all duration-300"
                 aria-label="Share"
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);

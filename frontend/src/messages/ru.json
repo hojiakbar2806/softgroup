@@ -102,6 +102,9 @@
       }
     }
   },
+  "TemplateDetail": {
+    "permissionError": "Для получения шаблонов, пожалуйста, загрузите какой-либо шаблон."
+  },
   "ProfilePage": {
     "Templates": {
       "header": {
@@ -122,6 +125,16 @@
         "file": "Файл шаблона",
         "submit": "Отправить"
       }
+    }
+  },
+  "Common": {
+    "modal": {
+      "cancel": "Отмена",
+      "login": "Войти",
+      "register": "Регистрация",
+      "addTemplate": "Добавить шаблон",
+      "refreshError": "Сессия истекла",
+      "unauthorized": "Вы не вошли в систему"
     }
   }
 }

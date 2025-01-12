@@ -12,10 +12,33 @@ const templateApi = baseApi.injectEndpoints({
       query: (slug) => `/templates/${slug}`,
       providesTags: ["Template"],
     }),
+
+    addRate: builder.mutation<any, { slug: string; rate: number }>({
+      query: (data) => ({
+        url: `/template/add-rating/${data.slug}?rating=${data.rate}`,
+        method: "PATCH",
+      }),
+    }),
+
+    downloadTemplate: builder.mutation<any, string>({
+      query: (slug) => `/templates/download/${slug}`,
+    }),
+
+    deleteTemplate: builder.mutation<any, string>({
+      query: (slug) => ({
+        url: `/templates/${slug}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
-export const { useGetAllTemplatesQuery, useGetTemplateWithSlugQuery } =
-  templateApi;
+export const {
+  useGetAllTemplatesQuery,
+  useGetTemplateWithSlugQuery,
+  useDownloadTemplateMutation,
+  useDeleteTemplateMutation,
+  useAddRateMutation,
+} = templateApi;
 
 export default templateApi;
