@@ -26,7 +26,7 @@ const getConfig = async (locale: string) => {
 };
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://api.softgroup.uz",
+  baseUrl: "http://127.0.0.1:8000",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -45,8 +45,17 @@ const baseQueryWithReauth: BaseQueryFn<
   object,
   FetchBaseQueryMeta
 > = async (args, api, extraOptions) => {
+  // const state = api.getState() as RootState;
+  // if (state.auth.isAuthenticated === false) {
+  //   return baseQuery(args, api, extraOptions);
+  // }
   let result = await baseQuery(args, api, extraOptions);
-  const protectedEndpoints = ["getUserTemplates", "downloadTemplate", "getMe"];
+  const protectedEndpoints = [
+    "getUserTemplates",
+    "downloadTemplate",
+    "getMe",
+    "addLike",
+  ];
 
   if (
     result.error &&

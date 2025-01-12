@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronRightCircle } from "lucide-react";
@@ -9,6 +9,8 @@ import { TemplateCardSkeleton } from "@/components/common/templateCard/templateC
 import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
 import CustomPagination from "@/components/common/pagination";
 import { useGetAllTemplatesQuery } from "@/services/templateService";
+import { closeModal } from "@/features/modal/loginMessageModalSlice";
+import { useDispatch } from "react-redux";
 
 interface TemplateSectionProps {
   sectionTitle?: string;
@@ -18,8 +20,13 @@ const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
   const searchParams = useSearchParams();
   const tier = searchParams.get("tier");
   const query = `${tier ? `tier=${tier}` : ""}`;
-
   const { data: templates, isLoading } = useGetAllTemplatesQuery(query);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(closeModal());
+  }, []);
 
   return (
     <section className="flex-1 py-10 bg-blue-50">

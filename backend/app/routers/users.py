@@ -1,13 +1,12 @@
-from typing import List, Optional
 from sqlalchemy import func
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from app.core.dependencies import current_auth_user
-from app.models.template import Category, Feature, Template
+from app.models.template import Feature, Template
 from app.models.user import User
-from app.schemas.template import PaginatedTemplateResponse, TemplateResponse
+from app.schemas.template import PaginatedTemplateResponse
 from app.schemas.user import User as UserSchema
 from app.database.session import get_db_session
 
@@ -23,30 +22,11 @@ async def read_users_me(current_user: User = Depends(current_auth_user)):
 async def read_users_me(
     page: int = 1,
     per_page: int = 10,
-    slug: Optional[str] = None,
-    category: Optional[str] = None,
-    tier: Optional[str] = None,
     session: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(current_auth_user),
 ):
     query = select(Template).where(Template.owner_id == current_user.id)
 
-    if slug:
-        query = query.where(Template.slug.contains(slug))
-
-    if category:
-        db_category = await session.scalar(
-            select(Category).where(Category.slug == category)
-        )
-        if not db_category:
-            raise HTTPException(
-                status_code=404, detail="Category not found")
-        query = query.where(Template.category_id == db_category.id)
-
-    if tier == "premium":
-        query = query.where(Template.current_price > 0)
-    else:
-        query = query.where(Template.current_price == 0)
     query = query.options(
         selectinload(Template.translations),
         selectinload(Template.images),

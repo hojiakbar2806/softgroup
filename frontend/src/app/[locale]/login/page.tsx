@@ -8,11 +8,13 @@ import { setCredentials } from "@/features/auth/authSlice";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
+  const t = useTranslations();
   const validationSchema = Yup.object({
-    username: Yup.string().required("Username is required"),
-    password: Yup.string().required("Password is required"),
+    username: Yup.string().required(t("Auth.LoginPage.reuiredUsername")),
+    password: Yup.string().required(t("Auth.LoginPage.reuiredPassword")),
   });
 
   const dispatch = useAppDispatch();
@@ -30,7 +32,7 @@ export default function LoginPage() {
         const result = await login(values).unwrap();
         dispatch(setCredentials({ token: result.access_token }));
         router.push("/");
-        toast.success("Login successful");
+        toast.success(t("Auth.LoginPage.success"));
       } catch (err) {
         console.error("Failed to login:", err);
       }
@@ -41,10 +43,11 @@ export default function LoginPage() {
     <div className="w-full h-screen flex justify-center items-center p-4">
       <form
         className="w-full p-8 sm:max-w-lg
-       flex mt-auto gap-8 flex-col m-auto shadow rounded-lg"
+        flex mt-auto gap-8 flex-col m-auto shadow rounded-lg"
       >
+        <h1 className="text-2xl font-bold">{t("Auth.LoginPage.login")}</h1>
         <Input
-          label="Username"
+          label={t("Auth.LoginPage.username")}
           name="username"
           onChange={formik.handleChange}
           value={formik.values.username}
@@ -56,7 +59,7 @@ export default function LoginPage() {
           }
         />
         <Input
-          label="Password"
+          label={t("Auth.LoginPage.password")}
           name="password"
           type="password"
           value={formik.values.password}
@@ -76,10 +79,12 @@ export default function LoginPage() {
             isLoading ? "bg-primary/50" : ""
           }`}
         >
-          {isLoading ? "Loading ..." : "Login"}
+          {isLoading
+            ? `${t("Auth.LoginPage.login")} ...`
+            : t("Auth.LoginPage.login")}
         </button>
         <Link href="/register" className="text-blue-500">
-          Register
+          {t("Auth.RegisterPage.register")}
         </Link>
       </form>
     </div>

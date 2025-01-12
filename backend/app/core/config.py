@@ -47,8 +47,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = "RS256"
     PRIVATE_KEY_PATH: Path = CORE_DIR / "certs" / "jwt-private.pem"
     PUBLIC_KEY_PATH: Path = CORE_DIR / "certs" / "jwt-public.pem"
-    ACCESS_TOKEN_EXPIRES_MINUTES: float = 10
-    REFRESH_TOKEN_EXPIRES_MINUTES: float = 1000
+    ACCESS_TOKEN_EXPIRES_MINUTES: float = 1
+    REFRESH_TOKEN_EXPIRES_MINUTES: float = 1
     ACTIVATION_TOKEN_EXPIRES_MINUTS: int = 2
 
     SECRET_KEY: str = "f56bd6bc8efed7bad12675f761e69f36ff8f403cc471da0028b8ea6cd95bfbe9"

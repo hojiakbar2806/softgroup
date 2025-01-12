@@ -9,23 +9,25 @@ import { useRegisterMutation } from "@/services/authService";
 import { toast } from "sonner";
 import { setCredentials } from "@/features/auth/authSlice";
 import { useDispatch } from "react-redux";
-
-const validationSchema = Yup.object({
-  full_name: Yup.string().required("Full name is required"),
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  username: Yup.string().required("Username is required"),
-  phone_number: Yup.string().required("Phone number is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-});
+import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
   const [register, { isLoading, error }] = useRegisterMutation();
   const dispatch = useDispatch();
   const router = useRouter();
+  const t = useTranslations();
+
+  const validationSchema = Yup.object({
+    full_name: Yup.string().required(t("Auth.RegisterPage.requiredFullname")),
+    email: Yup.string()
+      .email("Invalid email format")
+      .required(t("Auth.RegisterPage.requiredEmail")),
+    username: Yup.string().required(t("Auth.RegisterPage.requiredUsername")),
+    phone_number: Yup.string().required(t("Auth.RegisterPage.requiredPhone")),
+    password: Yup.string()
+      .min(6, t("Auth.RegisterPage.invalidPassword"))
+      .required(t("Auth.RegisterPage.requiredPassword")),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -41,7 +43,7 @@ export default function RegisterPage() {
         const result = await register(values).unwrap();
         dispatch(setCredentials({ token: result.access_token }));
         router.push("/");
-        toast.success("Registration successful");
+        toast.success(t("Auth.RegisterPage.success"));
       } catch (err) {
         console.error("Registration failed:", err);
       }
@@ -54,10 +56,12 @@ export default function RegisterPage() {
         onSubmit={formik.handleSubmit}
         className="w-full p-8 sm:max-w-lg flex mt-auto gap-8 flex-col m-auto shadow rounded-lg"
       >
-        <h2 className="text-2xl font-bold">Register</h2>
+        <h1 className="text-2xl font-bold">
+          {t("Auth.RegisterPage.register")}
+        </h1>
 
         <Input
-          label="Fullname"
+          label={t("Auth.RegisterPage.fullname")}
           type="text"
           name="full_name"
           value={formik.values.full_name}
@@ -67,7 +71,7 @@ export default function RegisterPage() {
           helperText={formik.touched.full_name && formik.errors.full_name}
         />
         <Input
-          label="Username"
+          label={t("Auth.RegisterPage.username")}
           type="text"
           name="username"
           value={formik.values.username}
@@ -81,7 +85,7 @@ export default function RegisterPage() {
           }
         />
         <Input
-          label="Email"
+          label={t("Auth.RegisterPage.email")}
           type="email"
           name="email"
           value={formik.values.email}
@@ -91,7 +95,7 @@ export default function RegisterPage() {
           helperText={formik.touched.email && formik.errors.email}
         />
         <Input
-          label="Phone number"
+          label={t("Auth.RegisterPage.phone")}
           type="text"
           name="phone_number"
           value={formik.values.phone_number}
@@ -103,7 +107,7 @@ export default function RegisterPage() {
           helperText={formik.touched.phone_number && formik.errors.phone_number}
         />
         <Input
-          label="Password"
+          label={t("Auth.RegisterPage.password")}
           type="password"
           name="password"
           value={formik.values.password}
@@ -129,7 +133,7 @@ export default function RegisterPage() {
         )}
 
         <Link href="/login" className="text-blue-500">
-          Login
+          {t("Auth.LoginPage.login")}
         </Link>
       </form>
     </div>

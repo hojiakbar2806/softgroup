@@ -89,10 +89,12 @@ const AddTemplatePage: React.FC = () => {
       return;
     }
 
-    create(formData).unwrap().then(() => {
-      toast.success("Template created successfully");
-      router.push("/profile");
-    });
+    create(formData)
+      .unwrap()
+      .then(() => {
+        toast.success(t("success"));
+        router.push("/profile");
+      });
   };
 
   const updateFeature = (index: number, value: string): void => {
@@ -140,6 +142,9 @@ const AddTemplatePage: React.FC = () => {
                 <Label htmlFor="description">{t("form.description")}</Label>
                 <Textarea
                   name="description"
+                  defaultValue={
+                    "Mazkur bo‘limga o‘rnatiladigan matn, loyihani to‘liq ko‘rib chiqish uchun mo‘ljallangan. Bu yerda foydalanuvchi diqqatini jalb qiluvchi asosiy axborot yoki xabar keltiriladi. Sizning web-loyihangizni tasvirlash uchun shunchaki bu matnni ishlating. Keyinroq bu bo‘lim o‘ziga xos ma'lumot bilan almashtiriladi."
+                  }
                   className="resize-y min-h-24"
                   placeholder={t("form.description")}
                 />

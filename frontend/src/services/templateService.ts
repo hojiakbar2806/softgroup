@@ -35,13 +35,21 @@ const templateApi = baseApi.injectEndpoints({
         method: "GET",
         responseHandler: (res) => res.blob(),
       }),
+      invalidatesTags: ["Template"],
     }),
-
-    deleteTemplate: builder.mutation<any, string>({
+    addLike: builder.mutation<any, string>({
       query: (slug) => ({
-        url: `/templates/${slug}`,
-        method: "DELETE",
+        url: `/templates/add-like/${slug}`,
+        method: "PATCH",
       }),
+      invalidatesTags: ["Template"],
+    }),
+    addView: builder.mutation<any, string>({
+      query: (slug) => ({
+        url: `/templates/add-view/${slug}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Template"],
     }),
   }),
 });
@@ -49,9 +57,10 @@ const templateApi = baseApi.injectEndpoints({
 export const {
   useCreateTemplateMutation,
   useGetAllTemplatesQuery,
+  useAddLikeMutation,
+  useAddViewMutation,
   useGetTemplateWithSlugQuery,
   useDownloadTemplateMutation,
-  useDeleteTemplateMutation,
   useAddRateMutation,
 } = templateApi;
 

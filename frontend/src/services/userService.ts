@@ -6,7 +6,7 @@ const userService = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getUserTemplates: builder.query<Templates, void>({
       query: () => `/users/templates`,
-      providesTags: ["Template", "User"],
+      providesTags: ["Template"],
     }),
 
     getMe: builder.query<IUser, void>({

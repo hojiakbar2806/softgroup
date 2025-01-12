@@ -101,9 +101,6 @@
       }
     }
   },
-  "TemplateDetail": {
-    "permissionError": "Shablonlarni olish uchun, iltimos biror shablon yuklang."
-  },
   "ProfilePage": {
     "Templates": {
       "header": {
@@ -114,6 +111,8 @@
     "AddTemplate": {
       "title": "Template qo'shish",
       "button": "Orqaga qaytish",
+
+      "success": "Template muvaffaqiyatli qo'shildi",
 
       "form": {
         "title": "Template nomi",
@@ -126,14 +125,52 @@
       }
     }
   },
+  "TemplateDetailPage": {
+    "downloads": "Yuklashlar soni",
+    "description": "Tavsif",
+    "feature": "Xususiyatlar",
+    "download": "Yuklab olish",
+    "notfound": "Shablon topilmadi",
+    "free": "Bepul",
+    "premium": "Pullik",
+    "preview": "Shablonni ko'rish",
+    "copied": "Havola vaqtinchalik xotiraga nusxalandi"
+  },
+  "Auth": {
+    "LoginPage": {
+      "username": "Foydalanuvchi nomi",
+      "password": "Parol",
+      "reuiredUsername": "Username maydonini talab qilinadi",
+      "reuiredPassword": "Parol maydonini talab qilinadi",
+      "login": "Kirish",
+      "success": "Kirish muvaffaqiyatli amalga oshirildi"
+    },
+    "RegisterPage": {
+      "fullname": "Foydalanuvchi to'liq ismi",
+      "username": "Foydalanuvchi nomi",
+      "email": "Email",
+      "phone": "Telefon raqami",
+      "password": "Parol",
+      "requiredFullname": "Foydalanuvchi ismi talab qilinadi",
+      "requiredUsername": "Username talab qilinadi",
+      "requiredEmail": "Email talab qilinadi",
+      "requiredPhone": "Telefon raqam talab qilinadi",
+      "requiredPassword": "Parol talab qilinadi",
+      "invalidPassword": "Parol 6 ta belgidan kam bo'lmasligi kerak",
+      "register": "Ro'yxatdan o'tish",
+      "success": "Ro'yxatdan o'tish muvaffaqiyatli amalga oshirildi"
+    }
+  },
   "Common": {
     "modal": {
+      "message": "Xabar",
       "cancel": "Bekor qilish",
       "login": "Kirish",
       "register": "Ro'yxatdan o'tish",
       "addTemplate": "Template qo'shish",
-      "refreshError": "Sessiya tugagan",
-      "unauthorized": "Siz ro'yxatdan o'tmagansiz"
+      "permissionError": "Shablonlarni olish uchun, iltimos biror shablon yuklang.",
+      "refreshError": "Sizning sessiyangiz tugatilfi, iltimos qayta kiring.",
+      "unauthorized": "Siz tizimdan ro'yxatdan o'tmagansiz. Ro'yxatdan o'ting va qayta urunib ko'ring"
     }
   }
 }

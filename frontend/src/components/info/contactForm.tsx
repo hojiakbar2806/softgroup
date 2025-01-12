@@ -61,7 +61,7 @@ const ContactForm: React.FC = () => {
         <p className="text-xs text-gray-500">{t("message")}</p>
         <button
           type="submit"
-          className="h-14 text-lg bg-purple-800 border border-purple-800 rounded-full duration-300 transition-all hover:bg-purple-500 hover:border-white "
+          className="h-12 text-lg bg-purple-600 border border-purple-800 rounded-full duration-300 transition-all hover:bg-purple-500 hover:border-white "
         >
           {t("submit")}
         </button>

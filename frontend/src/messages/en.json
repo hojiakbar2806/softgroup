@@ -100,14 +100,24 @@
       }
     }
   },
-  "TemplateDetail": {
-    "permissionError": "To get templates, please upload any template."
+  "TemplateDetailPage": {
+    "downloads": "Downloads",
+    "description": "Description",
+    "feature": "Key Features",
+    "download": "Download",
+    "notfound": "Template not found",
+    "free": "Free",
+    "premium": "Premium",
+    "preview": "Preview",
+    "copied": "Link copied to clipboard"
   },
   "ProfilePage": {
     "Templates": {
       "header": {
         "title": "Your Templates",
-        "button": "Add Template"
+        "button": "Add Template",
+
+        "success": "Template successfully added"
       }
     },
     "AddTemplate": {
@@ -125,14 +135,42 @@
       }
     }
   },
+  "Auth": {
+    "LoginPage": {
+      "username": "Username",
+      "password": "Password",
+      "title": "Login",
+      "reuiredUsername": "Username is required",
+      "reuiredPassword": "Password is required",
+      "login": "Login",
+      "success": "Login successful"
+    },
+    "RegisterPage": {
+      "fullname": "Fullname",
+      "username": "Username",
+      "email": "Email",
+      "phone": "Phone",
+      "password": "Password",
+      "requiredFullname": "Fullname is required",
+      "requiredUsername": "Username is required",
+      "requiredEmail": "Email is required",
+      "requiredPhone": "Phone is required",
+      "requiredPassword": "Password is required",
+      "invalidPassword": "Password must contain at least 6 characters",
+      "register": "Register",
+      "success": "Registration successful"
+    }
+  },
   "Common": {
     "modal": {
+      "message": "Message",
       "cancel": "Cancel",
       "login": "Login",
       "register": "Register",
       "addTemplate": "Add Template",
-      "refreshError": "Session expired",
-      "unauthorized": "You are not logged in"
+      "permissionError": "To get templates, please upload any template.",
+      "refreshError": "Your session has expired due to inactivity. Please log in again to continue accessing your account securely.",
+      "unauthorized": "You are not logged in. Please log in to continue using your account securely."
     }
   }
 }

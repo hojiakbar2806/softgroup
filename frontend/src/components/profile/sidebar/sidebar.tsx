@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import {
   ChevronLeft,
   HeartIcon,
@@ -13,6 +13,10 @@ import { usePathname } from "next/navigation";
 import { useSidebarDialogStore } from "@/store/profileStore";
 import { useLogoutMutation } from "@/services/authService";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { logout } from "@/features/auth/authSlice";
+import { baseApi } from "@/services/baseApi";
+import { closeModal } from "@/features/modal/loginMessageModalSlice";
 
 const links = [
   { href: "/profile", label: "Dashboard", icon: <LayoutDashboard /> },
@@ -23,14 +27,15 @@ const Sidebar: FC = () => {
   const { isOpen, closeDialog } = useSidebarDialogStore();
   const pathname = usePathname();
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const [logout] = useLogoutMutation();
+  const [logoutSystem] = useLogoutMutation();
 
   const handleLogout = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    logout();
     router.push("/");
+    logoutSystem();
+    dispatch(logout());
+    dispatch(baseApi.util.resetApiState());
     toast.success("Logout successful");
   };
 

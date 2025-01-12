@@ -234,17 +234,19 @@ async def download_template(
     session: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(current_auth_user),
 ):
-    if not current_user.is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Please add one template and your account will be verified"
-        )
 
     template = await session.scalar(
         select(Template).where(Template.slug == slug)
     )
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
+
+    if template.current_price > 0:
+        if not current_user.is_verified:
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Please add one template and your account will be verified"
+            )
 
     if '.' not in slug:
         file_path = settings.TEMPLATES_DIR / slug / f"{slug}.zip"
@@ -291,3 +293,21 @@ async def get_template_file(
         raise HTTPException(status_code=404, detail="File not found")
 
     return FileResponse(file_path)
+
+
+@router.patch("/add-like/{slug}")
+async def add_like(
+    slug: str,
+    session: AsyncSession = Depends(get_db_session),
+    _: User = Depends(current_auth_user),
+):
+    template = await session.scalar(
+        select(Template).where(Template.slug == slug)
+    )
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    template.likes += 1
+    await session.commit()
+
+    return template

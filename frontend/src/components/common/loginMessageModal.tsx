@@ -28,7 +28,7 @@ const LoginMessageModal = () => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
       <div className="bg-white w-96 rounded-lg shadow-lg p-6 relative">
-        <h2 className="text-xl font-semibold mb-4">Xabar</h2>
+        <h2 className="text-xl font-semibold mb-4">{t("message")}</h2>
         <p className="text-gray-700 mb-6">{message}</p>
         <div className="flex items-center justify-end space-x-4">
           <button

@@ -44,7 +44,11 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${slug}.zip`;
+      if (slug.split(".").length > 1) {
+        link.download = slug;
+      } else {
+        link.download = `${slug}.zip`;
+      }
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -58,7 +62,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center h-full">
         <h1 className="text-3xl font-bold">404</h1>
-        <p className="text-lg">Template not found</p>
+        <p className="text-lg">{t("TemplateDetailPage.notfound")}</p>
       </div>
     );
   }
@@ -66,21 +70,12 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
   if (isDownloadError) {
     const status = (error as FetchBaseQueryError).status;
 
-    if (status === 401) {
+    if (status === 406) {
       dispatch(
         openModal({
-          message: t("TemplateDetail.permissionError"),
+          message: t("Common.modal.permissionError"),
           path: "/profile/add-template",
           button: t("Common.modal.addTemplate"),
-        })
-      );
-    }
-    if (status === 403) {
-      dispatch(
-        openModal({
-          message: t("Common.modal.unauthorized"),
-          path: "/register",
-          button: t("Common.modal.register"),
         })
       );
     }
@@ -138,7 +133,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               <span>
                 {data?.current_price === 0 ? (
                   <span className="text-3xl font-bold text-purple-600">
-                    Free
+                    {t("TemplateDetailPage.free")}
                   </span>
                 ) : (
                   <>
@@ -159,7 +154,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
 
           <div className="flex items-center gap-4">
             <span className="text-gray-600">
-              Downloads: {data?.downloads || 0}
+              {t("TemplateDetailPage.downloads")}: {data?.downloads || 0}
             </span>
           </div>
 
@@ -168,7 +163,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           {translated?.description && (
             <div className="space-y-2">
               <h2 className="text-xl font-semibold text-gray-900">
-                Description
+                {t("TemplateDetailPage.description")}
               </h2>
               <p className="text-gray-600 leading-relaxed">
                 {translated?.description}
@@ -179,7 +174,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           {data?.features && data.features.length > 0 && (
             <div className="space-y-4">
               <h2 className="text-xl font-semibold text-gray-900">
-                Key Features
+                {t("TemplateDetailPage.feature")}
               </h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {data.features.map((feature, i) => {
@@ -208,7 +203,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               aria-label="Download"
               onClick={handleDownload}
             >
-              Download
+              {t("TemplateDetailPage.download")}
               <ArrowUpRight
                 size={18}
                 className="group-hover:translate-x-1 transition-transform"
@@ -222,7 +217,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                   aria-label="Preview"
                 >
                   <EyeIcon size={20} />
-                  Preview
+                  {t("TemplateDetailPage.preview")}
                 </button>
               </Link>
             )}
@@ -243,7 +238,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                 aria-label="Share"
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
-                  toast.success("Link copied to clipboard");
+                  toast.success(t("TemplateDetailPage.copied"));
                 }}
               >
                 <CopyIcon size={20} />

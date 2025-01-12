@@ -7,6 +7,7 @@ import { EyeIcon, HeartIcon } from "lucide-react";
 import { Template } from "@/types/template";
 import { useLocale, useTranslations } from "next-intl";
 import { BASE_URL } from "@/lib/const";
+import { useAddLikeMutation } from "@/services/templateService";
 
 const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
   product,
@@ -19,6 +20,8 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
   const translated = product.translations?.find(
     (item) => item.language === locale
   );
+
+  const [addLike] = useAddLikeMutation();
 
   return (
     <div
@@ -39,7 +42,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
       />
 
       <div className="flex flex-1 flex-col px-3 gap-1 sm:gap-2">
-        <div className="flex items-center justify-between my-2">
+        <div className="flex items-center justify-between my-2 gap-2">
           <div className="flex items-center gap-2">
             <h2
               className="text-sm sm:text-lg text-gray-800 group-hover:text-purple-600 
@@ -52,7 +55,13 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
             </span>
           </div>
           <div className="flex gap-2">
-            <div className="flex text-sm items-center gap-px text-gray-400 group-hover:text-purple-600 transition-colors">
+            <div
+              className="flex text-sm items-center gap-px text-gray-400 group-hover:text-purple-600 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                addLike(product?.slug);
+              }}
+            >
               <HeartIcon className="size-4" />
               {product?.likes}
             </div>
