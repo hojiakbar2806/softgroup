@@ -18,15 +18,18 @@ interface TemplateSectionProps {
 
 const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
   const searchParams = useSearchParams();
-  const tier = searchParams.get("tier");
-  const query = `${tier ? `tier=${tier}` : ""}`;
-  const { data: templates, isLoading } = useGetAllTemplatesQuery(query);
+  const tier = searchParams.get("tier") || "free";
+  const page = searchParams.get("page") || "1";
+
+  const param = `tier=${tier}&page=${page}&per_page=12`;
+
+  const { data: templates, isLoading } = useGetAllTemplatesQuery(param);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(closeModal());
-  }, []);
+  }, [dispatch]);
 
   return (
     <section className="flex-1 py-10 bg-blue-50">
@@ -45,7 +48,7 @@ const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
 
         <TemplateCardWrapper>
           {isLoading ? (
-            Array.from({ length: 8 }).map((_, index) => (
+            Array.from({ length: 12 }).map((_, index) => (
               <TemplateCardSkeleton key={`skeleton-${index}`} />
             ))
           ) : templates?.data && templates.data.length > 0 ? (

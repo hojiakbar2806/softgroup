@@ -28,7 +28,6 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
       data-verified={is_verified}
       className="group flex flex-col cursor-pointer relative w-full bg-white shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden
       rounded-xl md:rounded-2xl
-      data-[verified=false]:brightness-75
       data-[verified=false]:pointer-events-none"
       onClick={() => router.push(`/templates/${product?.slug}`)}
     >
@@ -76,6 +75,8 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
         className="absolute bottom-0 left-0 -z-10 w-32 h-32 bg-blue-200/50 rounded-full 
         blur-3xl group-hover:bg-blue-300/50 transition-colors"
       />
+      {is_verified && <div className="flex items-center justify-center w-full h-full absolute bg-black/10">
+      <span className="text-white bg-purple-500 py-1 px-2 rounded">In Process</span></div>}
     </div>
   );
 };

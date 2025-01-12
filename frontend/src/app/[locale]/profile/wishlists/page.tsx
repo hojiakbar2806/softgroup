@@ -14,15 +14,15 @@ export default function WishtlistPage() {
     <section className="flex-1">
       <div className="container w-full">
         <TitleCard title="Wishlist" />
-        <TemplateCardWrapper>
-          {wishListItems.map((item) => (
-            <TemplateCard
-              key={item.id}
-              product={item}
-              is_verified={item.is_verified}
-            />
-          ))}
-        </TemplateCardWrapper>
+        {wishListItems.length > 0 ? (
+          <TemplateCardWrapper>
+            {wishListItems.map((item) => (
+              <TemplateCard key={item.id} product={item} />
+            ))}
+          </TemplateCardWrapper>
+        ) : (
+          <div className="mt-10 text-center text-xl">No templates</div>
+        )}
       </div>
     </section>
   );

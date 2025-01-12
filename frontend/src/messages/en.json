@@ -131,7 +131,8 @@
         "feature": "Features",
         "image": "Template Image",
         "file": "Template File",
-        "submit": "Submit"
+        "submit": "Submit",
+        "loading": "Loading..."
       }
     }
   },

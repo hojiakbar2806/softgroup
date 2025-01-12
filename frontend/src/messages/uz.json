@@ -121,7 +121,8 @@
         "feature": "Funksiyalar",
         "image": "Template Rasm",
         "file": "Template Fayl",
-        "submit": "Yuborish"
+        "submit": "Yuborish",
+        "loading": "Yuklanmoqda..."
       }
     }
   },

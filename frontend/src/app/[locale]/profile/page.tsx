@@ -25,19 +25,25 @@ export default function Profile() {
             Add template
           </Button>
         </CardHeader>
-        <TemplateCardWrapper>
-          {isLoading
-            ? Array.from({ length: 10 }).map((_, index) => (
-                <TemplateCardSkeleton key={index} />
-              ))
-            : data?.data?.map((template) => (
-                <TemplateCard
-                  key={template.id}
-                  product={template}
-                  is_verified={template.is_verified}
-                />
-              ))}
-        </TemplateCardWrapper>
+        {isLoading ? (
+          <TemplateCardWrapper>
+            {Array.from({ length: 10 }).map((_, index) => (
+              <TemplateCardSkeleton key={index} />
+            ))}
+          </TemplateCardWrapper>
+        ) : (data?.data.length || 0) > 0 ? (
+          <TemplateCardWrapper>
+            {data?.data?.map((template) => (
+              <TemplateCard
+                key={template.id}
+                product={template}
+                is_verified={template.is_verified}
+              />
+            ))}
+          </TemplateCardWrapper>
+        ) : (
+          <div className="mt-10 text-center text-xl">No templates</div>
+        )}
       </div>
     </section>
   );

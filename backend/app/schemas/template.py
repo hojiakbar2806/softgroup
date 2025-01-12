@@ -70,6 +70,7 @@ class TemplateResponse(BaseModel):
     avarage_rating: float
     likes: int
     views: int
+    is_verified: bool
     ratings: List[Rating]
     images: List[Image]
     translations: List[TemplateTranslation]

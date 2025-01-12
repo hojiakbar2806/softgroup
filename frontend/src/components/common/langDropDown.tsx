@@ -28,7 +28,7 @@ const LanguageDropdown: React.FC = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-24 md:w-28 flex items-center gap-1 transition rounded p-2"
+        className="w-24 md:w-32 flex items-center gap-1 transition rounded p-2"
       >
         <Image
           src={currentLanguage?.icon || ""}
