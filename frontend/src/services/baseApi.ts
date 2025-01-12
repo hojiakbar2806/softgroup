@@ -12,6 +12,7 @@ import { setCredentials, logout } from "../features/auth/authSlice";
 import { clearAllData } from "@/lib/utils";
 import { openModal } from "@/features/modal/loginMessageModalSlice";
 import { RootState } from "@/lib/store";
+import { BASE_URL } from "@/lib/const";
 
 const getConfig = async (locale: string) => {
   if (!locale || !["uz", "en", "ru"].includes(locale)) {
@@ -26,7 +27,7 @@ const getConfig = async (locale: string) => {
 };
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000",
+  baseUrl: BASE_URL,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
