@@ -18,7 +18,7 @@ export default function LoginPage() {
   });
 
   const dispatch = useAppDispatch();
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading, isError, error }] = useLoginMutation();
   const router = useRouter();
 
   const formik = useFormik({
@@ -38,6 +38,10 @@ export default function LoginPage() {
       }
     },
   });
+
+  if (isError) {
+    toast.error((error as any)?.data.detail || "Login failed");
+  }
 
   return (
     <div className="w-full h-screen flex justify-center items-center p-4">

@@ -145,7 +145,8 @@ async def read_templates(
     db: AsyncSession = Depends(get_db_session),
 ):
     try:
-        query = select(Template).where(Template.is_verified == True)
+        query = select(Template).where(Template.is_verified ==
+                                       True).order_by(Template.id.desc())
 
         if slug:
             query = query.where(Template.slug.contains(slug))

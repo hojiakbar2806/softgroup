@@ -21,7 +21,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
     (item) => item.language === locale
   );
 
-  const [addLike] = useAddLikeMutation();
+  const [addLike, { isLoading }] = useAddLikeMutation();
 
   return (
     <div
@@ -55,7 +55,9 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
           </div>
           <div className="flex gap-2">
             <div
-              className="flex text-sm items-center gap-px text-gray-400 group-hover:text-purple-600 transition-colors"
+              data-loading={isLoading}
+              className="flex text-sm items-center gap-px text-gray-400 group-hover:text-purple-600 transition-colors
+              data-[loading=true]:animate-ping"
               onClick={(e) => {
                 e.stopPropagation();
                 addLike(product?.slug);
@@ -75,8 +77,13 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
         className="absolute bottom-0 left-0 -z-10 w-32 h-32 bg-blue-200/50 rounded-full 
         blur-3xl group-hover:bg-blue-300/50 transition-colors"
       />
-      {is_verified && <div className="flex items-center justify-center w-full h-full absolute bg-black/10">
-      <span className="text-white bg-purple-500 py-1 px-2 rounded">In Process</span></div>}
+      {is_verified === false && (
+        <div className="flex items-center justify-center w-full h-full absolute bg-black/10">
+          <span className="text-white bg-purple-500 py-1 px-2 rounded">
+            In Process
+          </span>
+        </div>
+      )}
     </div>
   );
 };

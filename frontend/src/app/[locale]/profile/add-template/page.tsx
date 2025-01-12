@@ -31,7 +31,7 @@ const AddTemplatePage: React.FC = () => {
 
   const { data: user } = useGetMeQuery();
   const { data: categories } = useGetCategoriesQuery();
-  const [create, { isLoading }] = useCreateTemplateMutation();
+  const [create, { isLoading, isError, error }] = useCreateTemplateMutation();
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -104,6 +104,14 @@ const AddTemplatePage: React.FC = () => {
       )
     );
   };
+
+  if (isError) {
+    if ((error as any).status === 422) {
+      toast.error("All fields are required");
+    } else {
+      toast.error((error as any)?.data?.detail);
+    }
+  }
 
   return (
     <section className="flex-1">

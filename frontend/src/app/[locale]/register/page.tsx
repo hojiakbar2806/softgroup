@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
-  const [register, { isLoading, error }] = useRegisterMutation();
+  const [register, { isLoading, isError,error }] = useRegisterMutation();
   const dispatch = useDispatch();
   const router = useRouter();
   const t = useTranslations();
@@ -49,6 +49,10 @@ export default function RegisterPage() {
       }
     },
   });
+
+  if (isError) {
+    toast.error((error as any)?.data.detail || "Login failed");
+  }
 
   return (
     <div className="w-full h-screen flex justify-center items-center">
