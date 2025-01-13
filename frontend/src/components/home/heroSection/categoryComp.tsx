@@ -2,22 +2,17 @@
 
 import React from "react";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
-import { GetCategoriesService } from "@/services/template.service";
-import { ICategory } from "@/types/mixin";
 import { BASE_URL } from "@/lib/const";
+import { useGetCategoriesQuery } from "@/services/categoryService";
 
 const CategoryComp = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = useLocale();
 
-  const { data: categories, isLoading } = useQuery<ICategory[]>({
-    queryKey: ["categories"],
-    queryFn: GetCategoriesService,
-  });
+  const { data, isLoading } = useGetCategoriesQuery();
 
   const handleCategoryClick = (slug?: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -49,7 +44,7 @@ const CategoryComp = () => {
               >
                 All
               </div>
-              {categories?.map((category) => {
+              {data?.map((category) => {
                 const translatedTitle = category.translations?.find(
                   (translation) => translation.language === locale
                 )?.title;

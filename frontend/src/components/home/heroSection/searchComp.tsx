@@ -3,7 +3,6 @@
 import React, { Fragment, useState } from "react";
 import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useQuery } from "@tanstack/react-query";
 import Form from "next/form";
 import TemplateCard from "@/components/common/templateCard/templateCard";
 import { TemplateCardSkeleton } from "@/components/common/templateCard/templateCardSkeleton";
