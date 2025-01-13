@@ -41,8 +41,8 @@ async def send_file_to_telegram(slug: str):
 
         image = ""
 
-        for image in template.images:
-            image += f"\n{settings.BASE_URL}/{image.url}"
+        for img in template.images:
+            image += f"\n{settings.BASE_URL}/{img.url}"
 
         if template.is_verified:
             caption = f"""✅ ❌Template ({template.slug}) tasdiqlangan

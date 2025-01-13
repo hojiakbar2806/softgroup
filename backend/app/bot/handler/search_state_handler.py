@@ -49,8 +49,8 @@ async def search_state_handler(message: Message, state: FSMContext, bot: Bot):
         photo = FSInputFile(template.images[0].url)
         image = ""
 
-        for image in template.images:
-            image += f"\n{settings.BASE_URL}/{image.url}"
+        for img in template.images:
+            image += f"\n{settings.BASE_URL}/{img.url}"
 
         if template.is_verified:
             caption = f"""✅ ❌Template ({template.slug}) tasdiqlangan
