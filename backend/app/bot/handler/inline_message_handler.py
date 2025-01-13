@@ -6,6 +6,7 @@ from sqlalchemy.future import select
 
 from app.bot.session import get_db_session
 from app.models.template import Template
+from app.core.config import settings
 
 inline_message_router = Router()
 

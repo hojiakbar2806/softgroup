@@ -13,7 +13,15 @@ const userService = baseApi.injectEndpoints({
       query: () => `/users/me`,
       providesTags: ["User"],
     }),
+    contactUs: builder.mutation({
+      query: (data) => ({
+        url: `/users/contact`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetUserTemplatesQuery, useGetMeQuery } = userService;
+export const { useGetUserTemplatesQuery, useGetMeQuery, useContactUsMutation } =
+  userService;

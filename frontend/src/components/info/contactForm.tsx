@@ -6,41 +6,57 @@ import Form from "next/form";
 import Input from "../common/input";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import axios from "axios";
+import { useContactUsMutation } from "@/services/userService";
 import { toast } from "sonner";
 
 const ContactForm: React.FC = () => {
   const { openContact, toggleOpenContact } = useContactForm();
+  const [postContact] = useContactUsMutation();
   const t = useTranslations("InfoPage.ContactForm");
 
-  const telegramToken = "7958951230:AAGCU4oWRDXdyVT_LT8eB-m-u7RViiGtGPg";
-  const chatId = "-1002489508446";
-  const url = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
+  interface ContactResponse {
+    message: string;
+  }
+
+  interface ValidationError {
+    detail: Array<{ msg: string }>;
+  }
 
   const handleSubmit = async (formData: FormData) => {
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-
     try {
-      if (!name || !email) {
-        toast.error("Iltimos, to'liq ma'lumotlarni kiriting.");
+      const name = formData.get("name");
+      const email = formData.get("email");
+
+      if (
+        !name ||
+        !email ||
+        typeof name !== "string" ||
+        typeof email !== "string"
+      ) {
+        toast.error("Hamma maydonlarni to'ldiring");
         return;
       }
-      const res = await axios.post(url, {
-        chat_id: chatId,
-        text: `📝 *Yangi Xabar* 📝\n\n👤 *Ism:* ${name}\n📧 *Email:* ${email}`,
-        parse_mode: "Markdown",
+
+      const res = await postContact({
+        name: name.trim(),
+        email: email.trim(),
       });
 
-      if (res.status === 200) {
-        toast.success("Xabar muvaffaqiyatli yuborildi!");
+      if ("error" in res && res.error) {
+        if ("data" in res.error && res.error.data) {
+          const errorData = res.error.data as ValidationError;
+          toast.error(errorData.detail[0]?.msg || "Validation error occurred");
+        } else {
+          toast.error("An error occurred while submitting the form");
+        }
+      } else {
+        const successData = res.data as ContactResponse;
+        toast.success(successData.message);
         toggleOpenContact();
       }
     } catch (error) {
-      console.error(error);
-      toast.error(
-        "Xabar yuborishda xatolik yuz berdi. Iltimos, qayta urinib ko‘ring."
-      );
+      console.log(error);
+      toast.error("An unexpected error occurred");
     }
   };
 

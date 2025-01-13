@@ -31,12 +31,11 @@ const Sidebar: FC = () => {
   const [logoutSystem] = useLogoutMutation();
 
   const handleLogout = () => {
-    router.push("/");
     logoutSystem();
     dispatch(logout());
     dispatch(baseApi.util.resetApiState());
+    window.location.href = "/";
     toast.success("Logout successful");
-    window.location.reload();
   };
 
   return (

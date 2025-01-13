@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
-  const [register, { isLoading, isError,error }] = useRegisterMutation();
+  const [register, { isLoading, isError, error }] = useRegisterMutation();
   const dispatch = useDispatch();
   const router = useRouter();
   const t = useTranslations();

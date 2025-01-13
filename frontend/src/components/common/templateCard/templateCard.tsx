@@ -37,7 +37,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
         width={500}
         height={350}
         alt={translated?.title || ""}
-        className="aspect-[4/3] object-cover border-b group-hover:scale-105 transition-all duration-300"
+        className="aspect-video object-cover border-b group-hover:scale-105 transition-all duration-300"
       />
 
       <div className="flex flex-1 flex-col px-3 gap-1 sm:gap-2">

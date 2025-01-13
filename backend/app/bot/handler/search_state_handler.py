@@ -21,6 +21,7 @@ search_state_router = Router()
 async def search_state_handler(message: Message, state: FSMContext, bot: Bot):
     async with get_db_session() as session:
         query = select(Template).where(Template.slug == message.text).options(
+            selectinload(Template.translations),
             selectinload(Template.images)
         )
         result = await session.execute(query)
@@ -46,11 +47,19 @@ async def search_state_handler(message: Message, state: FSMContext, bot: Bot):
         ])
 
         photo = FSInputFile(template.images[0].url)
+        image = ""
+
+        for image in template.images:
+            image += f"\n{settings.BASE_URL}/{image.url}"
 
         if template.is_verified:
-            caption = "✅ Template tasdiqlangan"
+            caption = f"""✅ ❌Template ({template.slug}) tasdiqlangan
+{template.translations[0].description}
+{image}"""
         else:
-            caption = "❌ Template tasdiqlanmagan"
+            caption = f"""✅ Template ({template.slug}) tasdiqlanmagan
+{template.translations[0].description}
+{image}"""
 
         await bot.send_photo(
             chat_id=message.chat.id,

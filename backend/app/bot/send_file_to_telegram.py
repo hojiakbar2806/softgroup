@@ -2,7 +2,7 @@ from app.bot.bot import bot
 from app.core.config import settings
 from aiogram.types import FSInputFile
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from app.models.template import Template
+from app.models.template import Feature, Template
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from app.bot.session import get_db_session
@@ -11,7 +11,9 @@ from app.bot.session import get_db_session
 async def send_file_to_telegram(slug: str):
     async with get_db_session() as session:
         query = select(Template).where(Template.slug == slug).options(
-            selectinload(Template.images))
+            selectinload(Template.images),
+            selectinload(Template.translations),
+            selectinload(Template.features).selectinload(Feature.translations))
         result = await session.execute(query)
         template = result.scalar_one_or_none()
 
@@ -37,10 +39,19 @@ async def send_file_to_telegram(slug: str):
 
         photo = FSInputFile(template.images[0].url)
 
+        image = ""
+
+        for image in template.images:
+            image += f"\n{settings.BASE_URL}/{image.url}"
+
         if template.is_verified:
-            caption = f"✅ Template ({template.slug}) tasdiqlangan"
+            caption = f"""✅ ❌Template ({template.slug}) tasdiqlangan
+{template.translations[0].description}
+{image}"""
         else:
-            caption = f"❌ Template ({template.slug}) tasdiqlanmagan"
+            caption = f"""✅ Template ({template.slug}) tasdiqlanmagan
+{template.translations[0].description}
+{image}"""
 
     try:
         for chat_id in settings.CHAT_IDS:

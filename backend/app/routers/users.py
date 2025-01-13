@@ -1,3 +1,4 @@
+from fastapi.responses import JSONResponse
 from sqlalchemy import func
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,8 +8,10 @@ from app.core.dependencies import current_auth_user
 from app.models.template import Feature, Template
 from app.models.user import User
 from app.schemas.template import PaginatedTemplateResponse
-from app.schemas.user import User as UserSchema
+from app.schemas.user import User as UserSchema, ContactForm
 from app.database.session import get_db_session
+
+from app.bot.send_message import send_message
 
 router = APIRouter(prefix="/users",)
 
@@ -54,3 +57,9 @@ async def read_users_me(
         "has_next": page < total_pages,
         "has_previous": page > 1,
     }
+
+
+@router.post("/contact")
+async def contact(data: ContactForm):
+    await send_message(data)
+    return JSONResponse(status_code=200, content={"message": "Xabar muvaffaqiyatli yuborildi"})
