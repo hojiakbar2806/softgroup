@@ -206,7 +206,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
 
           <div className="flex flex-wrap gap-4 pt-6">
             <button
-              className="flex-1 min-w-[180px] select-none flex items-center justify-center gap-2 
+              className="flex-1 min-w-[200px] select-none flex items-center justify-center gap-2 
               bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-3 font-medium transition-all duration-300"
               aria-label="Download"
               onClick={handleDownload}
@@ -222,7 +222,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
             {slug.split(".").length == 1 && (
               <Link href={`${slug}/preview`} target="_blank">
                 <button
-                  className="flex-1 min-w-[180px] flex items-center justify-center gap-2 
+                  className="flex-1 min-w-[200px] flex items-center justify-center gap-2 
                 bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-3 font-medium transition-all duration-300"
                   aria-label="Preview"
                 >
