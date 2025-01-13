@@ -36,6 +36,7 @@ const Sidebar: FC = () => {
     dispatch(logout());
     dispatch(baseApi.util.resetApiState());
     toast.success("Logout successful");
+    window.location.reload();
   };
 
   return (
