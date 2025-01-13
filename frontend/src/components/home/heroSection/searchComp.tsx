@@ -8,19 +8,15 @@ import Form from "next/form";
 import TemplateCard from "@/components/common/templateCard/templateCard";
 import { TemplateCardSkeleton } from "@/components/common/templateCard/templateCardSkeleton";
 import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
-import { GetAllTemplateService } from "@/services/template.service";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGetAllTemplatesQuery } from "@/services/templateService";
 
 const SearchComp = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const t = useTranslations("TemplatePage.Header");
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["templates", searchQuery],
-    queryFn: () => GetAllTemplateService(`slug=${searchQuery}`),
-    enabled: !!searchQuery,
-  });
+  const { data, isLoading } = useGetAllTemplatesQuery(`slug=${searchQuery}`);
 
   const handleSearch = async (formData: FormData) => {
     const search = formData.get("search") as string;

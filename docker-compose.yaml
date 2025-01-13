@@ -54,6 +54,7 @@ services:
       - ./nginx/api.softgroup.uz.conf:/etc/nginx/conf.d/api.softgroup.uz.conf
       - ./nginx/templates.softgroup.uz.conf:/etc/nginx/conf.d/templates.softgroup.uz.conf
       - ./nginx/error-pages:/etc/nginx/error-pages:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"

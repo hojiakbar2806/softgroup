@@ -43,7 +43,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
 
   useEffect(() => {
     addView(slug);
-  }, []);
+  }, [slug]);
 
   const handleDownload = async () => {
     try {

@@ -3,10 +3,14 @@ import { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
 
 export default async function middleware(request: NextRequest) {
-  const intlMiddleware = createMiddleware(routing);
-  return intlMiddleware(request);
-}
+  const handleI18nRouting = createMiddleware({
+    ...routing,
+    defaultLocale: "uz",
+    localePrefix: "as-needed",
+  });
 
+  return handleI18nRouting(request);
+}
 export const config = {
   matcher: ["/", "/(uz|en|ru)/:path*"],
 };

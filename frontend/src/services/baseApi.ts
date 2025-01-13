@@ -13,18 +13,7 @@ import { clearAllData } from "@/lib/utils";
 import { openModal } from "@/features/modal/loginMessageModalSlice";
 import { RootState } from "@/lib/store";
 import { BASE_URL } from "@/lib/const";
-
-const getConfig = async (locale: string) => {
-  if (!locale || !["uz", "en", "ru"].includes(locale)) {
-    locale = "uz";
-  }
-  const messages = (await import(`@/messages/${locale}.json`)).default;
-
-  return {
-    locale,
-    messages,
-  };
-};
+import { getConfig } from "@/i18n/config";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
@@ -46,10 +35,6 @@ const baseQueryWithReauth: BaseQueryFn<
   object,
   FetchBaseQueryMeta
 > = async (args, api, extraOptions) => {
-  // const state = api.getState() as RootState;
-  // if (state.auth.isAuthenticated === false) {
-  //   return baseQuery(args, api, extraOptions);
-  // }
   let result = await baseQuery(args, api, extraOptions);
   const protectedEndpoints = [
     "getUserTemplates",
