@@ -40,7 +40,7 @@ export default async function RootLayout({
               <main>{children}</main>
               <Toaster position="bottom-right" richColors />
               <CartDialog />
-              <LoginMessageModal/>
+              <LoginMessageModal />
             </ReactQueryProvider>
           </RTKProviders>
         </body>
@@ -76,5 +76,8 @@ export const metadata: Metadata = {
       },
     ],
     type: "website",
+  },
+  verification: {
+    google: "emV-EXU3GWO_GujFkGMCi9DABaqmKifhSCErsDPgpsM",
   },
 };
