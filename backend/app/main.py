@@ -14,7 +14,8 @@ app.mount("/docs/static", StaticFiles(directory="docs/static"), name="static")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://templora.uz"
+        "https://templora.uz",
+        "https://softgroup.uz"
     ],
     allow_credentials=True,
     allow_methods=["*"],
