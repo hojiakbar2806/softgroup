@@ -38,7 +38,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
           chmod 600 ~/ssh_key
 
-          ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ubuntu@13.61.74.70 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ubuntu@37.60.228.238 << 'EOF'
           cd ~/softgroup 
           git pull
           sudo docker-compose down
