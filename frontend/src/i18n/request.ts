@@ -1,17 +1,15 @@
 import { getRequestConfig } from "next-intl/server";
 import { Locale, routing } from "./routing";
-import { messages } from "@/messages/messages";
 
-export default getRequestConfig(async ({ locale: requestLocale }) => {
-  let locale = requestLocale as Locale;
+export default getRequestConfig(async ({ requestLocale }: any) => {
+  let locale = await requestLocale;
 
-  if (!locale || !routing.locales.includes(locale)) {
+  if (!locale || !routing.locales.includes(locale as Locale)) {
     locale = routing.defaultLocale;
   }
 
   return {
     locale,
-    messages: await messages[locale](),
-    timeZone: "UTC",
+    messages: (await import(`@/messages/${locale}.json`)).default,
   };
 });
