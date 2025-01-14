@@ -53,6 +53,7 @@ services:
       - ./nginx/softgroup.uz.conf:/etc/nginx/conf.d/softgroup.uz.conf
       - ./nginx/api.softgroup.uz.conf:/etc/nginx/conf.d/api.softgroup.uz.conf
       - ./nginx/templates.softgroup.uz.conf:/etc/nginx/conf.d/templates.softgroup.uz.conf
+      - ./nginx/templora.uz.conf:/etc/nginx/conf.d/templora.uz.conf
       - ./nginx/error-pages:/etc/nginx/error-pages:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
