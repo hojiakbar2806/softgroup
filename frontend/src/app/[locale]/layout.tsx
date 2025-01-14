@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     title: "Softgroup - Innovatsion IT xizmatlari",
     description:
       "Sizning IT sohasidagi ehtiyojlaringiz uchun ishonchli hamkor! Bu innovatsion dasturiy ta'minot ishlab chiqarish va joriy etish bo'yicha mahsulot yaratuvchi,O'zbekistonda yangi va ilg'or uslubda xizmat ko'rsatish,ishlab chiqarish jarayonlarini avtomatlashtirish va biznesni yaratishga yordam beruvchi kompaniyadir.Biz bilan birgalikda biznesingizni global bozorda yuksaltirish osonroq!",
-    url: "http://templates.softgroup.uz",
+    url: "http://templora.uz",
     siteName: "Softgroup",
     images: [
       {
