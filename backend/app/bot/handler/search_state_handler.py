@@ -45,27 +45,23 @@ async def search_state_handler(message: Message, state: FSMContext, bot: Bot):
                     text="📥 Download", url=url)
             ]
         ])
-
-        photo = FSInputFile(template.images[0].url)
         image = ""
-
         for img in template.images:
             image += f"\n{settings.BASE_URL}/{img.url}"
 
         if template.is_verified:
-            caption = f"""✅ ❌Template ({template.slug}) tasdiqlangan
+            text = f"""✅ ❌Template ({template.slug}) tasdiqlangan
 {template.translations[0].description}
 {image}"""
         else:
-            caption = f"""✅ Template ({template.slug}) tasdiqlanmagan
+            text = f"""✅ Template ({template.slug}) tasdiqlanmagan
 {template.translations[0].description}
 {image}"""
 
-        await bot.send_photo(
+        await bot.send_message(
             chat_id=message.chat.id,
-            photo=photo,
             reply_markup=keyboard,
-            caption=caption
+            text=text
         )
 
     await state.clear()
