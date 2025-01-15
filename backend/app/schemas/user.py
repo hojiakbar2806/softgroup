@@ -1,5 +1,5 @@
 import re
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, validator
 from typing import List, Optional
 
 
@@ -8,6 +8,14 @@ class UserBase(BaseModel):
     username: str
     email: EmailStr
     phone_number: str
+
+    @field_validator('phone_number')
+    def validate_phone_number(cls, v):
+        if not v.startswith('+998'):
+            raise ValueError('Phone number must start with +998')
+        if not re.match(r'^\+998\d{9}$', v):
+            raise ValueError('Invalid phone number format (+998XXXXXXXXX)')
+        return v
 
 
 class UserCreate(UserBase):
@@ -42,7 +50,7 @@ class ContactForm(BaseModel):
     )
     email: EmailStr
 
-    @validator('name')
+    @field_validator('name')
     def validate_name(cls, v):
         # HTML teglar, JavaScript kod va maxsus belgilarni tekshirish
         dangerous_patterns = [

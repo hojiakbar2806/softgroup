@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     BOT_TOKEN: str = "7958951230:AAEuOYFSGTHB27TsNG_3n6c8uol3i2FdzUQ"
     CHAT_IDS: list = [1960543012, 5050150433]
     BASE_URL: str = "https://api.softgroup.uz"
-    WEBHOOK_URL: str = "https://api.softgroup.uz"
+    WEBHOOK_URL: str = "https://f072-185-139-137-102.ngrok-free.app"
 
     POSTGRES_DB: str = "postgres"
     POSTGRES_HOST: str = "localhost"

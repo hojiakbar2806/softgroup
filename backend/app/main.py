@@ -15,7 +15,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://templora.uz",
-        "https://softgroup.uz"
+        "https://softgroup.uz",
+        "http://localhost:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],

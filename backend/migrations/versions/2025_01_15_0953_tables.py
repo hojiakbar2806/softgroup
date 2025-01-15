@@ -1,8 +1,8 @@
 """tables
 
-Revision ID: 30b17e0a87d7
+Revision ID: 6ce5f78eded8
 Revises: 
-Create Date: 2025-01-08 09:14:06.340802
+Create Date: 2025-01-15 09:53:15.736392
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '30b17e0a87d7'
+revision: str = '6ce5f78eded8'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,6 +24,8 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('image_url', sa.String(length=255), nullable=False),
     sa.Column('slug', sa.String(length=255), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_categories_id'), 'categories', ['id'], unique=False)
@@ -36,6 +38,8 @@ def upgrade() -> None:
     sa.Column('hashed_password', sa.String(length=200), nullable=False),
     sa.Column('phone_number', sa.String(length=20), nullable=False),
     sa.Column('is_verified', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('phone_number')
     )
@@ -47,6 +51,8 @@ def upgrade() -> None:
     sa.Column('language', sa.String(length=2), nullable=False),
     sa.Column('title', sa.String(length=255), nullable=False),
     sa.Column('category_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -56,13 +62,15 @@ def upgrade() -> None:
     sa.Column('slug', sa.String(length=255), nullable=False),
     sa.Column('current_price', sa.Float(), nullable=False),
     sa.Column('original_price', sa.Float(), nullable=True),
-    sa.Column('downloads', sa.Integer(), nullable=False),
     sa.Column('likes', sa.Integer(), nullable=False),
+    sa.Column('status', sa.Enum('IN_PROCESS', 'PUBLISHED', 'REJECTED', name='statusenum'), nullable=False),
+    sa.Column('downloads', sa.Integer(), nullable=False),
     sa.Column('views', sa.Integer(), nullable=False),
     sa.Column('avarage_rating', sa.Float(), nullable=False),
-    sa.Column('is_verified', sa.Boolean(), nullable=False),
     sa.Column('owner_id', sa.Integer(), nullable=True),
     sa.Column('category_id', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ),
     sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -73,6 +81,8 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('available', sa.Boolean(), nullable=False),
     sa.Column('template_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['template_id'], ['templates.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -81,6 +91,8 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('url', sa.String(length=255), nullable=False),
     sa.Column('template_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['template_id'], ['templates.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -90,26 +102,54 @@ def upgrade() -> None:
     sa.Column('template_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('rating', sa.Float(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['template_id'], ['templates.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_ratings_id'), 'ratings', ['id'], unique=False)
+    op.create_table('reviews',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('rating', sa.Float(), nullable=False),
+    sa.Column('comment', sa.Text(), nullable=True),
+    sa.Column('template_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['template_id'], ['templates.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_reviews_id'), 'reviews', ['id'], unique=False)
     op.create_table('template_translations',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('language', sa.String(length=2), nullable=False),
     sa.Column('title', sa.String(length=255), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('template_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['template_id'], ['templates.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_template_translations_id'), 'template_translations', ['id'], unique=False)
+    op.create_table('user_likes',
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('template_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['template_id'], ['templates.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('user_id', 'template_id')
+    )
     op.create_table('feature_translations',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('language', sa.String(length=2), nullable=False),
     sa.Column('text', sa.String(length=255), nullable=False),
     sa.Column('feature_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['feature_id'], ['features.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -121,8 +161,11 @@ def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_index(op.f('ix_feature_translations_id'), table_name='feature_translations')
     op.drop_table('feature_translations')
+    op.drop_table('user_likes')
     op.drop_index(op.f('ix_template_translations_id'), table_name='template_translations')
     op.drop_table('template_translations')
+    op.drop_index(op.f('ix_reviews_id'), table_name='reviews')
+    op.drop_table('reviews')
     op.drop_index(op.f('ix_ratings_id'), table_name='ratings')
     op.drop_table('ratings')
     op.drop_index(op.f('ix_images_id'), table_name='images')

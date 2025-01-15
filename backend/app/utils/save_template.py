@@ -1,9 +1,8 @@
 import zipfile
 from pathlib import Path
 from io import BytesIO
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import HTTPException, UploadFile, status
 from app.core.config import settings
-from app.utils.translate import translate_text
 
 
 async def save_template_file(template_file: UploadFile, slug: str) -> tuple[Path, Path]:

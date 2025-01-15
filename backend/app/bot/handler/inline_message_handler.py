@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 
 from app.bot.session import get_db_session
 from app.models.template import Template
-from app.core.config import settings
+from sqlalchemy.orm import selectinload
 
 inline_message_router = Router()
 
@@ -17,7 +17,9 @@ async def process_callback(callback_query: CallbackQuery):
     slug = data.split("_")[1]
 
     async with get_db_session() as session:
-        query = select(Template).where(Template.slug == slug)
+        query = select(Template).where(Template.slug == slug).options(
+            selectinload(Template.owner),
+        )
         result = await session.execute(query)
         template = result.scalars().first()
 
@@ -26,13 +28,19 @@ async def process_callback(callback_query: CallbackQuery):
             print("Template topilmadi!")
 
         if data.startswith("verify_"):
-            print("Template verified!")
-            template.is_verified = True
-            await session.commit()
+            template.status = "PUBLISHED"
+            template.owner.is_verified = True
             await callback_query.answer("✅ Template muvafaqiyatli tasdiqlandi!")
-            await callback_query.message.answer(f"✅ Template `{slug}` tasdiqlandi.")
+            text = f"""✅ Template `{slug}` tasdiqlandi.
+
+👤 Murojat qiluvchi: {template.owner.full_name}
+📞 Telefon raqami: {template.owner.phone_number}
+🌟 Status:{template.owner.is_verified}"""
+
+            await callback_query.message.answer(text)
+            await session.commit()
         elif data.startswith("reject_"):
-            template.is_verified = False
+            template.status = "REJECTED"
             await session.commit()
             await callback_query.answer("❌ Template muvafaqiyatli rad etildi!")
             await callback_query.message.answer(f"❌ Template `{slug}` rad etildi.")

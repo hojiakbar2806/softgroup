@@ -2,25 +2,27 @@ import json
 import shutil
 
 from pathlib import Path
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import func
 from typing import List, Optional
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import FileResponse, JSONResponse
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile, status
 
-from app.models.user import User
+from app.models.user import User, UserLikes
 from app.core.config import settings
 from app.utils.slug import unique_slug
 from app.database.session import get_db_session
 from app.utils.save_image import save_image_file
 from app.utils.translate import handle_translations
-from app.core.dependencies import current_auth_user
+from app.core.dependencies import current_auth_user, get_token
 from app.utils.save_template import save_template_file
-from app.schemas.template import PaginatedTemplateResponse
+from app.schemas.template import PaginatedTemplateResponse, TemplateResponse
 from app.bot.send_file_to_telegram import send_file_to_telegram
 from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
+from app.core.security.utils import verify_user_token
 
 router = APIRouter(prefix="/templates")
 
@@ -43,7 +45,6 @@ async def create_template(
     images_dir = None
 
     try:
-
         category = await session.scalar(
             select(Category).where(Category.slug == category_slug)
         )
@@ -110,10 +111,8 @@ async def create_template(
                 template_id=db_template.id
             ))
 
-        current_user.is_verified = True
-        session.add(current_user)
-
         await session.commit()
+
         await send_file_to_telegram(slug)
 
         return JSONResponse(
@@ -135,6 +134,9 @@ async def create_template(
         )
 
 
+auth_schema = HTTPBearer()
+
+
 @router.get("", response_model=PaginatedTemplateResponse)
 async def read_templates(
     page: int = 1,
@@ -143,54 +145,106 @@ async def read_templates(
     category: Optional[str] = None,
     tier: Optional[str] = None,
     db: AsyncSession = Depends(get_db_session),
-):
+    token: str = Depends(get_token),
+) -> PaginatedTemplateResponse:
+    if page < 1 or per_page < 1:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid pagination parameters"
+        )
+
     try:
-        query = select(Template).where(Template.is_verified ==
-                                       True).order_by(Template.id.desc())
+        user_likes = []
+        if token:
+            current_user = await verify_user_token(token, db, "access")
+            if current_user:
+                likes_query = select(UserLikes.template_id).where(
+                    UserLikes.user_id == current_user.id
+                )
+                result = await db.execute(likes_query)
+                user_likes = result.scalars().all()
+
+        query = select(Template).where(Template.status == "PUBLISHED")
 
         if slug:
-            query = query.where(Template.slug.contains(slug))
+            query = query.where(Template.slug.ilike(f"%{slug}%"))
 
         if category:
-            db_category = await db.scalar(
-                select(Category).where(Category.slug == category)
-            )
+            category_query = select(Category).where(Category.slug == category)
+            db_category = await db.scalar(category_query)
             if not db_category:
                 raise HTTPException(
-                    status_code=404, detail="Category not found")
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Category not found"
+                )
             query = query.where(Template.category_id == db_category.id)
 
-        if tier == "premium":
-            query = query.where(Template.current_price > 0)
-        else:
-            query = query.where(Template.current_price == 0)
+        if tier:
+            if tier == "premium":
+                query = query.where(Template.current_price > 0)
+            else:
+                query = query.where(Template.current_price == 0)
 
         query = query.options(
             selectinload(Template.translations),
             selectinload(Template.images),
             selectinload(Template.features).selectinload(Feature.translations),
             selectinload(Template.ratings),
+            selectinload(Template.reviews),
         )
 
-        total_templates = await db.scalar(
-            select(func.count()).select_from(query.subquery())
-        )
+        count_query = select(func.count()).select_from(query.subquery())
+        total_templates = await db.scalar(count_query)
 
-        templates = await db.scalars(
-            query.offset((page - 1) * per_page).limit(per_page)
-        )
+        if total_templates == 0:
+            return PaginatedTemplateResponse(
+                data=[],
+                current_page=page,
+                per_page=per_page,
+                total_pages=0,
+                total_templates=0,
+                has_next=False,
+                has_previous=False,
+            )
+
+        query = query.offset((page - 1) * per_page).limit(per_page)
+
+        result = await db.scalars(query)
+        templates = result.all()
 
         total_pages = (total_templates + per_page - 1) // per_page
 
-        return {
-            "data": templates.all(),
-            "current_page": page,
-            "per_page": per_page,
-            "total_pages": total_pages,
-            "total_templates": total_templates,
-            "has_next": page < total_pages,
-            "has_previous": page > 1,
-        }
+        data = []
+        for template in templates:
+            template_dict = {
+                "id": template.id,
+                "slug": template.slug,
+                "current_price": template.current_price,
+                "original_price": template.original_price,
+                "downloads": template.downloads,
+                "average_rating": 0,
+                "likes": template.likes,
+                "views": template.views,
+                "is_liked": template.id in user_likes,
+                "ratings": template.ratings,
+                "images": template.images,
+                "translations": template.translations,
+                "features": template.features,
+                "reviews": template.reviews
+            }
+
+            template_response = TemplateResponse.model_validate(template_dict)
+            data.append(template_response)
+
+        return PaginatedTemplateResponse(
+            data=data,
+            current_page=page,
+            per_page=per_page,
+            total_pages=total_pages,
+            total_templates=total_templates,
+            has_next=page < total_pages,
+            has_previous=page > 1,
+        )
 
     except Exception as e:
         raise HTTPException(
@@ -297,7 +351,7 @@ async def get_template_file(
 
 
 @router.patch("/add-like/{slug}")
-async def add_like(
+async def toggle_like(
     slug: str,
     session: AsyncSession = Depends(get_db_session),
     _: User = Depends(current_auth_user),
@@ -308,10 +362,25 @@ async def add_like(
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
 
-    template.likes += 1
-    await session.commit()
+    existing_like = await session.scalar(
+        select(UserLikes).where(
+            UserLikes.user_id == _.id,
+            UserLikes.template_id == template.id
+        )
+    )
 
-    return template
+    if existing_like:
+        template.likes -= 1
+        await session.delete(existing_like)
+        await session.commit()
+        return {"message": "Like removed"}
+
+    else:
+        template.likes += 1
+        new_like = UserLikes(user_id=_.id, template_id=template.id)
+        session.add(new_like)
+        await session.commit()
+        return {"message": "Like added"}
 
 
 @router.patch("/add-view/{slug}")

@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.database.base import Base
@@ -18,9 +18,21 @@ class User(Base):
 
     templates = relationship("Template", back_populates="owner")
     ratings = relationship("Rating", back_populates="user")
+    reviews = relationship("Review", back_populates="user")
+    liked_templates = relationship("UserLikes", back_populates="user")
 
     def set_password(self, password):
         self.hashed_password = hash_password(password)
 
     def check_password(self, password):
         return check_password(password, self.hashed_password)
+
+
+class UserLikes(Base):
+    __tablename__ = "user_likes"
+
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    template_id = Column(Integer, ForeignKey("templates.id"), primary_key=True)
+
+    user = relationship("User", back_populates="liked_templates")
+    template = relationship("Template", back_populates="liked_by_users")

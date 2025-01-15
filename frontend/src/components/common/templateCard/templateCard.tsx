@@ -63,7 +63,7 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
                 addLike(product?.slug);
               }}
             >
-              <HeartIcon className="size-4" />
+              <HeartIcon className={`size-4`} />
               {product?.likes}
             </div>
             <div className="flex text-sm items-center gap-px text-gray-400 group-hover:text-purple-600 transition-colors">

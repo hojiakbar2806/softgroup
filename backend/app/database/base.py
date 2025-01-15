@@ -1,7 +1,8 @@
-import re
-from sqlalchemy.ext.declarative import declared_attr
+from datetime import datetime
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import Column, DateTime
 
 
 class Base(DeclarativeBase):
-    pass
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow)

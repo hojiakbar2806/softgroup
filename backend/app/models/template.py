@@ -1,6 +1,14 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, Text, ForeignKey
-from sqlalchemy.orm import relationship
+import enum
 from app.database.base import Base
+from sqlalchemy.orm import validates
+from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Enum, Integer, String, Boolean, Float, Text, ForeignKey
+
+
+class StatusEnum(enum.Enum):
+    IN_PROCESS = "in_process"
+    PUBLISHED = "published"
+    REJECTED = "rejected"
 
 
 class Template(Base):
@@ -10,11 +18,12 @@ class Template(Base):
     slug = Column(String(255), unique=True, nullable=False, index=True)
     current_price = Column(Float, nullable=False)
     original_price = Column(Float, nullable=True)
-    downloads = Column(Integer, default=0, nullable=False)
     likes = Column(Integer, default=0, nullable=False)
+    status = Column(Enum(StatusEnum),
+                    default=StatusEnum.IN_PROCESS, nullable=False)
+    downloads = Column(Integer, default=0, nullable=False)
     views = Column(Integer, default=0, nullable=False)
     avarage_rating = Column(Float, default=0, nullable=False)
-    is_verified = Column(Boolean, default=False, nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
     category_id = Column(Integer, ForeignKey("categories.id"))
@@ -23,6 +32,8 @@ class Template(Base):
         "Category",
         back_populates="templates"
     )
+
+    liked_by_users = relationship("UserLikes", back_populates="template")
 
     translations = relationship(
         "TemplateTranslation",
@@ -47,6 +58,29 @@ class Template(Base):
         "Rating",
         back_populates="template"
     )
+    reviews = relationship(
+        "Review",
+        back_populates="template"
+    )
+
+
+class Review(Base):
+    __tablename__ = "reviews"
+
+    id = Column(Integer, primary_key=True, index=True)
+    rating = Column(Float, nullable=False)
+    comment = Column(Text, nullable=True)
+    template_id = Column(Integer, ForeignKey("templates.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    template = relationship("Template", back_populates="reviews")
+    user = relationship("User", back_populates="reviews")
+
+    @validates("rating")
+    def validate_rating(self, key, value):
+        if value < 0 or value > 5:
+            raise ValueError("Rating must be between 0 and 5")
+        return value
 
 
 class TemplateTranslation(Base):

@@ -1,4 +1,4 @@
-from fastapi import Request
+from fastapi import HTTPException, Request
 from fastapi import Depends
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,3 +17,12 @@ async def current_auth_user(auth: HTTPAuthorizationCredentials = Depends(auth_sc
 
 def get_accept_language(request: Request) -> str:
     return request.headers.get("Accept-Language", "en")
+
+
+async def get_token(request: Request):
+    authorization: str = request.headers.get("Authorization")
+    if not authorization:
+        return None
+    if not authorization.startswith("Bearer "):
+        return None
+    return authorization[len("Bearer "):]
