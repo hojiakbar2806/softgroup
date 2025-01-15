@@ -128,7 +128,6 @@ export default function RegisterPage() {
             formik.touched.phone_number && Boolean(formik.errors.phone_number)
           }
           helperText={formik.touched.phone_number && formik.errors.phone_number}
-          placeholder="+998"
         />
         <Input
           label={t("Auth.RegisterPage.password")}
@@ -155,7 +154,7 @@ export default function RegisterPage() {
 
         <Link
           href="/login"
-          className="text-blue-500 hover:text-blue-600 text-center"
+          className="text-blue-500 hover:text-blue-600"
         >
           {t("Auth.LoginPage.login")}
         </Link>
