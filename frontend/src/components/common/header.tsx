@@ -15,7 +15,7 @@ const Header: FC = () => {
     <header className="flex justify-center bg-[#3a4352] shadow-sm py-3 sticky top-0 z-50">
       <div className="container flex justify-between items-center">
         <Link href="/">
-          <h1 className="text-2xl md:text-3xl text-white">Softgroup</h1>
+          <h1 className="text-2xl md:text-3xl text-white">Templora</h1>
         </Link>
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-5 2xl:gap-6">
           <LanguageDropdown />

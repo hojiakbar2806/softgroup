@@ -47,7 +47,7 @@ const Sidebar: FC = () => {
       <div>
         <div className="w-full flex items-center justify-between border-b pb-4">
           <Link href="/">
-            <h1 className="text-2xl md:text-3xl text-black">Softgroup</h1>
+            <h1 className="text-2xl md:text-3xl text-black">Templora</h1>
           </Link>
           <button className="md:hidden" onClick={closeDialog}>
             <ChevronLeft />
