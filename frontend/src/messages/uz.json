@@ -160,7 +160,12 @@
       "requiredPassword": "Parol talab qilinadi",
       "invalidPassword": "Parol 6 ta belgidan kam bo'lmasligi kerak",
       "register": "Ro'yxatdan o'tish",
-      "success": "Ro'yxatdan o'tish muvaffaqiyatli amalga oshirildi"
+      "success": "Ro'yxatdan o'tish muvaffaqiyatli amalga oshirildi",
+      "invalidEmail": "Email formati noto'g'ri",
+      "invalidPhone": "Telefon raqami formati noto'g'ri",
+      "invalidPhoneFormat": "Telefon raqami formati noto'g'ri",
+      "invalidPhoneLength": "Telefon raqami 13 ta belgidan oshmasligi kerak",
+      "loading": "Kutib turing..."
     }
   },
   "Common": {

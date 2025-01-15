@@ -160,7 +160,12 @@
       "requiredPassword": "Password is required",
       "invalidPassword": "Password must contain at least 6 characters",
       "register": "Register",
-      "success": "Registration successful"
+      "success": "Register successful",
+      "invalidEmail": "Email format is incorrect",
+      "invalidPhone": "Phone format is incorrect",
+      "invalidPhoneFormat": "Phone format is incorrect",
+      "invalidPhoneLength": "Phone must be at least 13 characters",
+      "loading": "Loading..."
     }
   },
   "Common": {
