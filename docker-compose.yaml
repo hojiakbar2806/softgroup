@@ -2,7 +2,7 @@ services:
   softgroup_backend:
     image: hojiakbar2806/softgroup_backend:latest
     container_name: softgroup_backend
-    command: sh -c "poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    command: sh -c "poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000"
     environment:
       - APP_ENV=production
       - DEBUG=False
