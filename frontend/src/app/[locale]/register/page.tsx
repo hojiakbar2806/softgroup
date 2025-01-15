@@ -51,7 +51,7 @@ export default function RegisterPage() {
   });
 
   if (isError) {
-    toast.error((error as any)?.data.detail || "Login failed");
+    toast.error((error as any)?.data.detail || "Registration failed");
   }
 
   return (
