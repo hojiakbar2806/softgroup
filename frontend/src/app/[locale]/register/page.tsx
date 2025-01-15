@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
-  const [register, { isLoading, isError, error }] = useRegisterMutation();
+  const [register, { isLoading }] = useRegisterMutation();
   const dispatch = useDispatch();
   const router = useRouter();
   const t = useTranslations();
@@ -20,10 +20,14 @@ export default function RegisterPage() {
   const validationSchema = Yup.object({
     full_name: Yup.string().required(t("Auth.RegisterPage.requiredFullname")),
     email: Yup.string()
-      .email("Invalid email format")
+      .email(t("Auth.RegisterPage.invalidEmail"))
       .required(t("Auth.RegisterPage.requiredEmail")),
     username: Yup.string().required(t("Auth.RegisterPage.requiredUsername")),
-    phone_number: Yup.string().required(t("Auth.RegisterPage.requiredPhone")),
+    phone_number: Yup.string()
+      .required(t("Auth.RegisterPage.requiredPhone"))
+      .matches(/^\+998/, t("Auth.RegisterPage.invalidPhoneFormat"))
+      .min(13, t("Auth.RegisterPage.invalidPhoneLength"))
+      .max(13, t("Auth.RegisterPage.invalidPhoneLength")),
     password: Yup.string()
       .min(6, t("Auth.RegisterPage.invalidPassword"))
       .required(t("Auth.RegisterPage.requiredPassword")),
@@ -44,15 +48,34 @@ export default function RegisterPage() {
         dispatch(setCredentials({ token: result.access_token }));
         router.push("/");
         toast.success(t("Auth.RegisterPage.success"));
-      } catch (err) {
-        console.error("Registration failed:", err);
+      } catch (err: any) {
+        if (err.data?.detail) {
+          if (Array.isArray(err.data.detail)) {
+            err.data.detail.forEach((error: any) => {
+              const fieldName = error.loc[1];
+              const errorMessage = error.msg;
+              formik.setFieldError(fieldName, errorMessage);
+            });
+          } else {
+            toast.error(err.data.detail);
+          }
+        } else {
+          toast.error(t("Auth.RegisterPage.generalError"));
+        }
       }
     },
   });
 
-  if (isError) {
-    toast.error((error as any)?.data.detail || "Registration failed");
-  }
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (!value.startsWith("998")) {
+      value = "998" + value;
+    }
+    if (value.length > 0) {
+      value = "+" + value;
+    }
+    formik.setFieldValue("phone_number", value);
+  };
 
   return (
     <div className="w-full h-screen flex justify-center items-center">
@@ -82,11 +105,7 @@ export default function RegisterPage() {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           error={formik.touched.username && Boolean(formik.errors.username)}
-          helperText={
-            formik.touched.username && formik.errors.username
-              ? formik.errors.username
-              : ""
-          }
+          helperText={formik.touched.username && formik.errors.username}
         />
         <Input
           label={t("Auth.RegisterPage.email")}
@@ -100,15 +119,16 @@ export default function RegisterPage() {
         />
         <Input
           label={t("Auth.RegisterPage.phone")}
-          type="text"
+          type="tel"
           name="phone_number"
           value={formik.values.phone_number}
-          onChange={formik.handleChange}
+          onChange={handlePhoneChange}
           onBlur={formik.handleBlur}
           error={
             formik.touched.phone_number && Boolean(formik.errors.phone_number)
           }
           helperText={formik.touched.phone_number && formik.errors.phone_number}
+          placeholder="+998"
         />
         <Input
           label={t("Auth.RegisterPage.password")}
@@ -123,20 +143,20 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          className={`bg-blue-500 text-white p-2 rounded ${
-            isLoading ? "bg-primary/50" : ""
+          disabled={isLoading}
+          className={`bg-blue-500 text-white p-2 rounded transition-opacity ${
+            isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"
           }`}
         >
-          {isLoading ? "Loading ..." : "Register"}
+          {isLoading
+            ? t("Auth.RegisterPage.loading")
+            : t("Auth.RegisterPage.register")}
         </button>
 
-        {error && (
-          <p className="text-red-500 text-sm">
-            Registration failed. Please try again.
-          </p>
-        )}
-
-        <Link href="/login" className="text-blue-500">
+        <Link
+          href="/login"
+          className="text-blue-500 hover:text-blue-600 text-center"
+        >
           {t("Auth.LoginPage.login")}
         </Link>
       </form>
