@@ -1,11 +1,11 @@
 import enum
+from sqlalchemy.dialects.postgresql import ENUM
 from app.database.base import Base
-from sqlalchemy.orm import validates
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Enum, Integer, String, Boolean, Float, Text, ForeignKey
+from sqlalchemy.orm import validates, relationship
+from sqlalchemy import Column, Integer, String, Boolean, Float, Text, ForeignKey, DateTime
 
 
-class StatusEnum(enum.Enum):
+class StatusEnum(str, enum.Enum):
     IN_PROCESS = "in_process"
     PUBLISHED = "published"
     REJECTED = "rejected"
@@ -19,7 +19,7 @@ class Template(Base):
     current_price = Column(Float, nullable=False)
     original_price = Column(Float, nullable=True)
     likes = Column(Integer, default=0, nullable=False)
-    status = Column(Enum(StatusEnum),
+    status = Column(ENUM(StatusEnum, name="statusenum", create_type=False),
                     default=StatusEnum.IN_PROCESS, nullable=False)
     downloads = Column(Integer, default=0, nullable=False)
     views = Column(Integer, default=0, nullable=False)
