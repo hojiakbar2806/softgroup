@@ -1,10 +1,9 @@
-from app.core.config import settings
+from app.bot.session import get_db_session
 from sqlalchemy.future import select
+from app.core.config import settings
 from sqlalchemy.orm import selectinload
 from app.models.template import Feature, Template
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from app.bot.setup import bot
-from app.bot.session import get_db_session
 
 
 def verify_template_kb(slug, url):
@@ -18,6 +17,7 @@ def verify_template_kb(slug, url):
 
 
 async def send_file_to_telegram(slug: str):
+    from app.bot.setup import bot
     try:
         async with get_db_session() as session:
             query = select(Template).where(Template.slug == slug).options(
