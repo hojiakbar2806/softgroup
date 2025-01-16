@@ -14,9 +14,7 @@ from app.database.session import get_db_session
 from app.schemas.category import CategoryResponse
 from app.models import Category, CategoryTranslation
 
-
 router = APIRouter(prefix="/categories")
-
 
 @router.post("")
 async def category_create(

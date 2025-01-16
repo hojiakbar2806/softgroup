@@ -21,7 +21,7 @@ async def process_callback(callback_query: CallbackQuery):
             selectinload(Template.owner),
         )
         result = await session.execute(query)
-        template = result.scalars().first()
+        template = result.scalar_one_or_none()
 
         if not template:
             await callback_query.answer("❌ Template topilmadi!")

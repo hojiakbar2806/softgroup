@@ -3,6 +3,8 @@ from aiogram.types import Message
 
 from app.bot.session import get_db_session
 from app.models.template import Template
+from sqlalchemy.future import select
+
 
 message_router = Router()
 

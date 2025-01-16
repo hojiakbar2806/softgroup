@@ -1,10 +1,6 @@
-
 from typing import List, Optional
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
-from fastapi import Depends, HTTPException, status
 from pydantic import BaseModel
+
 
 class Review(BaseModel):
     id: int
@@ -16,12 +12,14 @@ class Review(BaseModel):
     class Config:
         from_attributes = True
 
+
 class Rating(BaseModel):
     id: int
     rating: float
 
     class Config:
         from_attributes = True
+
 
 class Image(BaseModel):
     id: int
@@ -30,12 +28,14 @@ class Image(BaseModel):
     class Config:
         from_attributes = True
 
+
 class FeatureTranslation(BaseModel):
     text: str
     language: str
 
     class Config:
         from_attributes = True
+
 
 class Feature(BaseModel):
     id: int
@@ -45,6 +45,7 @@ class Feature(BaseModel):
     class Config:
         from_attributes = True
 
+
 class TemplateTranslation(BaseModel):
     title: str
     language: str
@@ -52,6 +53,7 @@ class TemplateTranslation(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class TemplateResponse(BaseModel):
     id: int
@@ -71,6 +73,7 @@ class TemplateResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class PaginatedTemplateResponse(BaseModel):
     data: List[TemplateResponse]

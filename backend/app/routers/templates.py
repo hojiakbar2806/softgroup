@@ -2,27 +2,27 @@ import json
 import shutil
 
 from pathlib import Path
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import func
 from typing import List, Optional
 from sqlalchemy.future import select
+from fastapi.security import HTTPBearer
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import FileResponse, JSONResponse
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException,  UploadFile, status
 
-from app.models.user import User, UserLikes
 from app.core.config import settings
 from app.utils.slug import unique_slug
+from app.models.user import User, UserLikes
 from app.database.session import get_db_session
 from app.utils.save_image import save_image_file
 from app.utils.translate import handle_translations
-from app.core.dependencies import current_auth_user, get_token
-from app.utils.save_template import save_template_file
-from app.schemas.template import PaginatedTemplateResponse, TemplateResponse
-from app.bot.send_file_to_telegram import send_file_to_telegram
-from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
 from app.core.security.utils import verify_user_token
+from app.utils.save_template import save_template_file
+from app.core.dependencies import current_auth_user, get_token
+from app.bot.send_file_to_telegram import send_file_to_telegram
+from app.schemas.template import PaginatedTemplateResponse, TemplateResponse
+from app.models.template import Category, Feature, FeatureTranslation, Image, Template, TemplateTranslation
 
 router = APIRouter(prefix="/templates")
 
@@ -45,9 +45,9 @@ async def create_template(
     images_dir = None
 
     try:
-        category = await session.scalar(
-            select(Category).where(Category.slug == category_slug)
-        )
+        query = select(Category).where(Category.slug == category_slug)
+        result = await session.execute(query)
+        category = result.scalar_one_or_none()
         if not category:
             raise HTTPException(status_code=404, detail="Category not found")
 
@@ -61,6 +61,7 @@ async def create_template(
             owner_id=current_user.id,
             category_id=category.id
         )
+
         session.add(db_template)
         await session.flush()
 
@@ -70,11 +71,11 @@ async def create_template(
         translations = [
             TemplateTranslation(
                 language=lang,
-                title=title_,
-                description=desc_,
+                title=title,
+                description=desc,
                 template_id=db_template.id
             )
-            for lang, title_, desc_ in [
+            for lang, title, desc in [
                 ("uz", title_uz, desc_uz),
                 ("ru", title_ru, desc_ru),
                 ("en", title_en, desc_en)
@@ -83,17 +84,24 @@ async def create_template(
         session.add_all(translations)
 
         features_data = json.loads(features)
+
         for feature in features_data:
             db_feature = Feature(
-                available=feature['available'], template_id=db_template.id)
+                available=feature['available'],
+                template_id=db_template.id
+            )
             session.add(db_feature)
             await session.flush()
 
             text_uz, text_ru, text_en = await handle_translations(feature['text'])
+
             feature_translations = [
-                FeatureTranslation(language=lang, text=text_,
-                                   feature_id=db_feature.id)
-                for lang, text_ in [
+                FeatureTranslation(
+                    text=text,
+                    language=lang,
+                    feature_id=db_feature.id
+                )
+                for lang, text in [
                     ("uz", text_uz),
                     ("ru", text_ru),
                     ("en", text_en)
@@ -112,7 +120,6 @@ async def create_template(
             ))
 
         await session.commit()
-
         await send_file_to_telegram(slug)
 
         return JSONResponse(
@@ -153,104 +160,100 @@ async def read_templates(
             detail="Invalid pagination parameters"
         )
 
-    try:
-        user_likes = []
-        if token:
-            current_user = await verify_user_token(token, db, "access")
-            if current_user:
-                likes_query = select(UserLikes.template_id).where(
-                    UserLikes.user_id == current_user.id
-                )
-                result = await db.execute(likes_query)
-                user_likes = result.scalars().all()
+    user_likes = []
 
-        query = select(Template).where(Template.status == "PUBLISHED")
+    if token:
+        current_user = await verify_user_token(token, db, "access")
 
-        if slug:
-            query = query.where(Template.slug.ilike(f"%{slug}%"))
-
-        if category:
-            category_query = select(Category).where(Category.slug == category)
-            db_category = await db.scalar(category_query)
-            if not db_category:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Category not found"
-                )
-            query = query.where(Template.category_id == db_category.id)
-
-        if tier:
-            if tier == "premium":
-                query = query.where(Template.current_price > 0)
-            else:
-                query = query.where(Template.current_price == 0)
-
-        query = query.options(
-            selectinload(Template.translations),
-            selectinload(Template.images),
-            selectinload(Template.features).selectinload(Feature.translations),
-            selectinload(Template.ratings),
-            selectinload(Template.reviews),
+    if current_user:
+        likes_query = select(UserLikes.template_id).where(
+            UserLikes.user_id == current_user.id
         )
+        result = await db.execute(likes_query)
+        user_likes = result.scalars().all()
+        print(user_likes)
 
-        count_query = select(func.count()).select_from(query.subquery())
-        total_templates = await db.scalar(count_query)
+    query = select(Template).where(Template.status == "PUBLISHED")
 
-        if total_templates == 0:
-            return PaginatedTemplateResponse(
-                data=[],
-                current_page=page,
-                per_page=per_page,
-                total_pages=0,
-                total_templates=0,
-                has_next=False,
-                has_previous=False,
+    if slug:
+        query = query.where(Template.slug.ilike(f"%{slug}%"))
+
+    if category:
+        category_query = select(Category).where(Category.slug == category)
+        db_category = await db.scalar(category_query)
+        if not db_category:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Category not found"
             )
+        query = query.where(Template.category_id == db_category.id)
 
-        query = query.offset((page - 1) * per_page).limit(per_page)
+    if tier:
+        if tier == "premium":
+            query = query.where(Template.current_price > 0)
+        else:
+            query = query.where(Template.current_price == 0)
 
-        result = await db.scalars(query)
-        templates = result.all()
+    query = query.options(
+        selectinload(Template.translations),
+        selectinload(Template.images),
+        selectinload(Template.features).selectinload(Feature.translations),
+        selectinload(Template.ratings),
+        selectinload(Template.reviews),
+    )
 
-        total_pages = (total_templates + per_page - 1) // per_page
+    count_query = select(func.count()).select_from(query.subquery())
+    total_templates = await db.scalar(count_query)
 
-        data = []
-        for template in templates:
-            template_dict = {
-                "id": template.id,
-                "slug": template.slug,
-                "current_price": template.current_price,
-                "original_price": template.original_price,
-                "downloads": template.downloads,
-                "average_rating": 0,
-                "likes": template.likes,
-                "views": template.views,
-                "is_liked": template.id in user_likes,
-                "ratings": template.ratings,
-                "images": template.images,
-                "translations": template.translations,
-                "features": template.features,
-                "reviews": template.reviews
-            }
-
-            template_response = TemplateResponse.model_validate(template_dict)
-            data.append(template_response)
-
+    if total_templates == 0:
         return PaginatedTemplateResponse(
-            data=data,
+            data=[],
             current_page=page,
             per_page=per_page,
-            total_pages=total_pages,
-            total_templates=total_templates,
-            has_next=page < total_pages,
-            has_previous=page > 1,
+            total_pages=0,
+            total_templates=0,
+            has_next=False,
+            has_previous=False,
         )
 
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An unexpected error occurred: {str(e)}"
-        )
+    query = query.offset((page - 1) * per_page).limit(per_page)
+
+    result = await db.scalars(query)
+    templates = result.all()
+
+    total_pages = (total_templates + per_page - 1) // per_page
+
+    data = []
+    for template in templates:
+        template_dict = {
+            "id": template.id,
+            "slug": template.slug,
+            "current_price": template.current_price,
+            "original_price": template.original_price,
+            "downloads": template.downloads,
+            "average_rating": 0,  # You may want to calculate the average rating here
+            "likes": template.likes,
+            "views": template.views,
+            "is_liked": template.id in user_likes,  # Check if the template is liked
+            "ratings": template.ratings,
+            "images": template.images,
+            "translations": template.translations,
+            "features": template.features,
+            "reviews": template.reviews
+        }
+
+        template_response = TemplateResponse.model_validate(template_dict)
+        data.append(template_response)
+
+    return PaginatedTemplateResponse(
+        data=data,
+        current_page=page,
+        per_page=per_page,
+        total_pages=total_pages,
+        total_templates=total_templates,
+        has_next=page < total_pages,
+        has_previous=page > 1,
+    )
 
 
 @router.get("/{slug}")
@@ -326,6 +329,42 @@ async def download_template(
     )
 
 
+@router.get("/download-moderator/{slug}/{chat_id}/{token}")
+async def download_template(
+    slug: str,
+    chat_id: str,
+    token: str,
+    session: AsyncSession = Depends(get_db_session),
+):
+    if not chat_id in settings.CHAT_IDS and token != settings.BOT_TOKEN:
+        raise HTTPException(status_code=404, detail="You dont have access")
+
+    template = await session.scalar(
+        select(Template).where(Template.slug == slug)
+    )
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+
+    if '.' not in slug:
+        file_path = settings.TEMPLATES_DIR / slug / f"{slug}.zip"
+        media_type = 'application/zip'
+        filename = f"{slug}.zip"
+    else:
+        file_path = settings.DOCS_DIR / "documents" / slug
+        ext = slug.split('.')[-1]
+        media_type = f"application/{ext}"
+        filename = slug
+
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Template file not found")
+
+    return FileResponse(
+        path=file_path,
+        media_type=media_type,
+        filename=filename
+    )
+
+
 @router.get("/{slug}/{path:path}")
 async def get_template_file(
     slug: str,
@@ -354,7 +393,7 @@ async def get_template_file(
 async def toggle_like(
     slug: str,
     session: AsyncSession = Depends(get_db_session),
-    _: User = Depends(current_auth_user),
+    current_user: User = Depends(current_auth_user),
 ):
     template = await session.scalar(
         select(Template).where(Template.slug == slug)
@@ -362,12 +401,12 @@ async def toggle_like(
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
 
-    existing_like = await session.scalar(
-        select(UserLikes).where(
-            UserLikes.user_id == _.id,
-            UserLikes.template_id == template.id
-        )
+    query = select(UserLikes).where(
+        UserLikes.user_id == current_user.id,
+        UserLikes.template_id == template.id
     )
+    result = await session.execute(query)
+    existing_like = result.scalar_one_or_none()
 
     if existing_like:
         template.likes -= 1
@@ -377,7 +416,7 @@ async def toggle_like(
 
     else:
         template.likes += 1
-        new_like = UserLikes(user_id=_.id, template_id=template.id)
+        new_like = UserLikes(user_id=current_user.id, template_id=template.id)
         session.add(new_like)
         await session.commit()
         return {"message": "Like added"}
