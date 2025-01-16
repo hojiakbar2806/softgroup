@@ -45,7 +45,6 @@ async def process_callback(callback_query: CallbackQuery):
             await callback_query.answer("❌ Template muvafaqiyatli rad etildi!")
             await callback_query.message.answer(f"❌ Template `{slug}` rad etildi.")
         elif data.startswith("delete_"):
-
             if len(slug.split(".")) == 1:
                 current_template = os.path.join("docs", "templates", slug)
                 if os.path.exists(current_template):

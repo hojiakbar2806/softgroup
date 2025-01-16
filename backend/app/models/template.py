@@ -33,7 +33,11 @@ class Template(Base):
         back_populates="templates"
     )
 
-    liked_by_users = relationship("UserLikes", back_populates="template")
+    liked_by_users = relationship(
+        "UserLikes",
+        back_populates="template",
+        cascade="all, delete"
+    )
 
     translations = relationship(
         "TemplateTranslation",
