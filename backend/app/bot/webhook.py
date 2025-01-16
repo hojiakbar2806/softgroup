@@ -1,7 +1,7 @@
 from aiogram import types
-from app import bot
 from fastapi import APIRouter
 from app.core.config import settings
+from app.bot.setup import bot
 
 WEBHOOK_PATH = f"/bot/{settings.BOT_TOKEN}"
 WEBHOOK_URL = settings.WEBHOOK_URL + WEBHOOK_PATH
@@ -9,11 +9,11 @@ WEBHOOK_URL = settings.WEBHOOK_URL + WEBHOOK_PATH
 
 async def setup_webhook():
     try:
-        webhook_info = await bot.bot.get_webhook_info()
+        webhook_info = await bot.get_webhook_info()
         if webhook_info.url != WEBHOOK_URL:
-            await bot.bot.delete_webhook()
-            await bot.bot.set_webhook(WEBHOOK_URL)
-            await bot.bot.set_my_commands(
+            await bot.delete_webhook()
+            await bot.set_webhook(WEBHOOK_URL)
+            await bot.set_my_commands(
                 [
                     types.BotCommand(
                         command="/search",

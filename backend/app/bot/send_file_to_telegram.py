@@ -1,11 +1,10 @@
-from app import bot
 from app.core.config import settings
-from app.models.template import Feature, Template
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from app.bot.session import get_db_session
-from sqlalchemy.orm import selectinload
+from app.models.template import Feature, Template
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from app.bot.setup import bot
+from app.bot.session import get_db_session
 
 
 def verify_template_kb(slug, url):
@@ -31,7 +30,7 @@ async def send_file_to_telegram(slug: str):
             template = result.scalar_one_or_none()
 
             if not template:
-                await bot.bot.send_message("❌ Template topilmadi!")
+                await bot.send_message("❌ Template topilmadi!")
                 return
 
             url = f"https://templora.uz/templates/{template.slug}"
@@ -40,27 +39,28 @@ async def send_file_to_telegram(slug: str):
             download_url = f"{
                 settings.BASE_URL}/templates/download-moderator/{template.slug}/{chat_id[0]}/{token}"
 
-            text = f"""Template ({template.slug})
-Status: {template.status}\n
-Description: {
-                template.translations[0].description if template.translations else 'No description available'}
-\n"""
+            text = f"""<b>Template ({template.slug})</b>\n
+<b>Status:</b> {template.status}\n
+<b>Description:</b> {template.translations[0].description if template.translations else 'No description available'}\n
+"""
 
-            for img in template.images:
-                text += f"{settings.BASE_URL}/{img.url}\n"
-            text += "\n**Features:**\n"
+            for i, img in enumerate(template.images):
+                text += f"<a href='{settings.BASE_URL}/{
+                    img.url}'>View image {i}</a>\n"
+
+            text += "\n<b>Features:</b>\n"
 
             for feature in template.features:
                 availability = "✅" if feature.available else "❌"
                 feature_text = feature.translations[0].text if feature.translations else "No feature description"
-                text += f"**{feature_text}** {availability}\n"
+                text += f"<b>{feature_text}</b> {availability}\n"
 
             for chat_id in settings.CHAT_IDS:
-                await bot.bot.send_message(
+                await bot.send_message(
                     chat_id=chat_id,
                     reply_markup=verify_template_kb(slug, download_url),
                     text=text,
-                    parse_mode="Markdown"
+                    parse_mode="HTML"
                 )
                 print(f"Message '{url}' to {chat_id} successfully sent")
 
