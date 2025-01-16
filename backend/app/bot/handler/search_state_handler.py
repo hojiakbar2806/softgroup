@@ -13,5 +13,5 @@ search_state_router = Router()
 
 @search_state_router.message(StateFilter(SearchState.search), IsAdmin())
 async def search_state_handler(message: Message, state: FSMContext, bot: Bot):
-    await send_file_to_telegram(message.text)
+    await send_file_to_telegram(message.text, message.chat.id)
     await state.clear()

@@ -1,7 +1,7 @@
 from aiogram import types
 from fastapi import APIRouter
 from app.core.config import settings
-from app.bot.setup import bot
+from app.bot.setup import set_update, bot
 
 WEBHOOK_PATH = f"/bot/{settings.BOT_TOKEN}"
 WEBHOOK_URL = settings.WEBHOOK_URL + WEBHOOK_PATH
@@ -33,6 +33,6 @@ webhook_router = APIRouter()
 async def bot_webhook(update: dict):
     try:
         telegram_update = types.Update(**update)
-        await bot.set_update(bot, telegram_update)
+        await set_update(bot, telegram_update)
     except Exception as e:
         print(e)

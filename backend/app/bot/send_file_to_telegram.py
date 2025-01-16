@@ -1,3 +1,4 @@
+from typing import Optional
 from app.bot.session import get_db_session
 from sqlalchemy.future import select
 from app.core.config import settings
@@ -16,7 +17,7 @@ def verify_template_kb(slug, url):
     return ikm_b.as_markup()
 
 
-async def send_file_to_telegram(slug: str):
+async def send_file_to_telegram(slug: str, chat_id=None):
     from app.bot.setup import bot
     try:
         async with get_db_session() as session:
@@ -30,7 +31,7 @@ async def send_file_to_telegram(slug: str):
             template = result.scalar_one_or_none()
 
             if not template:
-                await bot.send_message("❌ Template topilmadi!")
+                await bot.send_message(text="❌ Template topilmadi!", chat_id=chat_id)
                 return
 
             url = f"https://templora.uz/templates/{template.slug}"
