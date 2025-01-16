@@ -164,8 +164,6 @@ async def read_templates(
 
     if token:
         current_user = await verify_user_token(token, db, "access")
-
-    if current_user:
         likes_query = select(UserLikes.template_id).where(
             UserLikes.user_id == current_user.id
         )
@@ -231,10 +229,10 @@ async def read_templates(
             "current_price": template.current_price,
             "original_price": template.original_price,
             "downloads": template.downloads,
-            "average_rating": 0,  # You may want to calculate the average rating here
+            "average_rating": 0,
             "likes": template.likes,
             "views": template.views,
-            "is_liked": template.id in user_likes,  # Check if the template is liked
+            "is_liked": template.id in user_likes,
             "ratings": template.ratings,
             "images": template.images,
             "translations": template.translations,
