@@ -31,14 +31,10 @@ export default function Profile() {
               <TemplateCardSkeleton key={index} />
             ))}
           </TemplateCardWrapper>
-        ) : (data?.data.length || 0) > 0 ? (
+        ) : (data?.length || 0) > 0 ? (
           <TemplateCardWrapper>
-            {data?.data?.map((template) => (
-              <TemplateCard
-                key={template.id}
-                product={template}
-                is_verified={template.is_verified}
-              />
+            {data?.map((template) => (
+              <TemplateCard key={template.id} product={template} />
             ))}
           </TemplateCardWrapper>
         ) : (

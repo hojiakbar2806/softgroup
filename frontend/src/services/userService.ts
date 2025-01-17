@@ -1,10 +1,10 @@
-import { Templates } from "@/types/template";
+import { MyTemplate } from "@/types/template";
 import { baseApi } from "./baseApi";
 import { IUser } from "@/types/user";
 
 const userService = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUserTemplates: builder.query<Templates, void>({
+    getUserTemplates: builder.query<MyTemplate[], void>({
       query: () => `/users/templates`,
       providesTags: ["Template"],
     }),

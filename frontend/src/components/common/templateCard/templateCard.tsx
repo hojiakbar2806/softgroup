@@ -4,15 +4,12 @@ import Image from "next/image";
 import { useRouter } from "@/i18n/routing";
 import { FC } from "react";
 import { EyeIcon, HeartIcon } from "lucide-react";
-import { Template } from "@/types/template";
+import { MyTemplate } from "@/types/template";
 import { useLocale, useTranslations } from "next-intl";
 import { BASE_URL } from "@/lib/const";
 import { useAddLikeMutation } from "@/services/templateService";
 
-const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
-  product,
-  is_verified,
-}) => {
+const TemplateCard: FC<{ product: MyTemplate }> = ({ product }) => {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("TemplatePage.Header.category");
@@ -25,10 +22,10 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
 
   return (
     <div
-      data-verified={is_verified}
+      data-process={product?.status ? false : true}
       className="group flex flex-col cursor-pointer relative w-full bg-white shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden
       rounded-xl md:rounded-2xl
-      data-[verified=false]:pointer-events-none"
+      data-[process=false]:pointer-events-none"
       onClick={() => router.push(`/templates/${product?.slug}`)}
     >
       <Image
@@ -77,10 +74,10 @@ const TemplateCard: FC<{ product: Template; is_verified?: boolean }> = ({
         className="absolute bottom-0 left-0 -z-10 w-32 h-32 bg-blue-200/50 rounded-full 
         blur-3xl group-hover:bg-blue-300/50 transition-colors"
       />
-      {is_verified === false && (
+      {product?.status && (
         <div className="flex items-center justify-center w-full h-full absolute bg-black/10">
           <span className="text-white bg-purple-500 py-1 px-2 rounded">
-            In Process
+            {product?.status}
           </span>
         </div>
       )}

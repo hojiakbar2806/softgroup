@@ -30,6 +30,28 @@ export interface Template {
   features: Feature[];
 }
 
+export interface MyTemplate {
+  id: number;
+  slug: string;
+  current_price: number;
+  original_price: number;
+  downloads: number;
+  avarage_rating: number;
+  likes: number;
+  views: number;
+  ratings: number[];
+  status?: string;
+  images: {
+    id: number;
+    url: string;
+  }[];
+  translations: {
+    title: string;
+    language: string;
+    description: string;
+  }[];
+}
+
 export interface Templates {
   data: {
     id: number;

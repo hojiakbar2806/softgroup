@@ -22,10 +22,8 @@ async def read_users_me(current_user: User = Depends(current_auth_user)):
     return current_user
 
 
-@router.get("/templates", response_model=PaginatedTemplateResponse)
+@router.get("/templates")
 async def read_users_templates(
-    page: int = 1,
-    per_page: int = 10,
     session: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(current_auth_user),
 ):
@@ -34,92 +32,9 @@ async def read_users_templates(
     query = query.options(
         selectinload(Template.translations),
         selectinload(Template.images),
-        selectinload(Template.features).selectinload(Feature.translations),
-        selectinload(Template.ratings),
-        selectinload(Template.reviews),
     )
-
-    total_templates = await session.scalar(
-        select(func.count()).select_from(query.subquery())
-    )
-
-    if total_templates == 0:
-        return PaginatedTemplateResponse(
-            data=[],
-            current_page=page,
-            per_page=per_page,
-            total_pages=0,
-            total_templates=0,
-            has_next=False,
-            has_previous=False,
-        )
-
-    query = query.offset((page - 1) * per_page).limit(per_page)
     result = await session.execute(query)
-    templates = result.scalars().unique().all()
-
-    total_pages = (total_templates + per_page - 1) // per_page
-
-    data = []
-    for template in templates:
-        ratings = [
-            r.rating for r in template.ratings] if template.ratings else [0]
-        avg_rating = mean(ratings) if ratings else 0.0
-
-        template_data = {
-            "id": template.id,
-            "slug": template.slug,
-            "current_price": float(template.current_price),
-            "original_price": float(template.original_price) if template.original_price else None,
-            "downloads": template.downloads,
-            "average_rating": float(avg_rating),
-            "likes": template.likes,
-            "views": template.views,
-            "is_liked": False,
-            "ratings": [{"id": r.id, "rating": float(r.rating)} for r in template.ratings],
-            "images": [{"id": img.id, "url": img.url} for img in template.images],
-            "translations": [
-                {
-                    "title": t.title,
-                    "language": t.language,
-                    "description": t.description
-                } for t in template.translations
-            ],
-            "features": [
-                {
-                    "id": f.id,
-                    "available": f.available,
-                    "translations": [
-                        {
-                            "text": ft.text,
-                            "language": ft.language
-                        } for ft in f.translations
-                    ]
-                } for f in template.features
-            ],
-            "reviews": [
-                {
-                    "id": r.id,
-                    "rating": float(r.rating),
-                    "comment": r.comment,
-                    "is_liked": r.is_liked,
-                    "user_id": r.user_id
-                } for r in template.reviews
-            ]
-        }
-
-        template_response = TemplateResponse.model_validate(template_data)
-        data.append(template_response)
-
-    return PaginatedTemplateResponse(
-        data=data,
-        current_page=page,
-        per_page=per_page,
-        total_pages=total_pages,
-        total_templates=total_templates,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-    )
+    return result.scalars().all()
 
 
 @router.get("/templates/liked", response_model=PaginatedTemplateResponse)
