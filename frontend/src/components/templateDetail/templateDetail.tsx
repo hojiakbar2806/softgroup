@@ -113,7 +113,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           </div>
 
           {imageList.length > 1 && (
-            <div className="flex gap-4 pb-2">
+            <div className="flex overflow-x-scroll scrollbar-none gap-4 pb-2">
               {imageList.map((img, index) => (
                 <div
                   key={index}
@@ -144,17 +144,9 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                     {t("TemplateDetailPage.free")}
                   </span>
                 ) : (
-                  <>
-                    {(data?.original_price || 0) >
-                      (data?.current_price || 0) && (
-                      <span className="text-xl text-gray-400 line-through">
-                        ${data?.original_price}
-                      </span>
-                    )}
-                    <span className="text-xl font-bold text-purple-600">
-                      ${data?.current_price}
-                    </span>
-                  </>
+                  <span className="text-3xl font-bold text-purple-600">
+                    {t("TemplateDetailPage.premium")}
+                  </span>
                 )}
               </span>
             </h1>
