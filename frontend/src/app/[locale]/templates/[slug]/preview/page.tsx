@@ -61,7 +61,7 @@ const PreviewPage = () => {
       <header className="flex justify-center bg-[#3a4352] shadow-sm py-3 sticky top-0 z-50">
         <div className="container flex justify-between items-center">
           <Link href="/">
-            <h1 className="text-2xl md:text-3xl text-white">Softgroup</h1>
+            <h1 className="text-2xl md:text-3xl text-white">Templora</h1>
           </Link>
           <button
             className="text-xs sm:px-4 sm:text-sm lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg
