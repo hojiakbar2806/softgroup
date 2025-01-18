@@ -1,20 +1,21 @@
 from sqlalchemy import select
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Cookie, Depends, HTTPException, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, status
 
-from app.core.security.jwt import create_access_token, create_refresh_token
-from app.core.security.utils import verify_user_token
-from app.database.session import get_db_session
-from app.utils.set_cookie import set_refresh_token_cookie
 from app.models.user import User
+from app.database.session import get_db_session
 from app.schemas.user import UserCreate, UserLogin
+from app.bot.send_message import send_user_details
+from app.core.security.utils import verify_user_token
+from app.utils.set_cookie import set_refresh_token_cookie
+from app.core.security.jwt import create_access_token, create_refresh_token
 
 router = APIRouter(prefix="/auth")
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(user: UserCreate, session: AsyncSession = Depends(get_db_session)):
+async def register(user: UserCreate, request: Request, session: AsyncSession = Depends(get_db_session)):
     query = select(User).where(User.username == user.username)
     db_user = (await session.execute(query)).scalar_one_or_none()
 
@@ -57,6 +58,7 @@ async def register(user: UserCreate, session: AsyncSession = Depends(get_db_sess
         status_code=status.HTTP_201_CREATED
     )
     set_refresh_token_cookie(response, refresh_token)
+    await send_user_details(user.full_name, user.email, user.phone_number, request)
     return response
 
 
