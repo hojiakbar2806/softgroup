@@ -12,15 +12,20 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_HOST=softgroup_db
       - POSTGRES_PORT=5432
-
     expose:
       - "8000"
     volumes:
       - ./docs:/app/docs
+      - ./logs:/var/log/softgroup
     depends_on:
       - softgroup_db
     networks:
       - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   softgroup_frontend:
     image: hojiakbar2806/softgroup:latest
@@ -31,6 +36,13 @@ services:
       - "3000"
     networks:
       - app-network
+    volumes:
+      - ./logs:/var/log/softgroup
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   softgroup_db:
     image: postgres
@@ -43,8 +55,14 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres_container:/var/lib/postgresql/data
+      - ./logs:/var/log/softgroup
     networks:
       - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   softgroup_nginx:
     image: nginx:latest
@@ -55,6 +73,7 @@ services:
       - ./nginx/templora.uz.conf:/etc/nginx/conf.d/templora.uz.conf
       - ./nginx/error-pages:/etc/nginx/error-pages:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./logs:/var/log/softgroup
     ports:
       - "80:80"
       - "443:443"
@@ -63,6 +82,11 @@ services:
       - softgroup_backend
     networks:
       - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 networks:
   app-network:
