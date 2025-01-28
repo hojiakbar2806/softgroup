@@ -1,8 +1,8 @@
 "use client";
 import { getDictionary } from "@/features/localization/getDictionary";
 import { closeModal } from "@/features/modal/loginMessageModalSlice";
-import { useRouter } from "@/i18n/routing";
 import { RootState } from "@/lib/store";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 

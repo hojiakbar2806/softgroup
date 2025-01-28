@@ -10,8 +10,6 @@ import {
   Heart,
 } from "lucide-react";
 import { BASE_URL } from "@/lib/const";
-import { Link } from "@/i18n/routing";
-import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import useWishListStore from "@/store/wishListStore";
 import TemplateDetailsSkeleton from "./templateDetailSkeleton";
@@ -23,15 +21,22 @@ import {
 import { useDispatch } from "react-redux";
 import { openModal } from "@/features/modal/loginMessageModalSlice";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useLocale } from "@/hooks/useLocal";
+import { getDictionary } from "@/features/localization/getDictionary";
+import Link from "next/link";
 
 type TemplateDetailProps = {
   slug: string;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
 };
 
-export default function TemplateDetails({ slug }: TemplateDetailProps) {
-  const locale = useLocale();
+export default function TemplateDetails({
+  slug,
+  dictionary,
+}: TemplateDetailProps) {
+  const dict = dictionary;
+  const { currentLang } = useLocale();
   const dispatch = useDispatch();
-  const t = useTranslations();
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const { toggleItem, hasInWishList } = useWishListStore();
   const { data, isLoading, isError } = useGetTemplateWithSlugQuery(slug);
@@ -70,7 +75,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center h-full">
         <h1 className="text-3xl font-bold">404</h1>
-        <p className="text-lg">{t("TemplateDetailPage.notfound")}</p>
+        <p className="text-lg">{dict.TemplateDetailPage.notfound}</p>
       </div>
     );
   }
@@ -81,9 +86,9 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
     if (status === 406) {
       dispatch(
         openModal({
-          message: t("Common.modal.permissionError"),
+          message: dict.Common.modal.permissionError,
           path: "/profile/add-template",
-          button: t("Common.modal.addTemplate"),
+          button: dict.Common.modal.addTemplate,
         })
       );
     }
@@ -95,7 +100,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
 
   const imageList: { id: number; url: string }[] = data?.images || [];
   const translated = data?.translations?.find(
-    (item) => item.language === locale
+    (item) => item.language === currentLang
   );
 
   return (
@@ -141,11 +146,11 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               <span>
                 {data?.current_price === 0 ? (
                   <span className="text-3xl font-bold text-purple-600">
-                    {t("TemplateDetailPage.free")}
+                    {dict.TemplateDetailPage.free}
                   </span>
                 ) : (
                   <span className="text-3xl font-bold text-purple-600">
-                    {t("TemplateDetailPage.premium")}
+                    {dict.TemplateDetailPage.premium}
                   </span>
                 )}
               </span>
@@ -154,7 +159,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
 
           <div className="flex items-center gap-4">
             <span className="text-gray-600">
-              {t("TemplateDetailPage.downloads")}: {data?.downloads || 0}
+              {dict.TemplateDetailPage.downloads}: {data?.downloads || 0}
             </span>
           </div>
 
@@ -163,7 +168,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           {translated?.description && (
             <div className="space-y-2">
               <h2 className="text-xl font-semibold text-gray-900">
-                {t("TemplateDetailPage.description")}
+                {dict.TemplateDetailPage.description}
               </h2>
               <p className="text-gray-600 leading-relaxed">
                 {translated?.description}
@@ -174,13 +179,13 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
           {data?.features && data.features.length > 0 && (
             <div className="space-y-4">
               <h2 className="text-xl font-semibold text-gray-900">
-                {t("TemplateDetailPage.feature")}
+                {dict.TemplateDetailPage.feature}
               </h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {data.features.map((feature, i) => {
                   const text =
                     feature.translations.find(
-                      (item) => item.language === locale
+                      (item) => item.language === currentLang
                     )?.text || "";
                   return (
                     <li
@@ -204,8 +209,8 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
               onClick={handleDownload}
             >
               {isDownloading
-                ? t("TemplateDetailPage.downloading")
-                : t("TemplateDetailPage.download")}
+                ? dict.TemplateDetailPage.downloading
+                : dict.TemplateDetailPage.download}
               <ArrowUpRight
                 size={18}
                 className="group-hover:translate-x-1 transition-transform"
@@ -219,7 +224,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                   aria-label="Preview"
                 >
                   <EyeIcon size={20} />
-                  {t("TemplateDetailPage.preview")}
+                  {dict.TemplateDetailPage.preview}
                 </button>
               </Link>
             )}
@@ -240,7 +245,7 @@ export default function TemplateDetails({ slug }: TemplateDetailProps) {
                 aria-label="Share"
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
-                  toast.success(t("TemplateDetailPage.copied"));
+                  toast.success(dict.TemplateDetailPage.copied);
                 }}
               >
                 <CopyIcon size={20} />

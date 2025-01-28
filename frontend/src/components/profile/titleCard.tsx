@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { CardHeader } from "../ui/card";
 import OpenSidebar from "./sidebar/openSidebar";
 import { Button } from "../ui/button";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "next/navigation";
 
 type TitleCardProps = {
   title: string;

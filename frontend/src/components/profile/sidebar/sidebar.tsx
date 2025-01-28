@@ -8,14 +8,14 @@ import {
   LogOutIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/routing";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSidebarDialogStore } from "@/store/profileStore";
 import { useLogoutMutation } from "@/services/authService";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { logout } from "@/features/auth/authSlice";
 import { baseApi } from "@/services/baseApi";
+import Link from "next/link";
 
 const links = [
   { href: "/profile", label: "Dashboard", icon: <LayoutDashboard /> },

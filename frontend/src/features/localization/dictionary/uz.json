@@ -111,9 +111,7 @@
     "AddTemplate": {
       "title": "Template qo'shish",
       "button": "Orqaga qaytish",
-
       "success": "Template muvaffaqiyatli qo'shildi",
-
       "form": {
         "title": "Template nomi",
         "description": "Template tavsif",

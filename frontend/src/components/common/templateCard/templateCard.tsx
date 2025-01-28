@@ -1,21 +1,27 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "@/i18n/routing";
 import { FC } from "react";
 import { EyeIcon, HeartIcon } from "lucide-react";
 import { MyTemplate } from "@/types/template";
-import { useLocale, useTranslations } from "next-intl";
 import { BASE_URL } from "@/lib/const";
 import { useAddLikeMutation } from "@/services/templateService";
+import { getDictionary } from "@/features/localization/getDictionary";
+import { useLocale } from "@/hooks/useLocal";
+import { useRouter } from "next/navigation";
 
-const TemplateCard: FC<{ product: MyTemplate }> = ({ product }) => {
+type TemplateCardProps = {
+  product: MyTemplate;
+  dictionary?: Awaited<ReturnType<typeof getDictionary>>;
+};
+
+const TemplateCard: FC<TemplateCardProps> = ({ product, dictionary }) => {
   const router = useRouter();
-  const locale = useLocale();
-  const t = useTranslations("TemplatePage.Header.category");
+  const { currentLang } = useLocale();
+  const dict = dictionary?.TemplatePage;
 
   const translated = product.translations?.find(
-    (item) => item.language === locale
+    (item) => item.language === currentLang
   );
 
   const [addLike, { isLoading }] = useAddLikeMutation();
@@ -47,7 +53,7 @@ const TemplateCard: FC<{ product: MyTemplate }> = ({ product }) => {
               {translated?.title}
             </h2>
             <span className="text-xs sm:text-sm px-1 py-px rounded font-bold text-purple-600 bg-purple-100">
-              {product?.current_price === 0 && t("free")}
+              {product?.current_price === 0 && dict?.Header.category.free}
             </span>
           </div>
           <div className="flex gap-2">

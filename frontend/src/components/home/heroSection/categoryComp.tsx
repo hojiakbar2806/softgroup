@@ -2,15 +2,15 @@
 
 import React from "react";
 import Image from "next/image";
-import { useLocale } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BASE_URL } from "@/lib/const";
 import { useGetCategoriesQuery } from "@/services/categoryService";
+import { useLocale } from "@/hooks/useLocal";
 
 const CategoryComp = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const locale = useLocale();
+  const { currentLang } = useLocale();
 
   const { data, isLoading } = useGetCategoriesQuery();
 
@@ -46,7 +46,7 @@ const CategoryComp = () => {
               </div>
               {data?.map((category) => {
                 const translatedTitle = category.translations?.find(
-                  (translation) => translation.language === locale
+                  (translation) => translation.language === currentLang
                 )?.title;
 
                 return (

@@ -3,9 +3,9 @@ import "server-only";
 import type { Locale } from "./i18n.config";
 import { cookies } from "next/headers";
 
-const dictionaries = {
+export const dictionaries = {
   en: async () => {
-    const dictModule = await import("./dictionary/en.json"); // module -> dictModule
+    const dictModule = await import("./dictionary/en.json");
     return dictModule.default;
   },
   uz: async () => {

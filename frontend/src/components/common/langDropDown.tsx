@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Locale } from "@/i18n/routing";
 import { useLocale } from "@/hooks/useLocal";
+import { Locale } from "@/features/localization/i18n.config";
 
 const languages = [
   { code: "uz", label: "O'zbek", icon: "/icons/uzbekistan.svg" },

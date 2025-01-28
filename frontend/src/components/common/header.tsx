@@ -2,9 +2,9 @@
 
 import { HeartIcon, User2Icon } from "lucide-react";
 import { FC } from "react";
-import { Link } from "@/i18n/routing";
 import LanguageDropdown from "./langDropDown";
 import useWishListStore from "@/store/wishListStore";
+import Link from "next/link";
 
 const Header: FC = () => {
   const { wishListItems } = useWishListStore();
