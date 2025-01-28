@@ -39,7 +39,7 @@ class Settings(BaseSettings):
 
     @property
     def URL(self) -> str:
-        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        return f"sqlite+aiosqlite:///{self.POSTGRES_DB}.db"
 
     ALGORITHM: str = "RS256"
     PRIVATE_KEY_PATH: Path = CORE_DIR / "certs" / "jwt-private.pem"

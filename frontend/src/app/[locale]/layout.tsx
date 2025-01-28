@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import { Sora } from "next/font/google";
-import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
 import React from "react";
 import { Toaster } from "sonner";
 import CartDialog from "@/components/cartDialog/cartDialog";
-import { Locale, routing } from "@/i18n/routing";
-import { notFound } from "next/navigation";
-import { getMessages } from "next-intl/server";
 import ReactQueryProvider from "@/lib/reactQueryProvider";
 import { RTKProviders } from "@/lib/provider";
 import LoginMessageModal from "@/components/common/loginMessageModal";
+import { getDictionary } from "@/features/localization/getDictionary";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -26,26 +23,21 @@ export default async function RootLayout({
   params,
 }: Readonly<RootLayoutProps>) {
   const locale = (await params).locale;
-  const messages: AbstractIntlMessages = await getMessages();
+  const dictionary = await getDictionary();
 
-  if (!routing.locales.includes(locale as Locale)) {
-    notFound();
-  }
   return (
-    <NextIntlClientProvider messages={messages}>
-      <html lang={locale}>
-        <body className={sora.className}>
-          <RTKProviders>
-            <ReactQueryProvider>
-              <main>{children}</main>
-              <Toaster position="bottom-right" richColors />
-              <CartDialog />
-              <LoginMessageModal />
-            </ReactQueryProvider>
-          </RTKProviders>
-        </body>
-      </html>
-    </NextIntlClientProvider>
+    <html lang={locale}>
+      <body className={sora.className}>
+        <RTKProviders>
+          <ReactQueryProvider>
+            <main>{children}</main>
+            <Toaster position="bottom-right" richColors />
+            <CartDialog />
+            <LoginMessageModal dictionary={dictionary} />
+          </ReactQueryProvider>
+        </RTKProviders>
+      </body>
+    </html>
   );
 }
 

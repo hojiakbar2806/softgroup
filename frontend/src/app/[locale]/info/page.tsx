@@ -6,17 +6,19 @@ import { InfoFooter } from "@/components/info/footer";
 import React from "react";
 import ContactForm from "@/components/info/contactForm";
 import LangSwitcher from "@/components/info/langSwitcher";
+import { getDictionary } from "@/features/localization/getDictionary";
 
-export default function InfoPage() {
+export default async function InfoPage() {
+  const dictionary = await getDictionary();
   return (
     <React.Fragment>
       <div className="w-full flex flex-col z-10 px-2 sm:px-5 md:px-2 lg:px-6">
-        <Header />
-        <MissionLine />
-        <Service />
+        <Header dictionary={dictionary} />
+        <MissionLine dictionary={dictionary} />
+        <Service dictionary={dictionary} />
         <InfoFooter />
       </div>
-      <ContactForm />
+      <ContactForm dictionary={dictionary} />
       <LangSwitcher />
       <ParallexBackground />
     </React.Fragment>

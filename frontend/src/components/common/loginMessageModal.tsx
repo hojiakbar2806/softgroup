@@ -1,13 +1,18 @@
 "use client";
+import { getDictionary } from "@/features/localization/getDictionary";
 import { closeModal } from "@/features/modal/loginMessageModalSlice";
 import { useRouter } from "@/i18n/routing";
 import { RootState } from "@/lib/store";
-import { useTranslations } from "next-intl";
+import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const LoginMessageModal = () => {
+type LoginMessageModalProps = {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+};
+
+const LoginMessageModal: FC<LoginMessageModalProps> = ({ dictionary }) => {
   const dispatch = useDispatch();
-  const t = useTranslations("Common.modal");
+  const dict = dictionary.Common.modal;
   const { isOpen, message, path, button } = useSelector(
     (state: RootState) => state.loginModal
   );
@@ -28,14 +33,14 @@ const LoginMessageModal = () => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
       <div className="bg-white w-96 rounded-lg shadow-lg p-6 relative">
-        <h2 className="text-xl font-semibold mb-4">{t("message")}</h2>
+        <h2 className="text-xl font-semibold mb-4">{dict.message}</h2>
         <p className="text-gray-700 mb-6">{message}</p>
         <div className="flex items-center justify-end space-x-4">
           <button
             onClick={handleCancel}
             className="px-4 py-2 rounded-lg bg-purple-50 text-gray-700 hover:bg-purple-200 transition"
           >
-            {t("cancel")}
+            {dict.cancel}
           </button>
           <button
             onClick={handleClick}

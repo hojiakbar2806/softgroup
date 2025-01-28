@@ -1,12 +1,16 @@
 "use client";
 
+import { FC } from "react";
+import { getDictionary } from "@/features/localization/getDictionary";
 import { useContactForm } from "@/store/formStore";
-import { useTranslations } from "next-intl";
-import React from "react";
 
-export const Header: React.FC = () => {
+type HeaderProps = {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+};
+
+export const Header: FC<HeaderProps> = ({ dictionary }) => {
   const { toggleOpenContact } = useContactForm();
-  const t = useTranslations("InfoPage");
+  const dict = dictionary.InfoPage.Header;
 
   return (
     <div className="h-screen flex flex-col items-center justify-center gap-12 max-w-6xl mx-auto text-white">
@@ -17,7 +21,7 @@ export const Header: React.FC = () => {
         className="leading-[150%] text-center text-white/90
         text-xs sm:text-sm md:text-base lg:text-xl lx:text-xl 2xl:text-2xl"
       >
-        {t("Header.description")}
+        {dict.description}
       </p>
       <button
         className="flex items-center border border-transparent
@@ -26,7 +30,7 @@ export const Header: React.FC = () => {
         "
         onClick={toggleOpenContact}
       >
-        {t("Header.button")}
+        {dict.button}
       </button>
     </div>
   );

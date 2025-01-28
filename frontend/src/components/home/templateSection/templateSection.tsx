@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronRightCircle } from "lucide-react";
@@ -27,7 +27,7 @@ const TemplateSection = ({ sectionTitle }: TemplateSectionProps) => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(closeModal());
   }, [dispatch]);
 

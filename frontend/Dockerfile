@@ -1,49 +1,24 @@
-# Bazaviy image uchun eng yengil va tez base
-FROM node:20-alpine AS base
+FROM node:18-alpine AS builder
 
-# Kerakli paketlarni o'rnatish uchun builder stage
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Dependency larni optimal o'rnatish
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package*.json ./
 
-# Build uchun kerakli source codeni olish
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+RUN npm install
+
 COPY . .
 
-# ENV o'zgaruvchilarini yangi formatda yozish
-ENV NEXT_TELEMETRY_DISABLED=1
-
-# Next.js configuration va build
 RUN npm run build
 
-# Minimal va eng tez runner
-FROM base AS runner
+FROM node:18-alpine AS runner
+
 WORKDIR /app
 
-# Xavfsizlik va resurslarni tejash uchun user yaratish
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package*.json ./
 
-# Kerakli fayllarni ko'chirish
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+RUN npm install --production
 
-# ENV o'zgaruvchilarini yangi formatda yozish
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
-
-# Foydalanuvchi va portni sozlash
-USER nextjs
 EXPOSE 3000
 
-# Serverni ishga tushirish
-CMD ["node", "server.js"]
+CMD ["npm", "start"]

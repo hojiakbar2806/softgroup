@@ -7,7 +7,6 @@ import LanguageDropdown from "./langDropDown";
 import useWishListStore from "@/store/wishListStore";
 
 const Header: FC = () => {
-  // const t = useTranslations("TemplatePage.Header");
   const { wishListItems } = useWishListStore();
   const wishListCount = wishListItems.length;
 

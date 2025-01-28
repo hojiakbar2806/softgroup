@@ -1,12 +1,8 @@
-import createMiddleware from "next-intl/middleware";
 import { NextRequest } from "next/server";
-import { routing } from "./i18n/routing";
+import { localizationMiddleware } from "./features/localization/localizationMiddleware";
 
-export default async function middleware(request: NextRequest) {
-  const intlMiddleware = createMiddleware(routing);
-  return intlMiddleware(request);
+export const config = { matcher: ["/((?!api|_next|.*.svg$).*)"] };
+
+export function middleware(request: NextRequest) {
+  return localizationMiddleware(request);
 }
-
-export const config = {
-  matcher: ["/", "/(uz|en|ru)/:path*"],
-};

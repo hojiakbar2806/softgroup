@@ -1,18 +1,22 @@
 "use client";
 
 import { useContactForm } from "@/store/formStore";
-import React from "react";
+import { FC } from "react";
 import Form from "next/form";
 import Input from "../common/input";
 import { X } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useContactUsMutation } from "@/services/userService";
 import { toast } from "sonner";
+import { getDictionary } from "@/features/localization/getDictionary";
 
-const ContactForm: React.FC = () => {
+type ContactFormProps = {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+};
+
+const ContactForm: FC<ContactFormProps> = ({ dictionary }) => {
   const { openContact, toggleOpenContact } = useContactForm();
   const [postContact] = useContactUsMutation();
-  const t = useTranslations("InfoPage.ContactForm");
+  const dict = dictionary.InfoPage.ContactForm;
 
   interface ContactResponse {
     message: string;
@@ -71,15 +75,15 @@ const ContactForm: React.FC = () => {
         className="relative z-20 flex flex-col gap-5 p-10 pointer-events-auto bg-nightSkyRadial shadow shadow-white rounded-xl text-white w-full max-w-[500px]
         scale-0 transition-all duration-300 group-data-[open=true]:scale-100"
       >
-        <h1 className="font-bold text-2xl text-center">{t("title")}</h1>
-        <Input name="name" label={t("name")} type="text" />
-        <Input name="email" label={t("email")} type="email" />
-        <p className="text-xs text-gray-500">{t("message")}</p>
+        <h1 className="font-bold text-2xl text-center">{dict.title}</h1>
+        <Input name="name" label={dict.name} type="text" />
+        <Input name="email" label={dict.email} type="email" />
+        <p className="text-xs text-gray-500">{dict.message}</p>
         <button
           type="submit"
           className="h-12 text-lg bg-purple-600 border border-purple-800 rounded-full duration-300 transition-all hover:bg-purple-500 hover:border-white "
         >
-          {t("submit")}
+          {dict.submit}
         </button>
 
         <button

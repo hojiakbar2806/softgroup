@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { useLocale } from "next-intl";
-import { Locale, useRouter, usePathname } from "@/i18n/routing";
+import { Locale } from "@/i18n/routing";
+import { useLocale } from "@/hooks/useLocal";
 
 const languages = [
   { code: "uz", label: "O'zbek", icon: "/icons/uzbekistan.svg" },
@@ -12,17 +12,10 @@ const languages = [
 ];
 
 const LanguageDropdown: React.FC = () => {
-  const locale = useLocale();
-  const pathname = usePathname();
-  const router = useRouter();
+  const { currentLang, setLang } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleLanguageChange = (lang: string) => {
-    router.replace({ pathname: pathname }, { locale: lang as Locale });
-    setIsOpen(false);
-  };
-
-  const currentLanguage = languages?.find((l) => l.code === locale);
+  const currentLanguage = languages?.find((l) => l.code === currentLang);
 
   return (
     <div className="relative">
@@ -53,11 +46,11 @@ const LanguageDropdown: React.FC = () => {
         onClick={(e) => e.stopPropagation()}
       >
         {languages
-          .filter((l) => l.code !== locale)
+          .filter((l) => l.code !== currentLang)
           .map((l) => (
             <button
               key={l.code}
-              onClick={() => handleLanguageChange(l.code)}
+              onClick={() => setLang(l.code as Locale)}
               className="w-full flex items-center px-2 py-1 gap-1
             hover:bg-gray-100 transition"
             >
@@ -69,8 +62,8 @@ const LanguageDropdown: React.FC = () => {
                 className="sm:size-5 lg:size-6 2xl:size-8"
               />
               <span className="text-xs sm:text-sm lg:text-base 2xl:text-lg">
-              {l.label}
-            </span>
+                {l.label}
+              </span>
             </button>
           ))}
       </div>

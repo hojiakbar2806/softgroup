@@ -1,4 +1,4 @@
-import { getMessages } from "next-intl/server";
+import { getDictionary } from "@/features/localization/getDictionary";
 
 export default async function RootLayout({
   children,
@@ -9,25 +9,25 @@ export default async function RootLayout({
 }
 
 export const metadata = async () => {
-  const messages = (await getMessages()) as any;
+  const dict = await getDictionary();
 
   return {
     metadataBase: new URL("http://softgroup.uz"),
-    title: messages.InfoPage.Meta.title,
+    title: dict.InfoPage.Meta.title,
     icons: {
       icon: "/icons/favicon.svg",
     },
-    description: messages.InfoPage.Meta.description,
-    keywords: messages.InfoPage.Meta.keywords,
+    description: dict.InfoPage.Meta.description,
+    keywords: dict.InfoPage.Meta.keywords,
     robots: "index, follow",
     openGraph: {
-      title: messages.InfoPage.Meta.openGraph.title,
-      description: messages.InfoPage.Meta.openGraph.description,
+      title: dict.InfoPage.Meta.openGraph.title,
+      description: dict.InfoPage.Meta.openGraph.description,
       url: "http://softgroup.uz",
       siteName: "Softgroup Info",
       images: [
         {
-          url: "http://templates.softgroup.uz/images/info-og-image.png",
+          url: "http://templora.uz/images/info-og-image.png",
           width: 1200,
           height: 630,
           alt: "Softgroup Info",

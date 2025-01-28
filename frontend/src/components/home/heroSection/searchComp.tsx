@@ -1,19 +1,23 @@
 "use client";
 
-import React, { Fragment, useState } from "react";
+import React, { FC, Fragment, useState } from "react";
 import { Search, X } from "lucide-react";
-import { useTranslations } from "next-intl";
 import Form from "next/form";
 import TemplateCard from "@/components/common/templateCard/templateCard";
 import { TemplateCardSkeleton } from "@/components/common/templateCard/templateCardSkeleton";
 import TemplateCardWrapper from "@/components/common/templateCard/templateCardWrapper";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetAllTemplatesQuery } from "@/services/templateService";
+import { getDictionary } from "@/features/localization/getDictionary";
 
-const SearchComp = () => {
+type SearchCompProps = {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+};
+
+const SearchComp: FC<SearchCompProps> = ({ dictionary }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const t = useTranslations("TemplatePage.Header");
+  const dict = dictionary.TemplatePage.Header.search;
 
   const { data, isLoading } = useGetAllTemplatesQuery(`slug=${searchQuery}`);
 
@@ -43,7 +47,7 @@ const SearchComp = () => {
               id="search"
               name="search"
               autoComplete="off"
-              placeholder={t("search.placeholder")}
+              placeholder={dict.placeholder}
               className="w-full pl-1 outline-none bg-transparent"
               aria-label="Search"
             />
@@ -55,7 +59,7 @@ const SearchComp = () => {
           className="border border-purple-500 rounded-lg hover:bg-purple-500 hover:text-white transition
           px-3 py-1.5 sm:px-4 md:py-2 lg:px-5 lg:text-base 2xl:px-6 2xl:text-lg"
         >
-          <span className="hidden sm:inline">{t("search.button")}</span>
+          <span className="hidden sm:inline">{dict.button}</span>
           <Search className="w-6 h-6 text-gray-400 sm:hidden block" />
         </button>
       </Form>

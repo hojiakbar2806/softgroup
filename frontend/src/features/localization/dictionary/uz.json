@@ -1,0 +1,183 @@
+{
+  "InfoPage": {
+    "Header": {
+      "description": "Sizning IT sohasidagi ehtiyojlaringiz uchun ishonchli hamkor! Bu innovatsion dasturiy ta'minot ishlab chiqarish va joriy etish bo'yicha mahsulot yaratuvchi,O'zbekistonda yangi va ilg'or uslubda xizmat ko'rsatish,ishlab chiqarish jarayonlarini avtomatlashtirish va biznesni yaratishga yordam beruvchi kompaniyadir.Biz bilan birgalikda biznesingizni global bozorda yuksaltirish osonroq!",
+      "button": "Biz bilan bog'lanish"
+    },
+    "Meta": {
+      "title": "Softgroup haqida - Missiya, qadriyatlar va kompaniya tarixi",
+      "description": "Softgroup kompaniyasining tarixini, missiyasini va qadriyatlarini bilib oling. Biz biznesingizni rivojlantirish uchun innovatsion yechimlar yaratishga intilamiz.",
+      "keywords": "Softgroup haqida, kompaniya tarixi, missiya, qadriyatlar, IT kompaniya O'zbekiston",
+      "openGraph": {
+        "title": "Softgroup haqida - Missiya, qadriyatlar va kompaniya tarixi",
+        "description": "Softgroup kompaniyasining tarixini, missiyasini va qadriyatlarini bilib oling. Biz biznesingizni rivojlantirish uchun innovatsion yechimlar yaratishga intilamiz."
+      }
+    },
+
+    "OurMissions": {
+      "title": "Bizning vazifalarimiz",
+      "Missions": [
+        {
+          "id": 1,
+          "name": "Innovatsion yechimlar yaratish.",
+          "content": "Har bir mahsulotimiz orqali mijozlarimiz uchun innovatsion va samarali yechimlar taqdim etishni maqsad qilamiz."
+        },
+        {
+          "id": 2,
+          "name": "Mijozlarimizning Ustuvorligi.",
+          "content": "Bizning asosiy e'tiborimiz — faoliyatimiz. Ularning bizneslarini rivojlantirishga yordam, samarali va foydalanuvchi dasturlarni ishga tushirish orqali ularga maksimal quvvat berish imkonini beradi.Biz taqdim etadigan barcha ta'minot vositalarining yuqori sifati va ishonchliligiga kafolat beramiz."
+        },
+        {
+          "id": 3,
+          "name": "Raqobatbardoshlik va Boshqaruv Efektivligi.",
+          "content": "Resurslarni optimallashtirish va tezkor qarorlar qabul qilish orqali jarayonlarning samaradorligini oshiramiz.Sifatli mahsulotlar va innovatsion texnologiyalar orqali bozor talablarini to'la qondira olamiz."
+        },
+        {
+          "id": 4,
+          "name": "Mahalliy Bozorga Moslashuvchanlik.",
+          "content": "O'zbekistonda sanoat rivojini qo'llab-quvvatlash va mahalliy tadbirkorlikni kuchaytirishga hissa qo'shamiz."
+        },
+        {
+          "id": 5,
+          "name": "Uzoq Muddatli Hamkorlikni Rivojlantirish.",
+          "content": "Biz milliy qisqa, balki uzoq muddatli va manfaatli yordamni rivojlantirishga intilamiz. Mijozlarimiz bilan mustahkam ishonchga hamkorlikni yo'lga qo'yish, doimiy doimiy qo'llab-quvvatlash va maslahatlar taqdim etish bizning strategiyamizning asosidir."
+        },
+        {
+          "id": 6,
+          "name": "Jamoa va Kadrlar Taraqqiyoti.",
+          "content": "Bizning muvaffaqiyatimiz — malakali va fidoyilarga ega bo'lgan jamoamizning yordamga bog'liq. Biz o'zimizni doimiy ravishda rivojlantirib boramiz, ularga eng yaxshi sharoitlarni yaratamiz va qobiliyatli o'z ustida ishlaydigan kelajak avlodga ham ish o'rinlari yarata olamiz."
+        }
+      ]
+    },
+    "OurServices": {
+      "title": "Bizning xizmatlarimiz",
+      "Services": [
+        {
+          "name": "Biznesni avtomatlashtirish",
+          "content": "Korxonangizning ishlab chiqarish, savdo, logistika va boshqa jarayonlarini avtomatlashtirish orqali vaqtni tejash va samaradorlikni oshirishga yordam beramiz."
+        },
+        {
+          "name": "Ilovalarni ishlab chiqish",
+          "content": "Sizning biznes ehtiyojlaringizga mos, funksional va qulay mobil va desktop ilovalar yaratamiz, mijozlar va xodimlar uchun qulay platformalar taqdim etamiz."
+        },
+        {
+          "name": "Veb-sahifalar ishlab chiqish",
+          "content": "Zamonaviy dizayn va ilg‘or texnologiyalarga asoslangan web-saytlar va platformalar ishlab chiqib, biznesingizning onlayn mavjudligini mustahkamlaymiz."
+        },
+        {
+          "name": "ML/AI",
+          "content": "Ma'lumotlarni tahlil qilish, jarayonlarni optimallashtirish va aqlli qarorlarni qabul qilish uchun sun'iy intellekt va mashina o'qitish tizimlarini joriy qilamiz."
+        },
+        {
+          "name": "ERP/CRM",
+          "content": "Resurslarni boshqarish, xarajatlarni nazorat qilish va mijozlar bilan ishlashni samarali tashkil qilish uchun ERP va CRM tizimlarini sozlaymiz va ishga tushiramiz."
+        },
+        {
+          "name": "IoT",
+          "content": "Korxonalarda moslama va qurilmalarni birlashtirib, masofadan boshqarish va real vaqt rejimida kuzatish imkoniyatlarini taqdim etamiz."
+        }
+      ]
+    },
+    "ContactForm": {
+      "title": "Biz bilan bog'lanish",
+      "name": "Ism",
+      "email": "Email",
+      "message": "Siz qo'ldirgan ma'lumot bilan biz sizga bo'g'lanamiz",
+      "submit": "Yuborish"
+    }
+  },
+  "TemplatePage": {
+    "Header": {
+      "title": "Sifat, ishonch va ajoyib narxlar – bir joyda!",
+      "description": "Eng sifatli mahsulotlar, tez yetkazib berish va raqobatbardosh narxlar bilan xarid qilishni boshlang. Bizning takliflarimiz sizni kutmoqda!",
+      "button": "Shablon qo'shish",
+      "search": {
+        "placeholder": "Shablon qidirish",
+        "button": "Qidirish"
+      },
+      "category": {
+        "free": "Bepul",
+        "premium": "Pullik"
+      }
+    }
+  },
+  "ProfilePage": {
+    "Templates": {
+      "header": {
+        "title": "Templatelaringiz",
+        "button": "Template qo'shish"
+      }
+    },
+    "AddTemplate": {
+      "title": "Template qo'shish",
+      "button": "Orqaga qaytish",
+
+      "success": "Template muvaffaqiyatli qo'shildi",
+
+      "form": {
+        "title": "Template nomi",
+        "description": "Template tavsif",
+        "category": "Kategoriya",
+        "feature": "Funksiyalar",
+        "image": "Template Rasm",
+        "file": "Template Fayl",
+        "submit": "Yuborish",
+        "loading": "Yuklanmoqda..."
+      }
+    }
+  },
+  "TemplateDetailPage": {
+    "downloads": "Yuklashlar soni",
+    "description": "Tavsif",
+    "feature": "Xususiyatlar",
+    "download": "Yuklab olish",
+    "downloading": "Yuklanmoqda...",
+    "notfound": "Shablon topilmadi",
+    "free": "Bepul",
+    "premium": "Pullik",
+    "preview": "Shablonni ko'rish",
+    "copied": "Havola vaqtinchalik xotiraga nusxalandi"
+  },
+  "Auth": {
+    "LoginPage": {
+      "username": "Foydalanuvchi nomi",
+      "password": "Parol",
+      "reuiredUsername": "Username maydonini talab qilinadi",
+      "reuiredPassword": "Parol maydonini talab qilinadi",
+      "login": "Kirish",
+      "success": "Kirish muvaffaqiyatli amalga oshirildi"
+    },
+    "RegisterPage": {
+      "fullname": "Foydalanuvchi to'liq ismi",
+      "username": "Foydalanuvchi nomi",
+      "email": "Email",
+      "phone": "Telefon raqami",
+      "password": "Parol",
+      "requiredFullname": "Foydalanuvchi ismi talab qilinadi",
+      "requiredUsername": "Username talab qilinadi",
+      "requiredEmail": "Email talab qilinadi",
+      "requiredPhone": "Telefon raqam talab qilinadi",
+      "requiredPassword": "Parol talab qilinadi",
+      "invalidPassword": "Parol 6 ta belgidan kam bo'lmasligi kerak",
+      "register": "Ro'yxatdan o'tish",
+      "success": "Ro'yxatdan o'tish muvaffaqiyatli amalga oshirildi",
+      "invalidEmail": "Email formati noto'g'ri",
+      "invalidPhone": "Telefon raqami formati noto'g'ri",
+      "invalidPhoneFormat": "Telefon raqami formati noto'g'ri",
+      "invalidPhoneLength": "Telefon raqami 13 ta belgidan oshmasligi kerak",
+      "loading": "Kutib turing..."
+    }
+  },
+  "Common": {
+    "modal": {
+      "message": "Xabar",
+      "cancel": "Bekor qilish",
+      "login": "Kirish",
+      "register": "Ro'yxatdan o'tish",
+      "addTemplate": "Template qo'shish",
+      "permissionError": "Shablonlarni olish uchun, iltimos biror shablon yuklang.",
+      "refreshError": "Sizning sessiyangiz tugatilfi, iltimos qayta kiring.",
+      "unauthorized": "Siz tizimdan ro'yxatdan o'tmagansiz. Ro'yxatdan o'ting va qayta urunib ko'ring"
+    }
+  }
+}
