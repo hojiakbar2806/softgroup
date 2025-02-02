@@ -16,7 +16,7 @@ services:
       - app-network
 
   softgroup_frontend:
-    image: hojiakbar2806/softgroup:latest
+    image: hojiakbar2806/softgroup_frontend:latest
     expose:
       - "3000"
     networks:
