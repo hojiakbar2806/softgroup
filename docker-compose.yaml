@@ -17,6 +17,8 @@ services:
 
   softgroup_frontend:
     image: hojiakbar2806/softgroup_frontend:latest
+    deploy:
+      replicas: 4
     expose:
       - "3000"
     networks:
