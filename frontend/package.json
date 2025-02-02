@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@formatjs/intl-localematcher": "^0.5.10",
     "@mui/material": "^6.3.1",
     "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-label": "^2.1.1",
@@ -25,6 +26,7 @@
     "formik": "^2.4.6",
     "framer-motion": "^12.0.6",
     "lucide-react": "^0.468.0",
+    "negotiator": "^1.0.0",
     "next": "^15.1.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -33,6 +35,7 @@
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.6.0",
     "tailwind-scrollbar": "^3.1.0",
+    "tailwindcss-animate": "^1.0.7",
     "yup": "^1.6.1",
     "zustand": "^5.0.2"
   },
