@@ -1,8 +1,6 @@
 from pathlib import Path
-from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
-load_dotenv()
 
 CURRENT = Path(__file__).resolve()
 CORE_DIR = CURRENT.parent
@@ -31,15 +29,7 @@ class Settings(BaseSettings):
     BASE_URL: str = "https://api.softgroup.uz"
     WEBHOOK_URL: str = "https://api.softgroup.uz"
 
-    POSTGRES_DB: str = "postgres"
-    POSTGRES_HOST: str = "localhost"
-    POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
-
-    @property
-    def URL(self) -> str:
-        return f"sqlite+aiosqlite:///{self.POSTGRES_DB}.db"
+    URL: str = "sqlite+aiosqlite:///softgroup.db"
 
     ALGORITHM: str = "RS256"
     PRIVATE_KEY_PATH: Path = CORE_DIR / "certs" / "jwt-private.pem"

@@ -6,51 +6,21 @@ services:
     environment:
       - APP_ENV=production
       - DEBUG=False
-      - RUN_ON_POSTGRES=True
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_HOST=softgroup_db
-      - POSTGRES_PORT=5432
     expose:
       - "8000"
     volumes:
       - ./docs:/app/docs
+      - ./softgroup.db:/softgroup.db
 
-    depends_on:
-      - softgroup_db
     networks:
       - app-network
 
   softgroup_frontend:
     image: hojiakbar2806/softgroup:latest
-    container_name: softgroup_frontend
-    environment:
-      - NODE_ENV=production
     expose:
       - "3000"
     networks:
       - app-network
-
-  # softgroup_db:
-  #   image: postgres
-  #   container_name: softgroup_db
-  #   environment:
-  #     - POSTGRES_PASSWORD=postgres
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_DB=postgres
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - ./postgres_container:/var/lib/postgresql/data
-  #     - ./logs:/var/log/softgroup
-  #   networks:
-  #     - app-network
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "10m"
-  #       max-file: "5"
 
   softgroup_nginx:
     image: nginx:latest
