@@ -17,15 +17,10 @@ jobs:
 
       - name: Build frontend Docker Image
         run: |
-          docker build \
-            --cache-from hojiakbar2806/softgroup:latest \
-            --tag hojiakbar2806/softgroup:latest ./frontend
+          docker build hojiakbar2806/softgroup:latest ./frontend
 
       - name: Build backend Docker Image
-        run: |
-          docker build \
-            --cache-from hojiakbar2806/softgroup_backend:latest \
-            --tag hojiakbar2806/softgroup_backend:latest ./backend
+        run: docker build hojiakbar2806/softgroup_backend:latest ./backend
 
       - name: Push frontend Docker Image
         run: docker push hojiakbar2806/softgroup:latest
